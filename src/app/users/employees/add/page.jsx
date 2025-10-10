@@ -402,6 +402,18 @@ export default function EmployeeEditPage() {
                                 ))}
                             </div>
 
+                            <div className="rounded-lg p-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
+                                    <div className="flex flex-col space-y-2">
+                                        <Label htmlFor="first_name">First Name</Label>
+                                        <TextInput id="name" placeholder="First Name"/>
+                                    </div>
+                                    <div className="flex flex-col space-y-2">
+                                        <Label htmlFor="last_name">Last Name</Label>
+                                        <TextInput id="name" placeholder="Last Name"/>
+                                    </div>
+                                </div>
+                            </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
                                 {/* Email */}
                                 <div className="flex flex-col space-y-2">
