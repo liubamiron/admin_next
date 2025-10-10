@@ -58,15 +58,6 @@ export default function CandidateAddPage() {
         first_name: z.string().min(1, "First name is required"),
         last_name: z.string().min(1, "Last name is required"),
         phone: z.string().min(5, "Phone number is required"),
-        // phones: z
-        //     .array(
-        //         z.object({
-        //             code: z.string().min(1, "Country code required"),
-        //             phone: z.string().min(5, "Phone number required"),
-        //             operator: z.string().min(1, "Operator required"),
-        //         })
-        //     )
-        //     .min(1, "At least one phone number is required"),
         email: z.email("Invalid email").min(1, "Email is required"),
         file: z.string().optional(),
         telegram: z.string().optional(),
@@ -78,29 +69,65 @@ export default function CandidateAddPage() {
 
     });
 
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //
+    //     try {
+    //         const candidateData = {
+    //             first_name: firstName,
+    //             last_name: lastName,
+    //             email,
+    //             sex: gender?.value || "",
+    //             dob,
+    //             phone: JSON.stringify(
+    //                 phones.map(p => ({
+    //                     code: p.code || "+373",
+    //                     tel: p.phone || "",
+    //                     operator: p.operator || "",
+    //                 }))
+    //             ),
+    //             office_id: offices?.value,
+    //             department_id: departments?.value,
+    //             position_id: positions?.value,
+    //             telegram,
+    //             file: fileName || "",
+    //         };
+    //
+    //         console.log(candidateData, 'json')
+    //
+    //         // Validate
+    //         const validatedData = candidateSchema.parse(candidateData);
+    //
+    //         // Send JSON instead of FormData
+    //         await createCandidate.mutateAsync({
+    //             body: JSON.stringify(validatedData),
+    //             headers: { 'Content-Type': 'application/json' },
+    //         });
+    //
+    //         console.log("✅ Candidate created successfully!");
+    //     } catch (err) {
+    //         console.error(err);
+    //     }
+    // };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
+            // Prepare candidate data
             const candidateData = {
                 first_name: firstName,
                 last_name: lastName,
                 email,
                 sex: gender?.value || "",
-                dob,
+                dob: dob instanceof Date ? dob.toISOString().split("T")[0] : dob, // "YYYY-MM-DD"
                 phone: JSON.stringify(
                     phones.map(p => ({
-                        code: p.code || "+373",
+                        code: p.countryCode || "+373",
                         tel: p.phone || "",
                         operator: p.operator || "",
                     }))
-                ),
-
-                // phone: phone.map(p => ({
-                //     code: p.code || "", // ensure string
-                //     phone: p.phone || "",
-                //     operator: p.operator || "",
-                // })),
+                ), // stringify array
                 office_id: offices?.value,
                 department_id: departments?.value,
                 position_id: positions?.value,
@@ -108,22 +135,20 @@ export default function CandidateAddPage() {
                 file: fileName || "",
             };
 
-            console.log(candidateData, 'json')
+            console.log(candidateData, "prepared JSON");
 
             // Validate
             const validatedData = candidateSchema.parse(candidateData);
 
-            // Send JSON instead of FormData
-            await createCandidate.mutateAsync({
-                body: JSON.stringify(validatedData),
-                headers: { 'Content-Type': 'application/json' },
-            });
+            // Send as JSON body
+            await createCandidate.mutateAsync(validatedData);
 
             console.log("✅ Candidate created successfully!");
         } catch (err) {
             console.error(err);
         }
     };
+
 
     if (!mounted) return <div className="text-center text-gray-500">Loading form...</div>;
 
