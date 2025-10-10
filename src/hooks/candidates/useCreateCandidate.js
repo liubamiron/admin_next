@@ -19,7 +19,8 @@ export function useCreateCandidate() {
                     'Accept': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(candidateData), // send JSON
+                body: JSON.stringify(candidateData),
+                credentials: 'include',
             });
 
             if (!res.ok) {
