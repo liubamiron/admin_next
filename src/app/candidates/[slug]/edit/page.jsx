@@ -327,6 +327,7 @@ export default function CandidateEditPage() {
                                 <div>
                                     <Label>Date of Birth</Label>
                                     <Datepicker
+                                        value={dob}
                                         selected={dob}
                                         onChange={(date) => {
                                             if (date instanceof Date && !isNaN(date)) {

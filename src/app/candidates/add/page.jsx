@@ -27,7 +27,7 @@ export default function CandidateAddPage() {
     const [positions, setPositions] = useState(null);
     const [gender, setGender] = useState(null);
     const [dob, setDob] = useState("");
-    const [phones, setPhones] = useState([{code: "+373", tel: "", operator: "", }]);
+    const [phones, setPhones] = useState([{code: "+373", phone: "", operator: "", }]);
 
     const [mounted, setMounted] = useState(false);
     useEffect(() => setMounted(true), []);
@@ -47,7 +47,7 @@ export default function CandidateAddPage() {
     };
 
     const handleAddPhone = () => {
-        setPhones([...phones, {tel: "", operator: "", code: ""}]);
+        setPhones([...phones, {code: "", phone: "", operator: ""}]);
     };
 
     const handleRemovePhone = (index) => {
@@ -331,7 +331,7 @@ export default function CandidateAddPage() {
                                         <TextInput
                                             id={`phone-${index}`}
                                             placeholder="123 456 789"
-                                            value={item.phone}
+                                            value={item.phone ?? ""}
                                             onChange={(e) => handleChange(index, "phone", e.target.value)}
                                             className="pl-25  dark:bg-gray-700  dark:text-white focus:none countryselect"
                                         />

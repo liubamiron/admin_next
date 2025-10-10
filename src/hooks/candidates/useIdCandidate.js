@@ -18,6 +18,16 @@ export function useIdCandidate(candidateId) {
             }
 
             const json = await res.json();
+
+            // Normalize phone field
+            if (json.data.phone && !Array.isArray(json.data.phone)) {
+                json.data.phone = [{
+                    tel: typeof json.data.phone === "string" ? json.data.phone : "",
+                    operator: "",
+                    code: "+373",
+                }];
+            }
+
             return json.data;
         },
         enabled: !!candidateId, // only fetch if ID exists
