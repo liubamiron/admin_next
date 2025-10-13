@@ -16,7 +16,7 @@ export default function LogInPage() {
         e.preventDefault();
         try {
             await login({ email, password });
-            router.push("/dashboard");
+            router.push("/users/employee");
         } catch (err) {
             console.error("Login failed:", err);
         }
