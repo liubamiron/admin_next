@@ -117,43 +117,6 @@ export default function CandidateAddPage() {
     //     }
     // };
 
-    const handleSubmit2 = async (e) => {
-        e.preventDefault();
-
-        try {
-            // Prepare candidate data
-            const candidateData = {
-                first_name: firstName,
-                last_name: lastName,
-                email,
-                sex: gender?.value || "",
-                dob: dob instanceof Date ? dob.toISOString().split("T")[0] : dob, // "YYYY-MM-DD"
-                phone: phones.map((p) => ({
-                    code: p.code || "+373",
-                    tel: p.phone || "",
-                    operator: p.operator || "",
-                })),
-                office_id: offices?.value,
-                department_id: departments?.value,
-                position_id: positions?.value,
-                telegram,
-                file: fileName || "",
-            };
-
-            console.log(candidateData, "prepared JSON");
-
-            // Validate
-            const validatedData = candidateSchema.parse(candidateData);
-
-            // Send as JSON body
-            await createCandidate.mutateAsync(validatedData);
-
-            console.log("✅ Candidate created successfully!");
-        } catch (err) {
-            console.error(err);
-        }
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -168,28 +131,15 @@ export default function CandidateAddPage() {
                 "dob",
                 dob instanceof Date ? dob.toISOString().split("T")[0] : dob
             );
-
-            // phones array → send as JSON string
-            // formData.append(
-            //     "phone",
-            //     JSON.stringify(
-            //         phones.map((p) => ({
-            //             code: p.countryCode || "+373",
-            //             tel: p.phone || "",
-            //             operator: p.operator || "",
-            //         }))
-            //     )
-            // );
-
             formData.append(
                 "phone",
-
+                JSON.stringify(
                     phones.map((p) => ({
-                        code: p.countryCode || "+373",
+                        code: p.code || "+373",
                         tel: p.phone || "",
                         operator: p.operator || "",
                     }))
-
+                )
             );
             formData.append("office_id", offices?.value || "");
             formData.append("department_id", departments?.value || "");
