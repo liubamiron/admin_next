@@ -28,7 +28,6 @@ export default function CandidateAddPage() {
     const [gender, setGender] = useState(null);
     const [dob, setDob] = useState("");
     const [phones, setPhones] = useState([{code: "+373", phone: "", operator: "", }]);
-    // const [phones, setPhones] = useState("");
 
     const [mounted, setMounted] = useState(false);
     useEffect(() => setMounted(true), []);
@@ -58,13 +57,7 @@ export default function CandidateAddPage() {
     const candidateSchema = z.object({
         first_name: z.string().min(1, "First name is required"),
         last_name: z.string().min(1, "Last name is required"),
-        phone: z.array(
-            z.object({
-                code: z.string().min(1, "Country code required"),
-                tel: z.string().min(5, "Phone number is required"),
-                operator: z.string().min(1, "Operator is required"),
-            })
-        ).min(1, "At least one phone is required"),
+        phone: z.string().min(1, "Phone is required"), // changed from array to string
         email: z.email("Invalid email").min(1, "Email is required"),
         file: z.string().optional(),
         telegram: z.string().optional(),
@@ -76,50 +69,8 @@ export default function CandidateAddPage() {
 
     });
 
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //
-    //     try {
-    //         const candidateData = {
-    //             first_name: firstName,
-    //             last_name: lastName,
-    //             email,
-    //             sex: gender?.value || "",
-    //             dob,
-    //             phone: JSON.stringify(
-    //                 phones.map(p => ({
-    //                     code: p.code || "+373",
-    //                     tel: p.phone || "",
-    //                     operator: p.operator || "",
-    //                 }))
-    //             ),
-    //             office_id: offices?.value,
-    //             department_id: departments?.value,
-    //             position_id: positions?.value,
-    //             telegram,
-    //             file: fileName || "",
-    //         };
-    //
-    //         console.log(candidateData, 'json')
-    //
-    //         // Validate
-    //         const validatedData = candidateSchema.parse(candidateData);
-    //
-    //         // Send JSON instead of FormData
-    //         await createCandidate.mutateAsync({
-    //             body: JSON.stringify(validatedData),
-    //             headers: { 'Content-Type': 'application/json' },
-    //         });
-    //
-    //         console.log("✅ Candidate created successfully!");
-    //     } catch (err) {
-    //         console.error(err);
-    //     }
-    // };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
             const formData = new FormData();
 
