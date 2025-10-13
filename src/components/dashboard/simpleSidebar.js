@@ -1,12 +1,12 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 
-import { useState } from "react";
+import {useState} from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { HiChevronDown, HiChevronUp } from "react-icons/hi";
+import {usePathname} from "next/navigation";
+import {HiChevronDown, HiChevronUp} from "react-icons/hi";
 
-import { useSidebarContext } from "@/contexts/sidebar-context";
+import {useSidebarContext} from "@/contexts/sidebar-context";
 import {useEmployees} from "@/hooks/useEmployees";
 
 export function SimpleSidebar() {
@@ -14,29 +14,29 @@ export function SimpleSidebar() {
     const pathname = usePathname();
     const [isUsersOpen, setUsersOpen] = useState(false);
 
-    const { data } = useEmployees(); // например, первая страница
+    const {data} = useEmployees(); // например, первая страница
     const totalEmployees = data?.total || 0;
 
 
     const menuItems = [
         {
 
-            icon: <img src="/icons/my_profile.svg" alt="My Profile" />,
+            icon: <img src="/icons/my_profile.svg" alt="My Profile"/>,
             label: "My Profile",
             href: "/profile",
         },
         {
-            icon: <img src="/icons/structure.svg" alt="Structure" />,
+            icon: <img src="/icons/structure.svg" alt="Structure"/>,
             label: "Structure",
             href: "/structure",
         },
         {
-            icon: <img src="/icons/users.svg" alt="Users" />,
+            icon: <img src="/icons/users.svg" alt="Users"/>,
             label: "Users",
             submenu: [
                 {
                     id: "1",
-                    icon: <img src="/icons/employees.svg" alt="Employees" />,
+                    icon: <img src="/icons/employees.svg" alt="Employees"/>,
                     label: "Employees",
                     href: "/users/employees",
                     count: totalEmployees,
@@ -44,24 +44,24 @@ export function SimpleSidebar() {
             ],
         },
         {
-            icon: <img src="/icons/candidates.svg" alt="Candidates" />,
+            icon: <img src="/icons/candidates.svg" alt="Candidates"/>,
             label: "Candidates",
             href: "/candidates",
             count: "1",
         },
         {
-            icon: <img src="/icons/interview_calendar.svg" alt="Interview Calendar" />,
+            icon: <img src="/icons/interview_calendar.svg" alt="Interview Calendar"/>,
             label: "Interview Calendar",
             href: "/interview-calendar",
             count: "3",
         },
         {
-            icon: <img src="/icons/shifts_calendar.svg" alt="Shifts Calendar" />,
+            icon: <img src="/icons/shifts_calendar.svg" alt="Shifts Calendar"/>,
             label: "Shifts Calendar",
             href: "/shifts-calendar",
         },
         {
-            icon: <img src="/icons/org_chart.svg" alt="Org Chart" />,
+            icon: <img src="/icons/org_chart.svg" alt="Org Chart"/>,
             label: "Org Chart",
             href: "/orgchart",
         },
@@ -80,7 +80,7 @@ export function SimpleSidebar() {
 
             {/* Sidebar */}
             <div
-                style={{ "--sidebar-width": sidebar.desktop.collapsed ? "4rem" : "18rem" }}
+                style={{"--sidebar-width": sidebar.desktop.collapsed ? "4rem" : "18rem"}}
                 className={`
           fixed top-16 left-0 inset-y-0 z-30 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
           w-72 md:translate-x-0
@@ -89,7 +89,18 @@ export function SimpleSidebar() {
           ${sidebar.mobile.isOpen ? "translate-x-0" : "-translate-x-full"}
         `}
             >
-                <div className="mx-2 my-3">
+                <div className="mx-4 my-3">
+                    <div className="w-[55px]">
+                        {sidebar.desktop.collapsed && (
+                            <Link href={'/'}>
+                                <img
+                                    src="/images/logo_sidebar.png"
+                                    alt="Sidebar Logo"
+                                    className="w-10 h-auto mb-2"
+                                />
+                            </Link>
+                        )}
+                    </div>
                     <ul>
                         {menuItems.map((item) => {
                             const hasSubmenu = !!item.submenu;
@@ -112,7 +123,8 @@ export function SimpleSidebar() {
                         ${isActiveMain ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300" : "hover:bg-[#EBF5FF] dark:hover:bg-gray-700"}
                       `}
                                         >
-                                            <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center">{item.icon}</div>
+                                            <div
+                                                className="flex-shrink-0 w-6 h-6 flex items-center justify-center">{item.icon}</div>
                                             <span
                                                 className={`transition-all duration-300 overflow-hidden whitespace-nowrap ${
                                                     sidebar.desktop.collapsed && !sidebar.mobile.isOpen ? "max-w-0 opacity-0" : "max-w-full opacity-100"
@@ -121,7 +133,8 @@ export function SimpleSidebar() {
                         {item.label}
                       </span>
                                             {!sidebar.desktop.collapsed && item.count && (
-                                                <span className="ml-auto inline-flex items-center justify-center w-6 h-6 text-xs font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">
+                                                <span
+                                                    className="ml-auto inline-flex items-center justify-center w-6 h-6 text-xs font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">
                           {item.count}
                         </span>
                                             )}
@@ -133,7 +146,8 @@ export function SimpleSidebar() {
                                                 className="flex items-center gap-3 p-2 rounded cursor-pointer hover:bg-[#EBF5FF] dark:hover:bg-gray-700"
                                                 onClick={() => setUsersOpen(!isUsersOpen)}
                                             >
-                                                <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center">{item.icon}</div>
+                                                <div
+                                                    className="flex-shrink-0 w-6 h-6 flex items-center justify-center">{item.icon}</div>
                                                 <span
                                                     className={`transition-all duration-300 overflow-hidden whitespace-nowrap ${
                                                         sidebar.desktop.collapsed && !sidebar.mobile.isOpen ? "max-w-0 opacity-0" : "max-w-full opacity-100"
@@ -143,7 +157,8 @@ export function SimpleSidebar() {
                         </span>
                                                 {!sidebar.desktop.collapsed && (
                                                     <div className="ml-auto">
-                                                        {showSubmenu ? <HiChevronUp size={20} /> : <HiChevronDown size={20} />}
+                                                        {showSubmenu ? <HiChevronUp size={20}/> :
+                                                            <HiChevronDown size={20}/>}
                                                     </div>
                                                 )}
                                             </div>
@@ -163,11 +178,14 @@ export function SimpleSidebar() {
                                   `}
                                                                 >
                                                                     <div className="flex items-center gap-2">
-                                                                        <span className="w-6 h-6 flex-shrink-0 flex items-center justify-center">{subitem.icon}</span>
-                                                                        <span className="truncate">{subitem.label}</span>
+                                                                        <span
+                                                                            className="w-6 h-6 flex-shrink-0 flex items-center justify-center">{subitem.icon}</span>
+                                                                        <span
+                                                                            className="truncate">{subitem.label}</span>
                                                                     </div>
                                                                     {subitem.count && (
-                                                                        <span className="inline-flex items-center justify-center w-6 h-6 text-xs font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">
+                                                                        <span
+                                                                            className="inline-flex items-center justify-center w-6 h-6 text-xs font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">
                                       {subitem.count}
                                     </span>
                                                                     )}

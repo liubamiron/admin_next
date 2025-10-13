@@ -10,6 +10,11 @@ export default async function HomePage() {
         redirect("/login");
     }
 
+    if (token) {
+        redirect("/users/employees");
+    }
+
+
     return (
         <main className="flex items-center justify-center min-h-screen">
             <h1>Welcome to Dashboard</h1>

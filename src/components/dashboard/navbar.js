@@ -29,30 +29,33 @@ export function DashboardNavbar() {
             sidebar.mobile.toggle();
         }
     }
+    const isSidebarCollapsed = sidebar.desktop.collapsed;
 
     return (
         <Navbar
             fluid
             className="fixed top-0 z-30 w-full border-b border-gray-200 bg-white  dark:border-gray-700 dark:bg-gray-800"
         >
-            <div className="pl-4 pr-4 flex w-full items-center justify-between">
+            <div className=" pr-4 flex w-full items-center justify-between">
                 {/* Left side: logo */}
                 <div className="flex items-center gap-4 ">
-                    <NavbarBrand as={Link} href="/" className="flex items-center">
-                        {/* Light mode logo */}
-                        <img
-                            src="/images/logo_group_light.svg"
-                            alt="Logo"
-                            className="mr-2 w-auto h-8 dark:hidden"
-                        />
-                        {/* Dark mode logo */}
-                        <img
-                            src="/images/logo_group_dark.svg"
-                            alt="Logo"
-                            className="mr-2 w-auto h-8 hidden dark:block"
-                        />
-                    </NavbarBrand>
-
+                    {/* Hide logo when sidebar is collapsed */}
+                    {!isSidebarCollapsed && (
+                        <NavbarBrand as={Link} href="/" className="flex items-center">
+                            {/* Light mode logo */}
+                            <img
+                                src="/images/logo_group_light.svg"
+                                alt="Logo"
+                                className="mr-2 w-auto h-8 dark:hidden"
+                            />
+                            {/* Dark mode logo */}
+                            <img
+                                src="/images/logo_group_dark.svg"
+                                alt="Logo"
+                                className="mr-2 w-auto h-8 hidden dark:block"
+                            />
+                        </NavbarBrand>
+                    )}
                     <button
                         onClick={handleToggleSidebar}
                         className="rounded p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
