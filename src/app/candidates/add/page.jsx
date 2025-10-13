@@ -65,13 +65,6 @@ export default function CandidateAddPage() {
                 operator: z.string().min(1, "Operator is required"),
             })
         ).min(1, "At least one phone is required"),
-        // phone: JSON.stringify(
-        //     phones.map(p => ({
-        //         code: p.code || "+373",
-        //         tel: p.phone || "",
-        //         operator: p.operator || "",
-        //     }))
-        // ),
         email: z.email("Invalid email").min(1, "Email is required"),
         file: z.string().optional(),
         telegram: z.string().optional(),
@@ -82,11 +75,6 @@ export default function CandidateAddPage() {
         dob: z.string().min(1, "Date of Birth is required"),
 
     });
-
-    const handleImgChange = (e) => {
-        setFileName(e.target.files[0]);
-    };
-
 
     // const handleSubmit = async (e) => {
     //     e.preventDefault();
@@ -129,7 +117,7 @@ export default function CandidateAddPage() {
     //     }
     // };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit2 = async (e) => {
         e.preventDefault();
 
         try {
@@ -166,7 +154,7 @@ export default function CandidateAddPage() {
         }
     };
 
-    const handleSubmit2 = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
