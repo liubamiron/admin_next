@@ -20,8 +20,12 @@ export function useLogin() {
         try {
             const res = await fetch(`https://hrm.webng.life/api/login`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json" ,
+                    'Accept': 'application/json',
+                },
                 body: JSON.stringify({ email, password }),
+                credentials: 'include',
             });
 
             const result = await res.json();
