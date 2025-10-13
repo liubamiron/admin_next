@@ -8,18 +8,19 @@ export function useCreateCandidate() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (candidateData) => {
+        mutationFn: async (formData) => {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
             const res = await fetch(`https://hrm.webng.life/api/candidate`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    // "Content-Type": "application/json",
                     'Accept': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(candidateData),
+                // body: JSON.stringify(candidateData),
+                body: formData,
                 credentials: 'include',
             });
 

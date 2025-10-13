@@ -110,7 +110,7 @@ export default function CandidateAddPage() {
     //     }
     // };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit2 = async (e) => {
         e.preventDefault();
 
         try {
@@ -149,6 +149,52 @@ export default function CandidateAddPage() {
         }
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const formData = new FormData();
+
+            formData.append("first_name", firstName);
+            formData.append("last_name", lastName);
+            formData.append("email", email);
+            formData.append("sex", gender?.value || "");
+            formData.append(
+                "dob",
+                dob instanceof Date ? dob.toISOString().split("T")[0] : dob
+            );
+
+            // phones array → send as JSON string
+            formData.append(
+                "phone",
+                JSON.stringify(
+                    phones.map((p) => ({
+                        code: p.countryCode || "+373",
+                        tel: p.phone || "",
+                        operator: p.operator || "",
+                    }))
+                )
+            );
+
+            formData.append("office_id", offices?.value || "");
+            formData.append("department_id", departments?.value || "");
+            formData.append("position_id", positions?.value || "");
+            formData.append("telegram", telegram || "");
+
+            // if you have a file (File object, not name string)
+            if (file) {
+                formData.append("file", file);
+            }
+
+            console.log([...formData.entries()], "📦 FormData ready");
+
+            await createCandidate.mutateAsync(formData);
+
+            console.log("✅ Candidate created successfully!");
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     if (!mounted) return <div className="text-center text-gray-500">Loading form...</div>;
 
