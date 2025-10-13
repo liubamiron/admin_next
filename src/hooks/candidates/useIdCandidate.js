@@ -20,15 +20,16 @@ export function useIdCandidate(candidateId) {
             const json = await res.json();
 
             // Normalize phone field
-            if (json.data.phone && !Array.isArray(json.data.phone)) {
-                json.data.phone = [{
-                    tel: typeof json.data.phone === "string" ? json.data.phone : "",
-                    operator: "",
-                    code: "+373",
-                }];
-            }
+            // if (json.data.phone && !Array.isArray(json.data.phone)) {
+            //     json.data.phone = [{
+            //         tel: typeof json.data.phone === "string" ? json.data.phone : "",
+            //         operator: "",
+            //         code: "",
+            //     }];
+            // }
 
             return json.data;
+            // return await res.json();
         },
         enabled: !!candidateId, // only fetch if ID exists
     });

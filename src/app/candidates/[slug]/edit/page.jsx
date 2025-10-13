@@ -33,45 +33,71 @@ export default function CandidateEditPage() {
     const [gender, setGender] = useState(null);
     const [dob, setDob] = useState("");
     const [phones, setPhones] = useState([{ phone: "", operator: "", countryCode: "+373" }]);
+    // const [phones, setPhones] = useState("");
     const [mounted, setMounted] = useState(false);
+
 
     // Convert YYYY-MM-DD to a Date object in local timezone
     const parseDob = (dateString) => {
+        if (!dateString) return null;
         const [year, month, day] = dateString.split("-").map(Number);
-        return new Date(year, month - 1, day); // month is 0-indexed
+        return new Date(year, month - 1, day);
     };
 
     useEffect(() => setMounted(true), []);
 
-    // Prefill form when candidate data loads
+// Prefill form when candidate data loads
     useEffect(() => {
-        if (candidate) {
-            setFirstName(candidate.first_name || "");
-            setLastName(candidate.last_name || "");
-            setEmail(candidate.email || "");
-            setTelegram(candidate.telegram || "");
-            setFileName(candidate.file || "");
-            setDepartments(candidate.department_id ? { value: candidate.department_id, label: candidate.department.name } : null);
-            setOffices(candidate.office_id ? { value: candidate.office_id, label: candidate.office.name } : null);
-            setPositions(candidate.position_id ? { value: candidate.position_id, label: candidate.position.name } : null);
-            setGender(candidate.sex ? genderOptions.find(g => g.value === candidate.sex) : null);
-            // setDob(candidate.dob);
-            setDob(parseDob(candidate.dob));
-            setPhones(candidate.phone?.map(p => ({
-                phone: p.tel,
-                operator: p.operator,
-                countryCode: p.code,
-            })) || [{ phone: "", operator: "", countryCode: "+373" }]);
+        if (!candidate) return;
+
+        // Handle phone normalization
+        let phoneArray = [];
+
+        if (typeof candidate.phone === "string") {
+            try {
+                phoneArray = JSON.parse(candidate.phone);
+            } catch (err) {
+                console.error("Failed to parse phone JSON:", err);
+                phoneArray = [];
+            }
+        } else if (Array.isArray(candidate.phone)) {
+            phoneArray = candidate.phone;
         }
+
+        setPhones(
+            phoneArray.length
+                ? phoneArray.map((p) => ({
+                    phone: p.tel,
+                    operator: p.operator,
+                    countryCode: p.code,
+                }))
+                : [{ phone: "", operator: "", countryCode: "+373" }]
+        );
+
+        // Prefill other fields
+        setFirstName(candidate.first_name || "");
+        setLastName(candidate.last_name || "");
+        setEmail(candidate.email || "");
+        setTelegram(candidate.telegram || "");
+        setFileName(candidate.file || "");
+        setDepartments(
+            candidate.department_id
+                ? { value: candidate.department_id, label: candidate.department.name }
+                : null
+        );
+        setOffices(
+            candidate.office_id ? { value: candidate.office_id, label: candidate.office.name } : null
+        );
+        setPositions(
+            candidate.position_id
+                ? { value: candidate.position_id, label: candidate.position.name }
+                : null
+        );
+        setGender(candidate.sex ? genderOptions.find((g) => g.value === candidate.sex) : null);
+        setDob(parseDob(candidate.dob));
     }, [candidate]);
 
-    // const parseDob2 = (dobStr) => {
-    //     const [year, month, day] = dobStr.split("-").map(Number);
-    //     return new Date(year, month - 1, day);
-    // };
-    //
-    // console.log(parseDob2(candidate.dob));
-    console.log(dob);
+    console.log(dob, phones);
 
     const candidateSchema = z.object({
         first_name: z.string().min(1),
@@ -328,7 +354,7 @@ export default function CandidateEditPage() {
                                     <Label>Date of Birth</Label>
                                     <Datepicker
                                         value={dob}
-                                        selected={dob}
+                                        // selected={dob}
                                         onChange={(date) => {
                                             if (date instanceof Date && !isNaN(date)) {
                                                 setDob(date); // ✅ keep as Date
