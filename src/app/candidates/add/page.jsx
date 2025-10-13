@@ -133,11 +133,11 @@ export default function CandidateAddPage() {
                 email,
                 sex: gender?.value || "",
                 dob: dob instanceof Date ? dob.toISOString().split("T")[0] : dob, // "YYYY-MM-DD"
-                phone: phones.map((p) => ({
+                phone: JSON.stringify(phones.map((p) => ({
                     code: p.code || "+373",
                     tel: p.phone || "",
                     operator: p.operator || "",
-                })),
+                }))),
                 office_id: offices?.value,
                 department_id: departments?.value,
                 position_id: positions?.value,
