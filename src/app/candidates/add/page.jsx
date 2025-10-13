@@ -58,13 +58,20 @@ export default function CandidateAddPage() {
     const candidateSchema = z.object({
         first_name: z.string().min(1, "First name is required"),
         last_name: z.string().min(1, "Last name is required"),
-        phone: z.array(
-            z.object({
-                code: z.string().min(1, "Country code required"),
-                tel: z.string().min(5, "Phone number is required"),
-                operator: z.string().min(1, "Operator is required"),
-            })
-        ).min(1, "At least one phone is required"),
+        // phone: z.array(
+        //     z.object({
+        //         code: z.string().min(1, "Country code required"),
+        //         tel: z.string().min(5, "Phone number is required"),
+        //         operator: z.string().min(1, "Operator is required"),
+        //     })
+        // ).min(1, "At least one phone is required"),
+        phone: JSON.stringify(
+            phones.map(p => ({
+                code: p.code || "+373",
+                tel: p.phone || "",
+                operator: p.operator || "",
+            }))
+        ),
         email: z.email("Invalid email").min(1, "Email is required"),
         file: z.string().optional(),
         telegram: z.string().optional(),
