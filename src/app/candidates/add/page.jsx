@@ -182,8 +182,8 @@ export default function CandidateAddPage() {
             formData.append("telegram", telegram || "");
 
             // if you have a file (File object, not name string)
-            if (file) {
-                formData.append("file", file);
+            if (fileName) {
+                formData.append("file", fileName);
             }
 
             console.log([...formData.entries()], "📦 FormData ready");
