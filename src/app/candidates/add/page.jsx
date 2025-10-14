@@ -43,7 +43,7 @@ export default function CandidateAddPage() {
 
 
     const handleFileChange = (event) => {
-        setFileName(event.target.files?.[0])
+        setFileName(event.target.files[0])
         console.log('file', fileName)
     };
 
