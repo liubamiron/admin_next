@@ -18,7 +18,7 @@ export function useLogin() {
         setError(null);
 
         try {
-            const res = await fetch(`${host}/api/login`, {
+            const res = await fetch(`${host}/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json" ,
