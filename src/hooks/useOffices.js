@@ -10,7 +10,7 @@ export function useOffices() {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
-            const res = await fetch(`${host}/api/offices`, {
+            const res = await fetch(`${host}/offices`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

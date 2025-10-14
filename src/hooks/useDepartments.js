@@ -10,7 +10,7 @@ export function useDepartments() {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
-            const res = await fetch(`${host}/api/departments`, {
+            const res = await fetch(`${host}/departments`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

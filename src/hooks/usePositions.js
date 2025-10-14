@@ -10,7 +10,7 @@ export function usePositions() {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
-            const res = await fetch(`${host}/api/positions`, {
+            const res = await fetch(`${host}/positions`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
