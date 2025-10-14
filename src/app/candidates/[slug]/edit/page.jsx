@@ -154,6 +154,7 @@ export default function CandidateEditPage() {
             formData.append("position_id", positions?.value || "");
             formData.append("telegram", telegram || "");
             formData.append("file", fileName);
+            formData.append("status", candidate?.statusTitle );
 
 
             console.log([...formData.entries()], "📦 FormData ready to send");
