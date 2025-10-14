@@ -1,39 +1,26 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    Button,
-    Datepicker,
-    FileInput,
-    Label,
-    TextInput,
-} from "flowbite-react";
-import { HiHome, HiMinus } from "react-icons/hi";
+import {useParams, useRouter} from "next/navigation";
+import {Breadcrumb, BreadcrumbItem, Button, Datepicker, FileInput, Label, TextInput} from "flowbite-react";
+import {HiHome, HiMinus,} from "react-icons/hi";
 import Select from "react-select";
 import z from "zod";
-import { useIdCandidate } from "@/hooks/candidates/useIdCandidate";
-import { useEditCandidate } from "@/hooks/candidates/useEditCandidate";
-import { useDepartments } from "@/hooks/useDepartments";
-import { usePositions } from "@/hooks/usePositions";
-import { useOffices } from "@/hooks/useOffices";
-import {
-    countryOptions,
-    genderOptions,
-    operatorOptions,
-} from "@/components/constants/filterOptions";
+import {useIdCandidate} from "@/hooks/candidates/useIdCandidate";
+import {useEditCandidate} from "@/hooks/candidates/useEditCandidate";
+import {useDepartments} from "@/hooks/useDepartments";
+import {usePositions} from "@/hooks/usePositions";
+import {useOffices} from "@/hooks/useOffices";
+import {countryOptions, genderOptions, operatorOptions} from "@/components/constants/filterOptions";
 
 export default function CandidateEditPage() {
     const router = useRouter();
-    const { slug } = useParams();
+    const { slug } = useParams(); // ✅ get ID from URL
     const { data: candidate, isLoading: loadingCandidate } = useIdCandidate(slug);
     const editCandidate = useEditCandidate();
-    const { data: departmentsData = [], isLoading: depLoading } = useDepartments();
-    const { data: positionsData = [], isLoading: posLoading } = usePositions();
-    const { data: officesData = [], isLoading: offLoading } = useOffices();
-
+    const {data: departmentsData = [], isLoading: depLoading} = useDepartments();
+    const {data: positionsData = [], isLoading: posLoading} = usePositions();
+    const {data: officesData = [], isLoading: offLoading} = useOffices();
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
@@ -44,11 +31,11 @@ export default function CandidateEditPage() {
     const [positions, setPositions] = useState(null);
     const [gender, setGender] = useState(null);
     const [dob, setDob] = useState("");
-    const [phones, setPhones] = useState([
-        { phone: "", operator: "", countryCode: "+373" },
-    ]);
+    const [phones, setPhones] = useState([{ phone: "", operator: "", countryCode: "+373" }]);
     const [mounted, setMounted] = useState(false);
 
+
+    // Convert YYYY-MM-DD to a Date object in local timezone
     const parseDob = (dateString) => {
         if (!dateString) return null;
         const [year, month, day] = dateString.split("-").map(Number);
@@ -57,9 +44,11 @@ export default function CandidateEditPage() {
 
     useEffect(() => setMounted(true), []);
 
+// Prefill form when candidate data loads
     useEffect(() => {
         if (!candidate) return;
 
+        // Handle phone normalization
         let phoneArray = [];
 
         if (typeof candidate.phone === "string") {
@@ -67,6 +56,7 @@ export default function CandidateEditPage() {
                 phoneArray = JSON.parse(candidate.phone);
             } catch (err) {
                 console.error("Failed to parse phone JSON:", err);
+                phoneArray = [];
             }
         } else if (Array.isArray(candidate.phone)) {
             phoneArray = candidate.phone;
@@ -82,6 +72,7 @@ export default function CandidateEditPage() {
                 : [{ phone: "", operator: "", countryCode: "+373" }]
         );
 
+        // Prefill other fields
         setFirstName(candidate.first_name || "");
         setLastName(candidate.last_name || "");
         setEmail(candidate.email || "");
@@ -93,22 +84,38 @@ export default function CandidateEditPage() {
                 : null
         );
         setOffices(
-            candidate.office_id
-                ? { value: candidate.office_id, label: candidate.office.name }
-                : null
+            candidate.office_id ? { value: candidate.office_id, label: candidate.office.name } : null
         );
         setPositions(
             candidate.position_id
                 ? { value: candidate.position_id, label: candidate.position.name }
                 : null
         );
-        setGender(
-            candidate.sex
-                ? genderOptions.find((g) => g.value === candidate.sex)
-                : null
-        );
+        setGender(candidate.sex ? genderOptions.find((g) => g.value === candidate.sex) : null);
         setDob(parseDob(candidate.dob));
     }, [candidate]);
+
+    console.log(dob, phones);
+
+    const candidateSchema = z.object({
+        first_name: z.string().min(1),
+        last_name: z.string().min(1),
+        email: z.string().email(),
+        phones: z.array(
+            z.object({
+                countryCode: z.string().min(1),
+                phone: z.string().min(5),
+                operator: z.string().min(1),
+            })
+        ),
+        office_id: z.string().optional(),
+        department_id: z.string().optional(),
+        position_id: z.string().optional(),
+        sex: z.string().min(1),
+        dob: z.string().min(1),
+        telegram: z.string().optional(),
+        file: z.string().optional(),
+    });
 
     const handleChange = (index, field, value) => {
         const updated = [...phones];
@@ -146,18 +153,14 @@ export default function CandidateEditPage() {
             formData.append("department_id", departments?.value || "");
             formData.append("position_id", positions?.value || "");
             formData.append("telegram", telegram || "");
+            formData.append("file", fileName);
 
-            // ⚙️ Handle file properly — either existing string or new File
-            if (fileName instanceof File) {
-                formData.append("file", fileName);
-            } else if (typeof fileName === "string" && fileName.trim() !== "") {
-                formData.append("file", fileName);
-            }
 
             console.log([...formData.entries()], "📦 FormData ready to send");
 
+            // Call your mutation (editCandidate)
             await editCandidate.mutateAsync({
-                candidateId: slug,
+                candidateId: slug, // assuming slug = candidate ID
                 candidateData: formData,
             });
 
@@ -169,8 +172,13 @@ export default function CandidateEditPage() {
         }
     };
 
+
+    const handleFileChange = (event) => {
+        setFileName(event.target.files?.[0]);
+    };
+
     const handleAddPhone = () => {
-        setPhones([...phones, { phone: "", operator: "", countryCode: "+373" }]);
+        setPhones([...phones, {phone: "", operator: "", countryCode: ""}]);
     };
 
     const handleRemovePhone = (index) => {
@@ -182,9 +190,7 @@ export default function CandidateEditPage() {
     return (
         <div className="p-6 space-y-6">
             <Breadcrumb>
-                <BreadcrumbItem href="/" icon={HiHome}>
-                    Home
-                </BreadcrumbItem>
+                <BreadcrumbItem href="/" icon={HiHome}>Home</BreadcrumbItem>
                 <BreadcrumbItem href="/candidates">Candidates</BreadcrumbItem>
                 <BreadcrumbItem>Edit</BreadcrumbItem>
             </Breadcrumb>
@@ -193,7 +199,6 @@ export default function CandidateEditPage() {
 
             <form className="space-y-6" onSubmit={handleEdit}>
                 <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6">
-                    {/* LEFT COLUMN */}
                     <div className="space-y-4 bg-white p-4 rounded-lg shadow dark:bg-gray-800">
                         <div className="w-full">
                             <Label htmlFor="dropzone-file" value="Upload Image or Document" />
@@ -225,26 +230,18 @@ export default function CandidateEditPage() {
                                         </p>
                                         <p className="text-xs text-gray-500">PNG, JPG, PDF (max 10MB)</p>
 
-                                        {/* ⚙️ FIXED FILE PREVIEW CONDITIONAL */}
                                         {fileName && (
-                                            <div className="mt-4 flex flex-col items-center space-y-2">
+                                            <div className="mt-3 flex flex-col items-center space-y-2">
+                                                <p className="text-sm text-gray-700 font-medium">{fileName.name}</p>
                                                 <Button
-                                                    size="xs"
                                                     color="blue"
+                                                    size="xs"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        if (typeof fileName === "string") {
-                                                            window.open(
-                                                                `https://hrm.webng.life/file/${fileName}`,
-                                                                "_blank",
-                                                                "noopener,noreferrer"
-                                                            );
-                                                        } else {
-                                                            window.open(URL.createObjectURL(fileName), "_blank");
-                                                        }
+                                                        window.open(`https://hrm.webng.life/file/${fileName}`, "_blank", "noopener,noreferrer");
                                                     }}
                                                 >
-                                                    Preview File
+                                                    Preview
                                                 </Button>
                                             </div>
                                         )}
@@ -256,7 +253,9 @@ export default function CandidateEditPage() {
                                         accept="image/*,.pdf"
                                         onChange={(e) => {
                                             const file = e.target.files?.[0];
-                                            if (file) setFileName(file);
+                                            if (file) {
+                                                setFileName(file);
+                                            }
                                         }}
                                     />
                                 </label>
@@ -293,52 +292,77 @@ export default function CandidateEditPage() {
                         </div>
                     </div>
 
-                    {/* RIGHT COLUMN */}
                     <div>
-                        {/* CANDIDATE DETAILS */}
+
                         <div className="rounded-lg p-6 mb-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800">
+
                             <h2 className="text-xl font-semibold mb-4">Candidate Details</h2>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
-                                <TextInput
-                                    placeholder="First Name"
-                                    value={firstName}
-                                    onChange={(e) => setFirstName(e.target.value)}
-                                    required
-                                />
-                                <TextInput
-                                    placeholder="Last Name"
-                                    value={lastName}
-                                    onChange={(e) => setLastName(e.target.value)}
-                                    required
-                                />
-                                <Datepicker
-                                    value={dob}
-                                    onChange={(date) => {
-                                        if (date instanceof Date && !isNaN(date)) setDob(date);
-                                    }}
-                                />
-                                <Select
-                                    options={genderOptions}
-                                    value={gender}
-                                    onChange={setGender}
-                                    placeholder="Select gender..."
-                                />
-                                <TextInput
-                                    placeholder="Email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                />
-                                <TextInput
-                                    placeholder="Telegram"
-                                    value={telegram}
-                                    onChange={(e) => setTelegram(e.target.value)}
-                                />
+                                <div className="flex flex-col space-y-2">
+                                    <Label>First Name</Label>
+                                    <TextInput
+                                        placeholder="First Name"
+                                        value={firstName}
+                                        onChange={(e) => setFirstName(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div className="flex flex-col space-y-2">
+                                    <Label>Last Name</Label>
+                                    <TextInput
+                                        placeholder="Last Name"
+                                        value={lastName}
+                                        onChange={(e) => setLastName(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <Label>Date of Birth</Label>
+                                    <Datepicker
+                                        value={dob}
+                                        // selected={dob}
+                                        onChange={(date) => {
+                                            if (date instanceof Date && !isNaN(date)) {
+                                                setDob(date); // ✅ keep as Date
+                                            } else {
+                                                setDob(null);
+                                            }
+                                        }}
+                                    />
+                                </div>
+
+                                <div className="flex flex-col space-y-2">
+                                    <Label>Gender</Label>
+                                    <Select
+                                        options={genderOptions}
+                                        value={gender}
+                                        onChange={setGender}
+                                        placeholder="Select gender..."
+                                        required
+                                    />
+                                </div>
+
+                                <div className="flex flex-col space-y-2">
+                                    <Label>Personal Email</Label>
+                                    <TextInput
+                                        placeholder="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="flex flex-col space-y-2">
+                                    <Label>Personal Telegram</Label>
+                                    <TextInput
+                                        placeholder="telegram"
+                                        value={telegram}
+                                        onChange={(e) => setTelegram(e.target.value)}
+                                    />
+                                </div>
                             </div>
                         </div>
-
-                        {/* PHONE FIELDS */}
                         <div className="rounded-lg p-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800">
                             {phones.map((item, index) => (
                                 <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
@@ -351,8 +375,8 @@ export default function CandidateEditPage() {
                                             {/* Country Code Select */}
                                             <div className="absolute inset-y-0 left-0 flex items-center">
                                                 <Select
-                                                    value={countryOptions.find(opt => opt.value === item.code) || countryOptions[0]}
-                                                    onChange={(selected) => handleChange(index, "code", selected.value)}
+                                                    value={countryOptions.find(opt => opt.value === item.countryCode) || countryOptions[0]}
+                                                    onChange={(selected) => handleChange(index, "countryCode", selected.value)}
                                                     options={countryOptions}
                                                     classNamePrefix="react-select"
                                                     isSearchable={false}
@@ -384,7 +408,7 @@ export default function CandidateEditPage() {
                                             <TextInput
                                                 id={`phone-${index}`}
                                                 placeholder="123 456 789"
-                                                value={item.phone ?? ""}
+                                                value={item.phone}
                                                 onChange={(e) => handleChange(index, "phone", e.target.value)}
                                                 className="pl-25  dark:bg-gray-700  dark:text-white focus:none countryselect"
                                             />
@@ -398,16 +422,11 @@ export default function CandidateEditPage() {
                                                 Operator
                                             </Label>
                                             <Select
-                                                value={
-                                                    countryOptions.find(
-                                                        (opt) => opt.value === item.countryCode
-                                                    ) || countryOptions[0]
-                                                }
-                                                onChange={(selected) =>
-                                                    handleChange(index, "countryCode", selected.value)
-                                                }
-                                                options={countryOptions}
-                                                isSearchable={false}
+                                                id={`operator-${index}`}
+                                                placeholder="Select an operator"
+                                                options={operatorOptions}
+                                                value={operatorOptions.find(opt => opt.value === item.operator) || null}
+                                                onChange={(selected) => handleChange(index, "operator", selected?.value || "")}
                                             />
                                         </div>
 
@@ -431,11 +450,11 @@ export default function CandidateEditPage() {
 
                             ))}
 
-                            <div className="flex gap-6">
-                                <Button outline color="blue" type="submit">
-                                    Save Changes
+                            <div className="flex flex-wrap gap-6">
+                                <Button outline color="blue" type='submit'>
+                                    Create
                                 </Button>
-                                <Button outline color="gray" onClick={() => router.back()}>
+                                <Button outline color="gray">
                                     Cancel
                                 </Button>
                             </div>
