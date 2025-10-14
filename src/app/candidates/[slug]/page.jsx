@@ -5,7 +5,7 @@ export default function CandidatePage() {
 
     return (
         <div>
-            Candidate page
+            Candidate page test
         </div>
     );
 

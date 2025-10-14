@@ -21,7 +21,7 @@ import PaginationComponent from "@/components/pagination/PaginationComponent";
 import {useAuthStore} from "@/store/useAuthStore";
 import {useCandidates} from "@/hooks/candidates/useCandidates";
 import {HiHome} from "react-icons/hi";
-import {usePathname, useRouter} from "next/navigation";
+import {useRouter} from "next/navigation";
 
 
 export default function CandidatesPage() {
@@ -243,7 +243,7 @@ export default function CandidatesPage() {
                                                 </Link>
                                             )}
                                             {canViewCandidates && (
-                                                <Link href={`/candidates/${c.id}`}>
+                                                <Link href={`/candidates/${c.id}/view`}>
                                                     <img src={"/icons/eye.svg"} alt="Eye" className="w-5 h-5"/>
                                                 </Link>
                                             )}
