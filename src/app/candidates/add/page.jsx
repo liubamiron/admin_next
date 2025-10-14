@@ -43,7 +43,7 @@ export default function CandidateAddPage() {
 
     const handleFileChange = (event) => {
         const file = event.target.files?.[0];
-        if (file) setFileName(file.name);
+        if (file) setFileName(file);
     };
 
     const handleAddPhone = () => {

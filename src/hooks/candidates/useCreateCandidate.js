@@ -15,11 +15,9 @@ export function useCreateCandidate() {
             const res = await fetch(`https://hrm.webng.life/api/candidate`, {
                 method: "POST",
                 headers: {
-                    // "Content-Type": "application/json",
                     'Accept': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
-                // body: JSON.stringify(candidateData),
                 body: formData,
                 credentials: 'include',
             });
