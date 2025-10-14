@@ -6,17 +6,19 @@ export function useEditCandidate() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({ candidateId, candidateData }) => {
+        mutationFn: async ({ candidateId, formData }) => {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
-            const res = await fetch(`https://hrm.webng.life/api/candidates/${candidateId}`, {
-                method: "PUT",
+            const res = await fetch(`https://hrm.webng.life/api/candidate/${candidateId}`, {
+                method: "PATCH",
                 headers: {
-                    "Content-Type": "application/json",
+                    // "Content-Type": "application/json",
+                    'Accept': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(candidateData), // send JSON
+                body: formData,
+                credentials: 'include',
             });
 
             if (!res.ok) {
