@@ -227,10 +227,11 @@ export default function CandidateEditPage() {
 
                         <div className="w-full">
                             <Label htmlFor="dropzone-file" value="Upload Image or Document" />
+
                             <div className="flex flex-col items-center justify-center w-full">
                                 <label
                                     htmlFor="dropzone-file"
-                                    className="flex flex-col items-center justify-center w-full h-48 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600"
+                                    className="flex flex-col items-center justify-center w-full min-h-[200px] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600"
                                 >
                                     <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center">
                                         <svg
@@ -253,18 +254,24 @@ export default function CandidateEditPage() {
                                         </p>
                                         <p className="text-xs text-gray-500">PNG, JPG, PDF (max 10MB)</p>
 
-                                        {/* Show existing file */}
+                                        {/* Show preview of existing file */}
                                         {fileName && !newFile && (
-                                            <div className="mt-2">
+                                            <div className="mt-4 w-full flex flex-col items-center">
                                                 {/\.(jpg|jpeg|png|gif)$/i.test(fileName) ? (
                                                     <img
                                                         src={`https://hrm.webng.life/file/${fileName}`}
                                                         alt="Uploaded file"
-                                                        className="w-24 h-24 object-cover rounded"
+                                                        className="w-40 h-40 object-cover rounded-lg border"
                                                     />
+                                                ) : fileName.endsWith(".pdf") ? (
+                                                    <iframe
+                                                        src={`https://hrm.webng.life/file/${fileName}`}
+                                                        title="PDF Preview"
+                                                        className="w-full h-[300px] rounded-lg border"
+                                                    ></iframe>
                                                 ) : (
                                                     <a
-                                                        href={`https://hrm.webng.life/${fileName}`}
+                                                        href={`https://hrm.webng.life/file/${fileName}`}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className="text-blue-600 hover:underline text-sm"
@@ -275,25 +282,45 @@ export default function CandidateEditPage() {
                                             </div>
                                         )}
 
-                                        {/* Show new selected file name */}
+                                        {/* Show preview of newly selected file */}
                                         {newFile && (
-                                            <p className="mt-2 text-sm text-blue-600">{newFile.name}</p>
+                                            <div className="mt-4 w-full flex flex-col items-center">
+                                                {newFile.type.startsWith("image/") ? (
+                                                    <img
+                                                        src={URL.createObjectURL(newFile)}
+                                                        alt="New upload preview"
+                                                        className="w-40 h-40 object-cover rounded-lg border"
+                                                    />
+                                                ) : newFile.type === "application/pdf" ? (
+                                                    <iframe
+                                                        src={URL.createObjectURL(newFile)}
+                                                        title="New PDF Preview"
+                                                        className="w-full h-[300px] rounded-lg border"
+                                                    ></iframe>
+                                                ) : (
+                                                    <p className="text-sm text-gray-500">{newFile.name}</p>
+                                                )}
+                                            </div>
                                         )}
                                     </div>
+
+                                    {/* Hidden input */}
                                     <FileInput
                                         id="dropzone-file"
                                         className="hidden"
+                                        accept="image/*,.pdf"
                                         onChange={(e) => {
                                             const file = e.target.files?.[0];
                                             if (file) {
                                                 setNewFile(file);
-                                                setFileName(file.name); // update fileName to reflect new selection
+                                                setFileName(file.name);
                                             }
                                         }}
                                     />
                                 </label>
                             </div>
                         </div>
+
 
                         <div className="space-y-4">
                             <Label>Office</Label>
