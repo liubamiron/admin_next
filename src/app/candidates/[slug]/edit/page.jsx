@@ -290,6 +290,15 @@ export default function CandidateEditPage() {
                                 isLoading={posLoading}
                                 placeholder="Select position..."
                             />
+
+                            {/*<TextInput value={candidate.statusTitle} label={"status"} />*/}
+                            <Label>Status</Label>
+                            <br/>
+                            <div
+                                className="bg-primary-100 text-primary-800 px-4 py-2 rounded-lg inline-block"
+                            >
+                                {candidate.statusTitle}
+                            </div>
                         </div>
                     </div>
 
