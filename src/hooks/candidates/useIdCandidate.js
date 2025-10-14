@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 
+const host = process.env.NEXT_PUBLIC_HOST;
+
 export function useIdCandidate(candidateId) {
     return useQuery({
         queryKey: ["candidate", candidateId],
@@ -8,7 +10,7 @@ export function useIdCandidate(candidateId) {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
-            const res = await fetch(`https://hrm.webng.life/api/candidates/${candidateId}`, {
+            const res = await fetch(`${host}/candidates/${candidateId}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -19,17 +21,7 @@ export function useIdCandidate(candidateId) {
 
             const json = await res.json();
 
-            // Normalize phone field
-            // if (json.data.phone && !Array.isArray(json.data.phone)) {
-            //     json.data.phone = [{
-            //         tel: typeof json.data.phone === "string" ? json.data.phone : "",
-            //         operator: "",
-            //         code: "",
-            //     }];
-            // }
-
             return json.data;
-            // return await res.json();
         },
         enabled: !!candidateId, // only fetch if ID exists
     });

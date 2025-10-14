@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 
+const host = process.env.NEXT_PUBLIC_HOST;
+
 // Mutation hook for updating a candidate
 export function useEditCandidate() {
     const queryClient = useQueryClient();
@@ -10,7 +12,7 @@ export function useEditCandidate() {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
-            const res = await fetch(`https://hrm.webng.life/api/candidate/${candidateId}`, {
+            const res = await fetch(`${host}/candidate/${candidateId}`, {
                 method: "PATCH",
                 headers: {
                     // "Content-Type": "application/json",

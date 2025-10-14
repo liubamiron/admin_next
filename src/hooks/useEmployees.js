@@ -10,7 +10,7 @@ export function useEmployees(page = 1) {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
-            const res = await fetch(`https://hrm.webng.life/api/users?page=${page}`, {
+            const res = await fetch(`${host}/api/users?page=${page}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

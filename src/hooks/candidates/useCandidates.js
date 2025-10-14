@@ -10,7 +10,7 @@ export function useCandidates(page = 1) {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
-            const res = await fetch(`https://hrm.webng.life/api/candidates?page=${page}`, {
+            const res = await fetch(`${host}/candidates?page=${page}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

@@ -12,7 +12,7 @@ export function useCreateCandidate() {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
-            const res = await fetch(`https://hrm.webng.life/api/candidate`, {
+            const res = await fetch(`${host}/api/candidate`, {
                 method: "POST",
                 headers: {
                     'Accept': 'application/json',
