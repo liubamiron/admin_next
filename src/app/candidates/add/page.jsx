@@ -41,10 +41,13 @@ export default function CandidateAddPage() {
 
     const createCandidate = useCreateCandidate();
 
+
     const handleFileChange = (event) => {
-        const file = event.target.files?.[0];
-        if (file) setFileName(file);
+        setFileName(event.target.files?.[0])
+        console.log('file', fileName)
     };
+
+
 
     const handleAddPhone = () => {
         setPhones([...phones, {code: "", phone: "", operator: ""}]);
@@ -59,7 +62,7 @@ export default function CandidateAddPage() {
         last_name: z.string().min(1, "Last name is required"),
         phone: z.string().min(1, "Phone is required"), // changed from array to string
         email: z.email("Invalid email").min(1, "Email is required"),
-        file: z.string().optional(),
+        file: z.file().optional(),
         telegram: z.string().optional(),
         office_id: z.number().optional(),
         department_id: z.number().optional(),
@@ -164,9 +167,9 @@ export default function CandidateAddPage() {
                                         <span className="font-semibold">Click to upload</span> or drag and drop
                                     </p>
                                     <p className="text-xs text-gray-500">PNG, JPG, PDF (max 10MB)</p>
-                                    {fileName && <p className="mt-2 text-sm text-blue-600">{fileName}</p>}
+                                    {fileName && <p className="mt-2 text-sm text-blue-600">{fileName.name}</p>}
                                 </div>
-                                <FileInput id="dropzone-file" className="hidden" onChange={handleFileChange}/>
+                                <FileInput id="dropzone-file" type="file" className="hidden" onChange={handleFileChange}/>
                             </label>
                         </div>
                     </div>
