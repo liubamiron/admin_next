@@ -167,7 +167,28 @@ export default function CandidateAddPage() {
                                         <span className="font-semibold">Click to upload</span> or drag and drop
                                     </p>
                                     <p className="text-xs text-gray-500">PNG, JPG, PDF (max 10MB)</p>
-                                    {fileName && <p className="mt-2 text-sm text-blue-600">{fileName.name}</p>}
+                                    {/*{fileName && <p className="mt-2 text-sm text-blue-600">{fileName.name}</p>}*/}
+                                    { fileName &&
+                                        <div className="mt-2">
+                                            { /\.(jpg|jpeg|png|gif)$/i.test(fileName.name || fileName) ?
+                                                (<img
+                                                    src={`https://hrm.webng.life/file/${fileName.name || fileName}`}
+                                                    alt="Uploaded file"
+                                                    className="w-24 h-24 object-cover rounded"
+                                                />)
+                                                : (
+                                                    <a
+                                                        href={`https://hrm.webng.life/file/${fileName.name || fileName}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-600 hover:underline text-sm"
+                                                    >
+                                                        View file
+                                                    </a>
+                                                )
+                                            }
+                                        </div>
+                                    }
                                 </div>
                                 <FileInput id="dropzone-file" type="file" className="hidden" onChange={handleFileChange}/>
                             </label>

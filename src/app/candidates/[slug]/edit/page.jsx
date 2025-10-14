@@ -258,7 +258,7 @@ export default function CandidateEditPage() {
                                             <div className="mt-2">
                                                 {/\.(jpg|jpeg|png|gif)$/i.test(fileName) ? (
                                                     <img
-                                                        src={`https://hrm.webng.life/${fileName}`}
+                                                        src={`https://hrm.webng.life/file/${fileName}`}
                                                         alt="Uploaded file"
                                                         className="w-24 h-24 object-cover rounded"
                                                     />
