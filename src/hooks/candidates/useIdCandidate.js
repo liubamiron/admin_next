@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 
-const host = process.env.NEXT_PUBLIC_HOST;
+const host = process.env.NEXT_PUBLIC_HOST || "https://hrm.webng.life/api";
 
 export function useIdCandidate(candidateId) {
     return useQuery({

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 
-const host = process.env.NEXT_PUBLIC_HOST;
+const host = process.env.NEXT_PUBLIC_HOST || "https://hrm.webng.life/api";
 
 // Mutation hook for creating candidate
 export function useCreateCandidate() {

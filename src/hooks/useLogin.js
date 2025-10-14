@@ -4,7 +4,7 @@ import { useState } from "react";
 import Cookies from "js-cookie";
 import {useAuthStore} from "@/store/useAuthStore";
 
-const host = process.env.NEXT_PUBLIC_HOST;
+const host = process.env.NEXT_PUBLIC_HOST || "https://hrm.webng.life/api";
 
 export function useLogin() {
     const [loading, setLoading] = useState(false);

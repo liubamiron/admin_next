@@ -291,7 +291,6 @@ export default function CandidateEditPage() {
                                 placeholder="Select position..."
                             />
 
-                            {/*<TextInput value={candidate.statusTitle} label={"status"} />*/}
                             <Label>Status</Label>
                             <br/>
                             <div
