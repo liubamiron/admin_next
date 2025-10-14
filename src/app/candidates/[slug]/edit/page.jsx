@@ -342,78 +342,93 @@ export default function CandidateEditPage() {
                         <div className="rounded-lg p-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800">
                             {phones.map((item, index) => (
                                 <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+
                                     <div className="flex flex-col space-y-2">
-                                        <Label>Phone Number</Label>
+                                        <Label htmlFor={`phone-${index}`} className="dark:text-white">
+                                            Phone Number
+                                        </Label>
                                         <div className="relative w-full border border-gray-300 rounded-lg">
+                                            {/* Country Code Select */}
                                             <div className="absolute inset-y-0 left-0 flex items-center">
                                                 <Select
-                                                    value={
-                                                        countryOptions.find(
-                                                            (opt) => opt.value === item.countryCode
-                                                        ) || countryOptions[0]
-                                                    }
-                                                    onChange={(selected) =>
-                                                        handleChange(index, "countryCode", selected.value)
-                                                    }
+                                                    value={countryOptions.find(opt => opt.value === item.code) || countryOptions[0]}
+                                                    onChange={(selected) => handleChange(index, "code", selected.value)}
                                                     options={countryOptions}
+                                                    classNamePrefix="react-select"
                                                     isSearchable={false}
+                                                    className="text-[14px] width-[115px]"
                                                     styles={{
-                                                        control: (p) => ({
-                                                            ...p,
-                                                            border: "none",
-                                                            boxShadow: "none",
-                                                            backgroundColor: "transparent",
+                                                        control: (provided) => ({
+                                                            ...provided,
+                                                            border: 'none',
+                                                            boxShadow: 'none',
+                                                            backgroundColor: 'transparent',
+                                                        }),
+                                                        indicatorsContainer: (provided) => ({
+                                                            ...provided,
+                                                            display: 'yes', // remove dropdown arrow
+                                                        }),
+                                                        valueContainer: (provided) => ({
+                                                            ...provided,
+                                                            padding: '0 0 0 6px',
+                                                        }),
+                                                        singleValue: (provided) => ({
+                                                            ...provided,
+                                                            color: 'inherit', // match text color
                                                         }),
                                                     }}
                                                 />
                                             </div>
+
+                                            {/* Phone Input */}
                                             <TextInput
+                                                id={`phone-${index}`}
                                                 placeholder="123 456 789"
-                                                value={item.phone}
-                                                onChange={(e) =>
-                                                    handleChange(index, "phone", e.target.value)
-                                                }
-                                                className="pl-24"
+                                                value={item.phone ?? ""}
+                                                onChange={(e) => handleChange(index, "phone", e.target.value)}
+                                                className="pl-25  dark:bg-gray-700  dark:text-white focus:none countryselect"
                                             />
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-[2fr_auto] gap-4 items-end">
-                                        <Select
-                                            placeholder="Select an operator"
-                                            options={operatorOptions}
-                                            value={
-                                                operatorOptions.find(
-                                                    (opt) => opt.value === item.operator
-                                                ) || null
-                                            }
-                                            onChange={(selected) =>
-                                                handleChange(index, "operator", selected?.value || "")
-                                            }
-                                        />
+                                    <div className="grid grid-cols-1 md:grid-cols-[2fr_auto] gap-4 items-end">
+                                        {/* Operator */}
+                                        <div className="flex flex-col space-y-2">
+                                            <Label htmlFor={`operator-${index}`} className="dark:text-white">
+                                                Operator
+                                            </Label>
+                                            <Select
+                                                value={
+                                                    countryOptions.find(
+                                                        (opt) => opt.value === item.countryCode
+                                                    ) || countryOptions[0]
+                                                }
+                                                onChange={(selected) =>
+                                                    handleChange(index, "countryCode", selected.value)
+                                                }
+                                                options={countryOptions}
+                                                isSearchable={false}
+                                            />
+                                        </div>
 
-                                        <div className="flex gap-2">
-                                            {index === phones.length - 1 && (
-                                                <Button
-                                                    color="blue"
-                                                    onClick={handleAddPhone}
-                                                    size="xs"
-                                                    className="w-10"
-                                                >
-                                                    +
-                                                </Button>
-                                            )}
-                                            <Button
-                                                color="failure"
-                                                onClick={() => handleRemovePhone(index)}
-                                                size="xs"
-                                                className="w-10"
-                                            >
-                                                -
-                                            </Button>
+                                        {/* Buttons */}
+                                        <div className="flex items-end gap-2 self-end">
+                                            {index === phones.length - 1 ? (<> {phones.length > 1 && (
+                                                    <Button color="failure" onClick={() => handleRemovePhone(index)}
+                                                            size="xs"
+                                                            className="flex items-center justify-center h-[42px] w-[42px] rounded-lg border bg-red-700 hover:bg-red-800 text-white text-lg"> - {/*<RiDeleteBin6Fill color="darkred" size="xs" />*/} </Button>)}
+                                                    <Button onClick={handleAddPhone}
+                                                            className="flex items-center justify-center h-[42px] w-[42px] rounded-lg border bg-blue-700 hover:bg-blue-800 text-white text-lg"> + </Button> </>) :
+                                                (<Button color="failure" onClick={() => handleRemovePhone(index)}
+                                                         size="xs"
+                                                         className="flex items-center justify-center h-[42px] text-white color-white">
+                                                    <HiMinus/>
+                                                </Button>)
+                                            }
                                         </div>
                                     </div>
                                 </div>
+
                             ))}
 
                             <div className="flex gap-6">
