@@ -140,14 +140,13 @@ export default function CandidateAddPage() {
             <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6">
                 <div className="space-y-4 bg-white p-4 rounded-lg shadow dark:bg-gray-800">
                     <div className="w-full">
-                        <Label htmlFor="dropzone-file" value="Upload Image or Document"/>
+                        <Label htmlFor="dropzone-file" value="Upload Image or Document" />
                         <div className="flex items-center justify-center w-full">
                             <label
                                 htmlFor="dropzone-file"
                                 className="flex flex-col items-center justify-center w-full h-48 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600"
                             >
-                                <div
-                                    className="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                                <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center">
                                     <svg
                                         aria-hidden="true"
                                         className="w-10 h-10 mb-3 text-gray-400"
@@ -167,30 +166,32 @@ export default function CandidateAddPage() {
                                         <span className="font-semibold">Click to upload</span> or drag and drop
                                     </p>
                                     <p className="text-xs text-gray-500">PNG, JPG, PDF (max 10MB)</p>
-                                    {/*{fileName && <p className="mt-2 text-sm text-blue-600">{fileName.name}</p>}*/}
-                                    { fileName &&
-                                        <div className="mt-2">
-                                            { /\.(jpg|jpeg|png|gif)$/i.test(fileName.name || fileName) ?
-                                                (<img
-                                                    src={`https://hrm.webng.life/file/${fileName.name || fileName}`}
-                                                    alt="Uploaded file"
-                                                    className="w-24 h-24 object-cover rounded"
-                                                />)
-                                                : (
-                                                    <a
-                                                        href={`https://hrm.webng.life/file/${fileName.name || fileName}`}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="text-blue-600 hover:underline text-sm"
-                                                    >
-                                                        View file
-                                                    </a>
-                                                )
-                                            }
+
+                                    {fileName && (
+                                        <div className="mt-3 flex flex-col items-center space-y-2">
+                                            <p className="text-sm text-gray-700 font-medium">{fileName.name}</p>
+                                            <Button
+                                                color="blue"
+                                                size="xs"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    const url = URL.createObjectURL(fileName);
+                                                    window.open(url, "_blank", "noopener,noreferrer");
+                                                }}
+                                            >
+                                                Preview
+                                            </Button>
                                         </div>
-                                    }
+                                    )}
                                 </div>
-                                <FileInput id="dropzone-file" type="file" className="hidden" onChange={handleFileChange}/>
+
+                                <FileInput
+                                    id="dropzone-file"
+                                    type="file"
+                                    accept="image/*,.pdf"
+                                    className="hidden"
+                                    onChange={handleFileChange}
+                                />
                             </label>
                         </div>
                     </div>
