@@ -138,16 +138,21 @@ export default function CandidateEditPage() {
                 dob instanceof Date ? dob.toISOString().split("T")[0] : dob
             );
 
-            formData.append(
-                "phone",
-                JSON.stringify(
-                    phones.map((p) => ({
-                        code: p.countryCode || "+373",
-                        tel: p.phone || "",
-                        operator: p.operator || "",
-                    }))
-                )
-            );
+            phones.forEach((p, index) => {
+                formData.append(`phone[${index}][code]`, p.countryCode);
+                formData.append(`phone[${index}][tel]`, p.tel);
+                formData.append(`phone[${index}][operator]`, p.operator);
+            });
+            // formData.append(
+            //     "phone",
+            //     JSON.stringify(
+            //         phones.map((p) => ({
+            //             code: p.countryCode || "+373",
+            //             tel: p.phone || "",
+            //             operator: p.operator || "",
+            //         }))
+            //     )
+            // );
 
             formData.append("office_id", offices?.value || "");
             formData.append("department_id", departments?.value || "");
