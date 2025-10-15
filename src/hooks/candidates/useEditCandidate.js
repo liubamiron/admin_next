@@ -15,12 +15,11 @@ export function useEditCandidate() {
             const res = await fetch(`${host}/candidate/${candidateId}`, {
                 method: "POST",
                 headers: {
-                    // "Content-Type": "application/json",
                     'Accept': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
                 body: formData,
-                credentials: 'include',
+                // credentials: 'include',
             });
 
             if (!res.ok) {
