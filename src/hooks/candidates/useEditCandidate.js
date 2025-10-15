@@ -13,7 +13,7 @@ export function useEditCandidate() {
             if (!token) throw new Error("No authentication token found");
 
             const res = await fetch(`${host}/candidate/${candidateId}`, {
-                method: "PATCH",
+                method: "POST",
                 headers: {
                     // "Content-Type": "application/json",
                     'Accept': 'application/json',

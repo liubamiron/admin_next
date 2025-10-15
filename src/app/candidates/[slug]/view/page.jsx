@@ -109,7 +109,7 @@ export default function CandidateViewPage() {
                 <BreadcrumbItem>Edit</BreadcrumbItem>
             </Breadcrumb>
 
-            <h2 className="text-xl font-semibold">Edit Candidate</h2>
+            <h2 className="text-xl font-semibold">View Candidate</h2>
                 <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6">
                     <div className="space-y-4 bg-white p-4 rounded-lg shadow dark:bg-gray-800">
                         <div className="w-full">
