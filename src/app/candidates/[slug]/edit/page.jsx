@@ -152,7 +152,6 @@ export default function CandidateEditPage() {
             formData.append("position_id", positions?.value || "");
             formData.append("telegram", telegram || "");
             formData.append("file", fileName);
-            formData.append("status", candidate?.statusTitle );
 
 
             console.log([...formData.entries()], "📦 FormData ready to send");
@@ -163,11 +162,10 @@ export default function CandidateEditPage() {
                 candidateData: formData,
             });
 
-            alert("✅ Candidate updated successfully!");
+            console.log("✅ Candidate updated successfully!");
             router.back();
         } catch (err) {
             console.error("❌ Edit failed:", err);
-            alert("❌ " + (err?.message || "Something went wrong"));
         }
     };
 
