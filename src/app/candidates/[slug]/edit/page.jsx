@@ -159,7 +159,7 @@ export default function CandidateEditPage() {
             // Call your mutation (editCandidate)
             await editCandidate.mutateAsync({
                 candidateId: slug, // assuming slug = candidate ID
-                candidateData: formData,
+                formData: formData,
             });
 
             console.log("✅ Candidate updated successfully!");
@@ -169,10 +169,6 @@ export default function CandidateEditPage() {
         }
     };
 
-
-    const handleFileChange = (event) => {
-        setFileName(event.target.files?.[0]);
-    };
 
     const handleAddPhone = () => {
         setPhones([...phones, {phone: "", operator: "", countryCode: ""}]);
