@@ -15,8 +15,8 @@ export function useEditCandidate() {
             const res = await fetch(`${host}/candidate/${candidateId}`, {
                 method: "POST",
                 headers: {
-                    Accept: 'application/json',
                     Authorization: `Bearer ${token}`,
+                    Accept: 'application/json',
                 },
                 body: formData,
                 credentials: 'include',
