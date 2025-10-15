@@ -19,7 +19,7 @@ export function useEditCandidate() {
                     Authorization: `Bearer ${token}`,
                 },
                 body: formData,
-                // credentials: 'include',
+                credentials: 'include',
             });
 
             if (!res.ok) {
