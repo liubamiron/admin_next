@@ -133,16 +133,12 @@ export default function CandidateAddPage() {
             const keyIndex = rawMsg.indexOf("Key");
             let cleanMsg = rawMsg;
             if (keyIndex !== -1) {
-                const firstPeriodIndex = rawMsg.indexOf(".", keyIndex);
-                const secondPeriodIndex = rawMsg.indexOf(".", firstPeriodIndex + 1);
-                cleanMsg =
-                    secondPeriodIndex !== -1
-                        ? rawMsg.slice(keyIndex, secondPeriodIndex + 1)
-                        : rawMsg.slice(keyIndex);
+                const periodIndex = rawMsg.indexOf("(Connection: pgsql", keyIndex);
+                cleanMsg = periodIndex !== -1 ? rawMsg.slice(keyIndex, periodIndex + 1) : rawMsg.slice(keyIndex);
             }
 
-            setSuccessMsg(""); // clear success
-            setErrorMsg(cleanMsg); // show only clean message
+            setSuccessMsg("");
+            setErrorMsg(cleanMsg);
         }
     };
 
