@@ -14,12 +14,14 @@ import {useState} from "react";
 import {usePathname} from "next/navigation";
 import dynamic from "next/dynamic";
 import {RiDeleteBin6Fill} from "react-icons/ri";
+import {useDepartments} from "@/hooks/useDepartments";
+import {usePositions} from "@/hooks/usePositions";
+import {useOffices} from "@/hooks/useOffices";
 
 
 const Select = dynamic(() => import("react-select"), {ssr: false});
 
 export default function EmployeeEditPage() {
-
     const pathname = usePathname();
     const segments = pathname.split("/").filter(Boolean);
 
@@ -27,10 +29,15 @@ export default function EmployeeEditPage() {
         const href = "/" + segments.slice(0, idx + 1).join("/");
         return {name: seg[0].toUpperCase() + seg.slice(1), href};
     });
-
+    const {data: departmentsData = [], isLoading: depLoading} = useDepartments();
+    const {data: positionsData = [], isLoading: posLoading} = usePositions();
+    const {data: officesData = [], isLoading: offLoading} = useOffices();
     const [fileName, setFileName] = useState("");
     const [status, setStatus] = useState(null);
     const [gender, setGender] = useState(null);
+    const [departments, setDepartments] = useState(null);
+    const [offices, setOffices] = useState(null);
+    const [positions, setPositions] = useState(null);
     const [placementDate, setPlacementDate] = useState("");
     const [dismissalDate, setDismissalDate] = useState("");
     const [dob, setDob] = useState("");
@@ -437,10 +444,85 @@ export default function EmployeeEditPage() {
                     </TabItem>
 
                     <TabItem title="Company">
-                        This is <span className="font-medium text-gray-800 dark:text-white">Dashboard tab's associated content</span>.
-                        Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript
-                        swaps classes to
-                        control the content visibility and styling.
+                        <div className="space-y-6">
+                            <div className=" rounded-lg p-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
+                                    <div className="flex flex-col space-y-2">
+                                        <Label>Office</Label>
+                                        <Select
+                                            options={officesData}
+                                            value={offices}
+                                            onChange={setOffices}
+                                            isLoading={offLoading}
+                                            placeholder="Select office..."
+                                        />
+                                    </div>
+                                    <div className="flex flex-col space-y-2">
+                                        <Label>Department</Label>
+                                        <Select
+                                            options={departmentsData}
+                                            value={departments}
+                                            onChange={setDepartments}
+                                            isLoading={depLoading}
+                                            placeholder="Select department..."
+                                        />
+                                    </div>
+                                    <div className="flex flex-col space-y-2">
+                                        <Label>Position</Label>
+                                        <Select
+                                            options={positionsData}
+                                            value={positions}
+                                            onChange={setPositions}
+                                            isLoading={posLoading}
+                                            placeholder="Select position..."
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col space-y-2">
+                                        <Label>Official Position</Label>
+                                        <Select
+                                            options={positionsData}
+                                            value={positions}
+                                            onChange={setPositions}
+                                            isLoading={posLoading}
+                                            placeholder="Select position..."
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col space-y-2">
+                                        <Label htmlFor="work_name">Work Name</Label>
+                                        <TextInput id="work_name" placeholder="Work Name"/>
+                                    </div>
+
+                                    <div className="flex flex-col space-y-2">
+                                        <Label htmlFor="work_email">Work Email</Label>
+                                        <TextInput id="work_email" placeholder="Work Email"/>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
+                                {/* Email */}
+                                <div className="flex flex-col space-y-2">
+                                    <Label htmlFor="email">Email Address</Label>
+                                    <TextInput id="email" type="email" placeholder="john@example.com"/>
+                                </div>
+
+                                {/* Position */}
+                                <div className="flex flex-col space-y-2">
+                                    <Label htmlFor="position">Position</Label>
+                                    <TextInput id="position" placeholder="Position"/>
+                                </div>
+
+                                {/* Department */}
+                                <div className="flex flex-col space-y-2 md:col-span-2">
+                                    <Label htmlFor="department">Department</Label>
+                                    <TextInput id="department" placeholder="Department"/>
+                                </div>
+                            </div>
+                        </div>
                     </TabItem>
                     <TabItem title="Files">
                     </TabItem>

@@ -286,9 +286,22 @@ export default function CandidateEditPage() {
                             <Label>Status</Label>
                             <br/>
                             <div
-                                className="bg-primary-100 text-primary-800 px-4 py-2 rounded-lg inline-block"
+                                className="bg-primary-100 text-primary-800 px-4 py-1 rounded-lg inline-block"
                             >
                                 {candidate.statusTitle}
+                            </div>
+                            <div className="flex flex-row gap-2">
+                                <div
+                                    className="bg-green-500 text-white px-4 py-1 rounded-lg flex flex-row gap-2"
+                                >
+                                    <img src={'/icons/human.svg'} alt="human"/> Hire
+                                </div>
+                                <div
+                                    className="bg-red-700 text-white px-4 py-1 rounded-lg inline-block"
+                                >
+                                    &#x2715; &nbsp; Decline
+                                </div>
+
                             </div>
                         </div>
                     </div>
