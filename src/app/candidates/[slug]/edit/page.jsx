@@ -2,8 +2,18 @@
 
 import { useEffect, useState } from "react";
 import {useParams, useRouter} from "next/navigation";
-import {Breadcrumb, BreadcrumbItem, Button, Datepicker, FileInput, Label, TextInput} from "flowbite-react";
-import {HiHome, HiMinus,} from "react-icons/hi";
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    Button,
+    Datepicker,
+    FileInput,
+    Label,
+    TextInput,
+    Toast,
+    ToastToggle
+} from "flowbite-react";
+import {HiCheck, HiHome, HiMinus,} from "react-icons/hi";
 import Select from "react-select";
 import z from "zod";
 import {useIdCandidate} from "@/hooks/candidates/useIdCandidate";
@@ -12,6 +22,7 @@ import {useDepartments} from "@/hooks/useDepartments";
 import {usePositions} from "@/hooks/usePositions";
 import {useOffices} from "@/hooks/useOffices";
 import {countryOptions, genderOptions, operatorOptions} from "@/components/constants/filterOptions";
+import {reactSelectHeightFix} from "@/components/ui/reactSelectHeightFix";
 
 export default function CandidateEditPage() {
     const router = useRouter();
@@ -35,6 +46,7 @@ export default function CandidateEditPage() {
     const [mounted, setMounted] = useState(false);
     const [successMsg, setSuccessMsg] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
+    const [newStatus, setNewStatus] = useState("")
 
 
     // Convert YYYY-MM-DD to a Date object in local timezone
@@ -80,6 +92,7 @@ export default function CandidateEditPage() {
         setEmail(candidate.email || "");
         setTelegram(candidate.telegram || "");
         setFileName(candidate.file || "");
+        setNewStatus(candidate.statusTitle || "");
         setDepartments(
             candidate.department_id
                 ? { value: candidate.department_id, label: candidate.department.name }
@@ -96,8 +109,6 @@ export default function CandidateEditPage() {
         setGender(candidate.sex ? genderOptions.find((g) => g.value === candidate.sex) : null);
         setDob(parseDob(candidate.dob));
     }, [candidate]);
-
-    console.log(dob, phones);
 
     const candidateSchema = z.object({
         first_name: z.string().min(1),
@@ -154,6 +165,7 @@ export default function CandidateEditPage() {
             formData.append("position_id", positions?.value || "");
             formData.append("telegram", telegram || "");
             formData.append("file", fileName);
+            formData.append("status", newStatus);
 
             await editCandidate.mutateAsync({
                 candidateId: slug, // assuming slug = candidate ID
@@ -287,6 +299,7 @@ export default function CandidateEditPage() {
                                 onChange={setOffices}
                                 isLoading={offLoading}
                                 placeholder="Select office..."
+                                styles={reactSelectHeightFix}
                             />
 
                             <Label>Department</Label>
@@ -296,6 +309,7 @@ export default function CandidateEditPage() {
                                 onChange={setDepartments}
                                 isLoading={depLoading}
                                 placeholder="Select department..."
+                                styles={reactSelectHeightFix}
                             />
 
                             <Label>Position</Label>
@@ -305,26 +319,37 @@ export default function CandidateEditPage() {
                                 onChange={setPositions}
                                 isLoading={posLoading}
                                 placeholder="Select position..."
+                                styles={reactSelectHeightFix}
                             />
 
                             <Label>Status</Label>
                             <br/>
                             <div
-                                className="bg-primary-100 text-primary-800 px-4 py-1 rounded-lg inline-block"
+                                className={`px-4 py-1 rounded-lg inline-block ${
+                                    newStatus === "New"
+                                        ? "bg-blue-100 text-blue-800"
+                                        : newStatus === "Declined"
+                                            ? "bg-red-100 text-red-800"
+                                            : newStatus === "Hired"
+                                                ? "bg-green-100 text-green-800"
+                                                : "bg-gray-100 text-gray-800"
+                                }`}
                             >
-                                {candidate.statusTitle}
+                                {newStatus}
                             </div>
                             <div className="flex flex-row gap-2">
-                                <div
+                                <Button
                                     className="bg-green-500 text-white px-4 py-1 rounded-lg flex flex-row gap-2"
+                                    onClick={() => setNewStatus("hired")}
                                 >
                                     <img src={'/icons/human.svg'} alt="human"/> Hire
-                                </div>
-                                <div
+                                </Button>
+                                <Button
                                     className="bg-red-700 text-white px-4 py-1 rounded-lg inline-block"
+                                    onClick={() => setNewStatus("declined")}
                                 >
                                     &#x2715; &nbsp; Decline
-                                </div>
+                                </Button>
 
                             </div>
                         </div>
@@ -355,11 +380,10 @@ export default function CandidateEditPage() {
                                         required
                                     />
                                 </div>
-                                <div>
+                                <div className={"mt-[5px]"}>
                                     <Label>Date of Birth</Label>
                                     <Datepicker
                                         value={dob}
-                                        // selected={dob}
                                         onChange={(date) => {
                                             if (date instanceof Date && !isNaN(date)) {
                                                 setDob(date); // ✅ keep as Date
@@ -378,6 +402,7 @@ export default function CandidateEditPage() {
                                         onChange={setGender}
                                         placeholder="Select gender..."
                                         required
+                                        styles={reactSelectHeightFix}
                                     />
                                 </div>
 
@@ -416,7 +441,7 @@ export default function CandidateEditPage() {
                                                     value={countryOptions.find(opt => opt.value === item.countryCode) || countryOptions[0]}
                                                     onChange={(selected) => handleChange(index, "countryCode", selected.value)}
                                                     options={countryOptions}
-                                                    classNamePrefix="react-select"
+                                                    // classNamePrefix="react-select"
                                                     isSearchable={false}
                                                     className="text-[14px] width-[115px]"
                                                     styles={{
@@ -438,6 +463,7 @@ export default function CandidateEditPage() {
                                                             ...provided,
                                                             color: 'inherit', // match text color
                                                         }),
+                                                        reactSelectHeightFix
                                                     }}
                                                 />
                                             </div>
@@ -465,6 +491,7 @@ export default function CandidateEditPage() {
                                                 options={operatorOptions}
                                                 value={operatorOptions.find(opt => opt.value === item.operator) || null}
                                                 onChange={(selected) => handleChange(index, "operator", selected?.value || "")}
+                                                styles={reactSelectHeightFix}
                                             />
                                         </div>
 
