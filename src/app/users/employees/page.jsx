@@ -25,6 +25,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import Select from "react-select";
 import { HiHome } from "react-icons/hi";
 import {usePathname, useRouter} from "next/navigation";
+import {reactSelectHeightFix} from "@/components/ui/reactSelectHeightFix";
 
 export default function EmployeesPage() {
     const [page, setPage] = useState(1);
@@ -375,6 +376,7 @@ export default function EmployeesPage() {
                                         className="basic-multi-select"
                                         classNamePrefix="select"
                                         placeholder="Select Workdays"
+                                        // styles={reactSelectHeightFix}
                                     />
                                 </div>
                             </div>

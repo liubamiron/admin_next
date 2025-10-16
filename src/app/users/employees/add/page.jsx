@@ -17,6 +17,7 @@ import {RiDeleteBin6Fill} from "react-icons/ri";
 import {useDepartments} from "@/hooks/useDepartments";
 import {usePositions} from "@/hooks/usePositions";
 import {useOffices} from "@/hooks/useOffices";
+import {reactSelectHeightFix} from "@/components/ui/reactSelectHeightFix";
 
 
 const Select = dynamic(() => import("react-select"), {ssr: false});
@@ -180,6 +181,7 @@ export default function EmployeeEditPage() {
                             placeholder="Select status..."
                             className="react-select-container"
                             classNamePrefix="react-select"
+                            styles={reactSelectHeightFix}
                         />
                     </div>
                     <div>
@@ -192,6 +194,7 @@ export default function EmployeeEditPage() {
                             placeholder="Select type..."
                             className="react-select-container"
                             classNamePrefix="react-select"
+                            styles={reactSelectHeightFix}
                         />
                     </div>
 
@@ -285,6 +288,7 @@ export default function EmployeeEditPage() {
                                             placeholder="Select gender..."
                                             className="react-select-container"
                                             classNamePrefix="react-select"
+                                            styles={reactSelectHeightFix}
                                         />
                                     </div>
 
@@ -298,6 +302,7 @@ export default function EmployeeEditPage() {
                                             placeholder="Select an option..."
                                             className="react-select-container"
                                             classNamePrefix="react-select"
+                                            styles={reactSelectHeightFix}
                                         />
                                     </div>
 
@@ -311,6 +316,7 @@ export default function EmployeeEditPage() {
                                             placeholder="Select any options..."
                                             className="react-select-container"
                                             classNamePrefix="react-select"
+                                            styles={reactSelectHeightFix}
                                         />
                                     </div>
                                 </div>
@@ -359,6 +365,7 @@ export default function EmployeeEditPage() {
                                                                 ...provided,
                                                                 color: 'inherit', // match text color
                                                             }),
+                                                            reactSelectHeightFix
                                                         }}
                                                     />
                                                 </div>
@@ -385,6 +392,7 @@ export default function EmployeeEditPage() {
                                                     placeholder="Select an option"
                                                     options={operatorOptions}
                                                     className="height-[42px] dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                                                    styles={reactSelectHeightFix}
                                                 />
                                             </div>
 
@@ -455,6 +463,7 @@ export default function EmployeeEditPage() {
                                             onChange={setOffices}
                                             isLoading={offLoading}
                                             placeholder="Select office..."
+                                            styles={reactSelectHeightFix}
                                         />
                                     </div>
                                     <div className="flex flex-col space-y-2">
@@ -465,6 +474,7 @@ export default function EmployeeEditPage() {
                                             onChange={setDepartments}
                                             isLoading={depLoading}
                                             placeholder="Select department..."
+                                            styles={reactSelectHeightFix}
                                         />
                                     </div>
                                     <div className="flex flex-col space-y-2">
@@ -475,6 +485,7 @@ export default function EmployeeEditPage() {
                                             onChange={setPositions}
                                             isLoading={posLoading}
                                             placeholder="Select position..."
+                                            styles={reactSelectHeightFix}
                                         />
                                     </div>
 
@@ -486,6 +497,7 @@ export default function EmployeeEditPage() {
                                             onChange={setPositions}
                                             isLoading={posLoading}
                                             placeholder="Select position..."
+                                            styles={reactSelectHeightFix}
                                         />
                                     </div>
 

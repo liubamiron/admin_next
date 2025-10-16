@@ -25,8 +25,8 @@ import {
     genderOptions,
     operatorOptions,
 } from "@/components/constants/filterOptions";
-import {router} from "next/client";
 import {BsExclamation} from "react-icons/bs";
+import {reactSelectHeightFix} from "@/components/ui/reactSelectHeightFix";
 
 // ✅ Zod schema
 const candidateSchema = z.object({
@@ -238,6 +238,7 @@ export default function CandidateAddPage() {
                                 onChange={(val) => setValue("office_id", val?.value)}
                                 isLoading={offLoading}
                                 placeholder="Select office..."
+                                styles={reactSelectHeightFix}
                             />
 
                             <Label>Department</Label>
@@ -246,6 +247,7 @@ export default function CandidateAddPage() {
                                 onChange={(val) => setValue("department_id", val?.value)}
                                 isLoading={depLoading}
                                 placeholder="Select department..."
+                                styles={reactSelectHeightFix}
                             />
 
                             <Label>Position</Label>
@@ -254,6 +256,7 @@ export default function CandidateAddPage() {
                                 onChange={(val) => setValue("position_id", val?.value)}
                                 isLoading={posLoading}
                                 placeholder="Select position..."
+                                styles={reactSelectHeightFix}
                             />
                         </div>
                     </div>
@@ -291,6 +294,7 @@ export default function CandidateAddPage() {
                                         options={genderOptions}
                                         onChange={(val) => setValue("sex", val?.value)}
                                         placeholder="Select gender..."
+                                        styles={reactSelectHeightFix}
                                     />
                                     {errors.sex && <p className="text-red-500 text-sm">{errors.sex.message}</p>}
                                 </div>
@@ -357,6 +361,7 @@ export default function CandidateAddPage() {
                                                             ...provided,
                                                             color: "inherit",
                                                         }),
+                                                       reactSelectHeightFix
                                                     }}
                                                 />
                                             </div>
@@ -393,6 +398,7 @@ export default function CandidateAddPage() {
                                                         boxShadow: "none",
                                                         "&:hover": { borderColor: "#3b82f6" },
                                                     }),
+                                                    reactSelectHeightFix
                                                 }}
                                             />
                                         </div>
