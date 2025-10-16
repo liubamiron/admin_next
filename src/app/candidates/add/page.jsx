@@ -8,9 +8,9 @@ import {
     Datepicker,
     FileInput,
     Label,
-    TextInput,
+    TextInput, Toast, ToastToggle,
 } from "flowbite-react";
-import { HiHome, HiMinus } from "react-icons/hi";
+import {HiCheck, HiHome, HiMinus, HiX} from "react-icons/hi";
 import { usePathname } from "next/navigation";
 import { useDepartments } from "@/hooks/useDepartments";
 import { usePositions } from "@/hooks/usePositions";
@@ -25,6 +25,7 @@ import {
     genderOptions,
     operatorOptions,
 } from "@/components/constants/filterOptions";
+import {router} from "next/client";
 
 // ✅ Zod schema
 const candidateSchema = z.object({
@@ -84,6 +85,9 @@ export default function CandidateAddPage() {
     });
 
     const [mounted, setMounted] = useState(false);
+    const [successMsg, setSuccessMsg] = useState("");
+    const [errorMsg, setErrorMsg] = useState("");
+
     useEffect(() => setMounted(true), []);
 
     const pathname = usePathname();
@@ -116,9 +120,20 @@ export default function CandidateAddPage() {
             });
 
             await createCandidate.mutateAsync(formData);
+            setSuccessMsg("Candidate created successfully!");
             console.log("✅ Candidate created successfully!");
+            setTimeout(() => {
+                router.push("/candidates");
+            }, 2000);
         } catch (err) {
             console.error("❌ Error:", err);
+            const message =
+                err?.response?.data?.message ||
+                err?.message ||
+                "Failed to create candidate. Please try again.";
+
+            setSuccessMsg("");
+            setErrorMsg(message);
         }
     };
 
@@ -401,10 +416,28 @@ export default function CandidateAddPage() {
                                 </Button>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </form>
+            {successMsg && (
+                <Toast>
+                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500">
+                        <HiCheck className="h-5 w-5" />
+                    </div>
+                    <div className="ml-3 text-sm font-normal">{successMsg}</div>
+                    <ToastToggle onDismiss={() => setSuccessMsg("")} />
+                </Toast>
+            )}
+
+            {errorMsg && (
+                <Toast>
+                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500">
+                        <HiX className="h-5 w-5" />
+                    </div>
+                    <div className="ml-3 text-sm font-normal">{errorMsg}</div>
+                    <ToastToggle onDismiss={() => setErrorMsg("")} />
+                </Toast>
+            )}
         </div>
     );
 }
