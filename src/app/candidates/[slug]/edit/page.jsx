@@ -165,7 +165,7 @@ export default function CandidateEditPage() {
             formData.append("position_id", positions?.value || "");
             formData.append("telegram", telegram || "");
             formData.append("file", fileName);
-            formData.append("status", newStatus.toUpperCase());
+            formData.append("status", newStatus.toLowerCase());
 
             await editCandidate.mutateAsync({
                 candidateId: slug, // assuming slug = candidate ID
