@@ -11,7 +11,7 @@ import {
     TextInput, Toast, ToastToggle,
 } from "flowbite-react";
 import {HiCheck, HiHome} from "react-icons/hi";
-import { usePathname } from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import { useDepartments } from "@/hooks/useDepartments";
 import { usePositions } from "@/hooks/usePositions";
 import { useOffices } from "@/hooks/useOffices";
@@ -55,6 +55,7 @@ export default function CandidateAddPage() {
     const { data: departmentsData = [], isLoading: depLoading } = useDepartments();
     const { data: positionsData = [], isLoading: posLoading } = usePositions();
     const { data: officesData = [], isLoading: offLoading } = useOffices();
+    const router = useRouter();
 
     const {
         register,
@@ -438,7 +439,7 @@ export default function CandidateAddPage() {
                                 <Button type="submit" outline color="blue">
                                     Create
                                 </Button>
-                                <Button type="button" outline color="gray">
+                                <Button type="button" outline color="gray" onClick={() => router.push("/candidates")}>
                                     Cancel
                                 </Button>
                             </div>

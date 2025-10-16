@@ -48,7 +48,6 @@ export default function CandidateEditPage() {
     const [errorMsg, setErrorMsg] = useState("");
     const [newStatus, setNewStatus] = useState("")
 
-
     // Convert YYYY-MM-DD to a Date object in local timezone
     const parseDob = (dateString) => {
         if (!dateString) return null;
@@ -520,7 +519,7 @@ export default function CandidateEditPage() {
                             <Button outline color="blue" type='submit'>
                                 Save Changes
                             </Button>
-                            <Button outline color="gray">
+                            <Button outline color="gray"  onClick={() => router.push("/candidates")}>
                                 Cancel
                             </Button>
                         </div>
