@@ -381,7 +381,7 @@ export default function EmployeesPage() {
                 </ModalFooter>
             </Modal>
 
-            <div className="overflow-x-auto max-w-[1300px]">
+            <div className="overflow-x-auto">
                 <Table>
                     <TableHead>
                         <TableRow>
