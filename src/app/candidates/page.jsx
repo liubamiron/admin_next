@@ -120,7 +120,7 @@ export default function CandidatesPage() {
     };
 
     return (
-        <div className="flex-1 p-4 space-y-6 min-h-screen">
+        <div className=" p-4 space-y-6 flex flex-col">
             <Breadcrumb aria-label="Breadcrumb">
                 <BreadcrumbItem href="/" icon={HiHome}>
                     Home
@@ -134,7 +134,10 @@ export default function CandidatesPage() {
                 Candidates
             </h2>
 
-            <Button  onClick={() => router.push('/candidates/add')} className={"text-end align-end"}>Add Candidate</Button>
+            <div className="flex justify-end p-4">
+                <Button onClick={() => router.push('/candidates/add')} >Add Candidate
+                </Button>
+            </div>
             {/* Filter Modal */}
             <Modal
                 show={filterOpen}
