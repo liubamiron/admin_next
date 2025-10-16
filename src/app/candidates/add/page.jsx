@@ -10,7 +10,7 @@ import {
     Label,
     TextInput, Toast, ToastToggle,
 } from "flowbite-react";
-import {HiCheck, HiHome, HiMinus, HiX} from "react-icons/hi";
+import {HiCheck, HiHome} from "react-icons/hi";
 import { usePathname } from "next/navigation";
 import { useDepartments } from "@/hooks/useDepartments";
 import { usePositions } from "@/hooks/usePositions";
@@ -26,6 +26,7 @@ import {
     operatorOptions,
 } from "@/components/constants/filterOptions";
 import {router} from "next/client";
+import {BsExclamation} from "react-icons/bs";
 
 // ✅ Zod schema
 const candidateSchema = z.object({
@@ -175,7 +176,7 @@ export default function CandidateAddPage() {
             {errorMsg && (
                 <Toast>
                     <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500">
-                        <HiX className="h-5 w-5" />
+                        <BsExclamation className="h-5 w-5" />
                     </div>
                     <div className="ml-3 text-sm font-normal">{errorMsg}</div>
                     <ToastToggle onDismiss={() => setErrorMsg("")} />

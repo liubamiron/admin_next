@@ -33,6 +33,8 @@ export default function CandidateEditPage() {
     const [dob, setDob] = useState("");
     const [phones, setPhones] = useState([{ phone: "", operator: "", countryCode: "+373" }]);
     const [mounted, setMounted] = useState(false);
+    const [successMsg, setSuccessMsg] = useState("");
+    const [errorMsg, setErrorMsg] = useState("");
 
 
     // Convert YYYY-MM-DD to a Date object in local timezone
@@ -153,19 +155,21 @@ export default function CandidateEditPage() {
             formData.append("telegram", telegram || "");
             formData.append("file", fileName);
 
-
-            console.log([...formData.entries()], "📦 FormData ready to send");
-
-            // Call your mutation (editCandidate)
             await editCandidate.mutateAsync({
                 candidateId: slug, // assuming slug = candidate ID
                 formData: formData,
             });
-
             console.log("✅ Candidate updated successfully!");
-            router.back();
+            setSuccessMsg("Candidate updated successfully!");
+
+            // Redirect after short delay
+            setTimeout(() => {
+                router.push("/candidates");
+            }, 3500);
+
         } catch (err) {
-            console.error("❌ Edit failed:", err);
+            console.error("Edit failed:", err);
+            setErrorMsg("Failed to update candidate");
         }
     };
 
@@ -187,6 +191,26 @@ export default function CandidateEditPage() {
                 <BreadcrumbItem href="/candidates">Candidates</BreadcrumbItem>
                 <BreadcrumbItem>Edit</BreadcrumbItem>
             </Breadcrumb>
+
+            {successMsg && (
+                <Toast>
+                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500">
+                        <HiCheck className="h-5 w-5" />
+                    </div>
+                    <div className="ml-3 text-sm font-normal">{successMsg}</div>
+                    <ToastToggle onDismiss={() => setSuccessMsg("")} />
+                </Toast>
+            )}
+
+            {errorMsg && (
+                <Toast>
+                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500">
+                        <HiMinus className="h-5 w-5" />
+                    </div>
+                    <div className="ml-3 text-sm font-normal">{errorMsg}</div>
+                    <ToastToggle onDismiss={() => setErrorMsg("")} />
+                </Toast>
+            )}
 
             <h2 className="text-xl font-semibold">Edit Candidate</h2>
 
@@ -466,7 +490,7 @@ export default function CandidateEditPage() {
 
                             <div className="flex flex-wrap gap-6">
                                 <Button outline color="blue" type='submit'>
-                                    Create
+                                    Save Changes
                                 </Button>
                                 <Button outline color="gray">
                                     Cancel
