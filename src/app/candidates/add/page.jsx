@@ -133,7 +133,8 @@ export default function CandidateAddPage() {
             const keyIndex = rawMsg.indexOf("Key");
             let cleanMsg = rawMsg;
             if (keyIndex !== -1) {
-                const periodIndex = rawMsg.indexOf(".", keyIndex);
+                const firstPeriodIndex = rawMsg.indexOf(".", keyIndex);
+                const secondPeriodIndex = rawMsg.indexOf(".", firstPeriodIndex + 1);
                 cleanMsg =
                     secondPeriodIndex !== -1
                         ? rawMsg.slice(keyIndex, secondPeriodIndex + 1)
