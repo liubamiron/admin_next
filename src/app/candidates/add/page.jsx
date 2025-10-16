@@ -134,7 +134,10 @@ export default function CandidateAddPage() {
             let cleanMsg = rawMsg;
             if (keyIndex !== -1) {
                 const periodIndex = rawMsg.indexOf(".", keyIndex);
-                cleanMsg = periodIndex !== -1 ? rawMsg.slice(keyIndex, periodIndex + 1) : rawMsg.slice(keyIndex);
+                cleanMsg =
+                    secondPeriodIndex !== -1
+                        ? rawMsg.slice(keyIndex, secondPeriodIndex + 1)
+                        : rawMsg.slice(keyIndex);
             }
 
             setSuccessMsg(""); // clear success
