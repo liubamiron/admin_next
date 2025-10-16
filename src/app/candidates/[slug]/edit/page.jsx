@@ -228,14 +228,14 @@ export default function CandidateEditPage() {
 
             <form className="space-y-6" onSubmit={handleEdit}>
                 <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6">
-                    <div className="space-y-4 bg-white p-4 rounded-lg shadow dark:bg-gray-800">
+                    <div className="space-y-4 bg-white p-4 rounded-lg shadow dark:bg-gray-800 flex flex-col justify-between h-full">
                         <div className="w-full">
                             <Label htmlFor="dropzone-file" value="Upload Image or Document" />
 
                             <div className="flex flex-col items-center justify-center w-full">
                                 <label
                                     htmlFor="dropzone-file"
-                                    className="flex flex-col items-center justify-center w-full min-h-[200px] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600"
+                                    className="flex flex-col items-center justify-center w-full min-h-[100px] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600"
                                 >
                                     <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center">
                                         <svg
@@ -337,15 +337,16 @@ export default function CandidateEditPage() {
                             >
                                 {newStatus}
                             </div>
+                            <br/>
                             <div className="flex flex-row gap-2">
-                                <Button
-                                    className="bg-green-500 text-white px-4 py-1 rounded-lg flex flex-row gap-2"
+                                <Button color="green"
+                                    className="flex flex-row gap-3"
                                     onClick={() => setNewStatus("hired")}
                                 >
                                     <img src={'/icons/human.svg'} alt="human"/> Hire
                                 </Button>
-                                <Button
-                                    className="bg-red-700 text-white px-4 py-1 rounded-lg inline-block"
+                                <Button color="red"
+                                    className=" inline-block"
                                     onClick={() => setNewStatus("declined")}
                                 >
                                     &#x2715; &nbsp; Decline
@@ -356,7 +357,6 @@ export default function CandidateEditPage() {
                     </div>
 
                     <div>
-
                         <div className="rounded-lg p-6 mb-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800">
 
                             <h2 className="text-xl font-semibold mb-4">Candidate Details</h2>
@@ -514,15 +514,15 @@ export default function CandidateEditPage() {
                                 </div>
 
                             ))}
-
-                            <div className="flex flex-wrap gap-6">
-                                <Button outline color="blue" type='submit'>
-                                    Save Changes
-                                </Button>
-                                <Button outline color="gray">
-                                    Cancel
-                                </Button>
-                            </div>
+                        </div>
+                        <br/>
+                        <div className="flex flex-wrap gap-6">
+                            <Button outline color="blue" type='submit'>
+                                Save Changes
+                            </Button>
+                            <Button outline color="gray">
+                                Cancel
+                            </Button>
                         </div>
                     </div>
                 </div>
