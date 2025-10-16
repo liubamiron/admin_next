@@ -127,15 +127,21 @@ export default function CandidateAddPage() {
             }, 2000);
         } catch (err) {
             console.error("❌ Error:", err);
-            const message =
-                err?.response?.data?.message ||
-                err?.message ||
-                "Failed to create candidate. Please try again.";
+            let rawMsg = err?.response?.data?.message || err?.message || "Failed to create candidate. Please try again.";
 
-            setSuccessMsg("");
-            setErrorMsg(message);
+            // Extract from "Key" to first period
+            const keyIndex = rawMsg.indexOf("Key");
+            let cleanMsg = rawMsg;
+            if (keyIndex !== -1) {
+                const periodIndex = rawMsg.indexOf(".", keyIndex);
+                cleanMsg = periodIndex !== -1 ? rawMsg.slice(keyIndex, periodIndex + 1) : rawMsg.slice(keyIndex);
+            }
+
+            setSuccessMsg(""); // clear success
+            setErrorMsg(cleanMsg); // show only clean message
         }
     };
+
 
     if (!mounted)
         return <div className="text-center text-gray-500">Loading form...</div>;
@@ -155,6 +161,26 @@ export default function CandidateAddPage() {
             </Breadcrumb>
 
             <h2 className="text-xl font-semibold mb-4">Add Candidate</h2>
+
+            {successMsg && (
+                <Toast>
+                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500">
+                        <HiCheck className="h-5 w-5" />
+                    </div>
+                    <div className="ml-3 text-sm font-normal">{successMsg}</div>
+                    <ToastToggle onDismiss={() => setSuccessMsg("")} />
+                </Toast>
+            )}
+
+            {errorMsg && (
+                <Toast>
+                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500">
+                        <HiX className="h-5 w-5" />
+                    </div>
+                    <div className="ml-3 text-sm font-normal">{errorMsg}</div>
+                    <ToastToggle onDismiss={() => setErrorMsg("")} />
+                </Toast>
+            )}
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6">
@@ -419,25 +445,6 @@ export default function CandidateAddPage() {
                     </div>
                 </div>
             </form>
-            {successMsg && (
-                <Toast>
-                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500">
-                        <HiCheck className="h-5 w-5" />
-                    </div>
-                    <div className="ml-3 text-sm font-normal">{successMsg}</div>
-                    <ToastToggle onDismiss={() => setSuccessMsg("")} />
-                </Toast>
-            )}
-
-            {errorMsg && (
-                <Toast>
-                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500">
-                        <HiX className="h-5 w-5" />
-                    </div>
-                    <div className="ml-3 text-sm font-normal">{errorMsg}</div>
-                    <ToastToggle onDismiss={() => setErrorMsg("")} />
-                </Toast>
-            )}
         </div>
     );
 }

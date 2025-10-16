@@ -381,7 +381,7 @@ export default function EmployeesPage() {
                 </ModalFooter>
             </Modal>
 
-            {/* Table */}
+            <div className="overflow-x-auto max-w-[1300px]">
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -392,7 +392,7 @@ export default function EmployeesPage() {
                             {visibleColumns.roles && showRolesColumn && <TableHeadCell>Roles</TableHeadCell>}
                             {visibleColumns.position && showPositionsColumn && <TableHeadCell>Position</TableHeadCell>}
                             {visibleColumns.status && <TableHeadCell>Status</TableHeadCell>}
-                            {visibleColumns.shifts && <TableHeadCell>Shifts</TableHeadCell>}
+                            {visibleColumns.shifts && <TableHeadCell className="min-w-[250px]">Shifts</TableHeadCell>}
                             {visibleColumns.date_of_dismissal && <TableHeadCell>Date of dismissal</TableHeadCell>}
                             {visibleColumns.created_at && <TableHeadCell>Created at</TableHeadCell>}
                             {visibleColumns.updated_at && <TableHeadCell>Updated at</TableHeadCell>}
@@ -401,7 +401,7 @@ export default function EmployeesPage() {
                     </TableHead>
                     <TableBody>
                         {filteredEmployees.length > 0 ? filteredEmployees.map(emp => (
-                            <TableRow key={emp.id}>
+                            <TableRow key={emp.id} className="bg-white dark:bg-gray-800">
                                 {visibleColumns.image && (
                                     <TableCell>
                                         <img src={emp.image ? `https://hrm.webng.life/file/${emp.image}` : "/images/default_img.png"} className="w-10 h-10 rounded-full object-cover" alt="img"/>
@@ -433,7 +433,7 @@ export default function EmployeesPage() {
                                     </TableCell>
                                 )}
                                 {visibleColumns.shifts && (
-                                    <TableCell>
+                                    <TableCell className="min-w-[250px]">
                                         {emp.shift?.map(s => (
                                             <div key={s.id}>
                                                 {s.work_days.map(d => SHIFT_DAY_OPTIONS.find(o => o.value === d)?.label).join(", ")} - {s.start_time} - {s.end_time}
@@ -504,7 +504,7 @@ export default function EmployeesPage() {
                         )}
                     </TableBody>
                 </Table>
-
+            </div>
             <div className="flex justify-between items-center">
                 <p className="text-sm text-gray-600">
                     Showing {(current_page - 1) * per_page + 1} to {Math.min(current_page * per_page, total)} of {total} users
