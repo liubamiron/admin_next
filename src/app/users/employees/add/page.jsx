@@ -179,8 +179,6 @@ export default function EmployeeEditPage() {
                             value={status}
                             onChange={setStatus}
                             placeholder="Select status..."
-                            className="react-select-container"
-                            classNamePrefix="react-select"
                             styles={reactSelectHeightFix}
                         />
                     </div>
@@ -192,8 +190,6 @@ export default function EmployeeEditPage() {
                             id="type"
                             options={workTimeOptions}
                             placeholder="Select type..."
-                            className="react-select-container"
-                            classNamePrefix="react-select"
                             styles={reactSelectHeightFix}
                         />
                     </div>
