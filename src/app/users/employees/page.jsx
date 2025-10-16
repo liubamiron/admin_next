@@ -266,7 +266,9 @@ export default function EmployeesPage() {
 
             {/* Columns Selection Modal */}
             <Modal show={columnsModalOpen} onClose={() => setColumnsModalOpen(false)}
-                   className="max-w-[650px] mx-auto mt-[60px] z-30">
+                   // className="max-w-[650px] mx-auto mt-[60px] z-30"
+            >
+                <div className="max-w-[600px] w-full mx-auto">
                 <ModalHeader>Customize Columns</ModalHeader>
                 <ModalBody className="space-y-4">
                     {/* Individual Columns */}
@@ -309,10 +311,14 @@ export default function EmployeesPage() {
                     </div>
                     <Button onClick={() => setColumnsModalOpen(false)} color="blue">Apply</Button>
                 </ModalFooter>
+                </div>
             </Modal>
 
             {/* Filter Modal */}
-            <Modal show={filterOpen} onClose={() => setFilterOpen(false)} className="max-w-[1000px] mx-auto z-30">
+            <Modal show={filterOpen} onClose={() => setFilterOpen(false)}
+                   // className="max-w-[1000px] mx-auto z-30"
+            >
+                <div className="max-w-[800px] w-full mx-auto">
                 <ModalHeader>Filters</ModalHeader>
                 <ModalBody className="overflow-y-auto">
                     <div className="grid grid-cols-2 gap-6">
@@ -379,6 +385,7 @@ export default function EmployeesPage() {
                     <Button color="gray" onClick={resetFilters}>Reset Filters</Button>
                     <Button onClick={() => setFilterOpen(false)}>Apply</Button>
                 </ModalFooter>
+                </div>
             </Modal>
 
             <div className="overflow-x-auto">

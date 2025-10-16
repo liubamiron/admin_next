@@ -14,7 +14,7 @@ import {
     Modal,
     ModalHeader,
     ModalBody,
-    ModalFooter, Breadcrumb, BreadcrumbItem,
+    ModalFooter, Breadcrumb, BreadcrumbItem
 } from "flowbite-react";
 import {FaFilter} from "react-icons/fa";
 import PaginationComponent from "@/components/pagination/PaginationComponent";
@@ -22,6 +22,7 @@ import {useAuthStore} from "@/store/useAuthStore";
 import {useCandidates} from "@/hooks/candidates/useCandidates";
 import {HiHome} from "react-icons/hi";
 import {useRouter} from "next/navigation";
+import Select from"react-select";
 
 
 export default function CandidatesPage() {
@@ -138,29 +139,53 @@ export default function CandidatesPage() {
                 <Button onClick={() => router.push('/candidates/add')} >Add Candidate
                 </Button>
             </div>
-            {/* Filter Modal */}
             <Modal
                 show={filterOpen}
                 onClose={() => setFilterOpen(false)}
-                className="max-w-[600px] mx-auto mt-15"
             >
+                <div className="max-w-[600px] w-full mx-auto">
                 <ModalHeader className="m-5">Filters</ModalHeader>
                 <ModalBody>
                     <div className="grid grid-cols-1 gap-6">
                         {SELECT_FILTERS.map((key) => (
-                            <select
-                                key={key}
-                                value={filters[key] || ""}
-                                onChange={(e) => handleFilterChange(key, e.target.value)}
-                                className="w-full p-2 border rounded-md"
-                            >
-                                <option value="">Select {key}</option>
-                                {(FILTER_OPTIONS_MAP[key] || []).map((opt) => (
-                                    <option key={opt.value} value={opt.value}>
-                                        {opt.label}
-                                    </option>
-                                ))}
-                            </select>
+                            <div key={key} className="flex flex-col space-y-2">
+                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
+                                    {key}
+                                </label>
+                                <Select
+                                    placeholder={`Select ${key}`}
+                                    value={
+                                        filters[key]
+                                            ? {
+                                                value: filters[key],
+                                                label: filters[key],
+                                            }
+                                            : null
+                                    }
+                                    onChange={(selected) =>
+                                        handleFilterChange(key, selected ? selected.value : "")
+                                    }
+                                    options={FILTER_OPTIONS_MAP[key] || []}
+                                    classNamePrefix="react-select"
+                                    styles={{
+                                        control: (provided, state) => ({
+                                            ...provided,
+                                            borderColor: state.isFocused
+                                                ? "#3b82f6"
+                                                : "#d1d5db",
+                                            boxShadow: "none",
+                                            minHeight: "42px",
+                                            "&:hover": {
+                                                borderColor: "#3b82f6",
+                                            },
+                                        }),
+                                        menu: (provided) => ({
+                                            ...provided,
+                                            zIndex: 9999, // avoid overlap issues
+                                        }),
+                                    }}
+                                />
+                            </div>
                         ))}
                     </div>
                 </ModalBody>
@@ -170,7 +195,9 @@ export default function CandidatesPage() {
                     </Button>
                     <Button onClick={() => setFilterOpen(false)}>Apply</Button>
                 </ModalFooter>
+                </div>
             </Modal>
+
 
             <div className="flex justify-between items-center w-full">
                 <Button
