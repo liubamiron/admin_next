@@ -23,6 +23,7 @@ import {useCandidates} from "@/hooks/candidates/useCandidates";
 import {HiHome} from "react-icons/hi";
 import {useRouter} from "next/navigation";
 import Select from"react-select";
+import {useDeclinedCandidates, useHiredCandidates, useNewCandidates} from "@/hooks/candidates/fetchCandidatesByStatus";
 
 
 export default function CandidatesPage() {
@@ -37,17 +38,27 @@ export default function CandidatesPage() {
     const router = useRouter();
     const SELECT_FILTERS = ["position", "status"];
 
-    const {data, isLoading, isError, error} = useCandidates(page); // 🔹 hook to fetch candidates
+    const {data, isLoading, isError, error} = useCandidates(page); //hook to fetch candidates
+    const { data: newData } = useNewCandidates();
+    const { data: hiredData } = useHiredCandidates();
+    const { data: declinedData } = useDeclinedCandidates();
+
     const canEditCandidates = useAuthStore((s) => s.edit_candidates);
     const canViewCandidates = useAuthStore((s) => s.view_candidates);
 
     const showActionsColumn = canEditCandidates || canViewCandidates;
 
     const candidates = data?.data || [];
+    const candidatesAll = data?.total || [];
     const current_page = data?.current_page || 1;
     const last_page = data?.last_page || 1;
     const per_page = data?.per_page || 1;
     const total = data?.total || 0;
+
+    // badge counts
+    const newCandidates = newData?.data.total || 0;
+    const hiredCandidates = hiredData?.data.total || 0;
+    const declinedCandidates = declinedData?.data.total || 0;
 
 
     const dynamicPositionOptions = useMemo(() => {
@@ -218,22 +229,25 @@ export default function CandidatesPage() {
             </div>
 
             <div className="flex justify-center gap-4 bg-white p-4 rounded-lg shadow dark:bg-gray-800 max-w-[400px] mx-auto">
-                {/* All + Badge */}
+                {/* Filter + Badge */}
                 <div className="flex items-center gap-1">
                     <span>All</span>
-                    <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold bg-gray-200 rounded-full">{candidates.total}</span>
+                    <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold bg-gray-200 rounded-full">{candidatesAll}</span>
                 </div>
                 <div className="flex items-center gap-1">
                     <span>New</span>
-                    <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold text-blue-600 bg-blue-200 rounded-full">{candidates.filter((c) => c.status === "new").length}</span>
+                    <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold text-blue-600 bg-blue-200 rounded-full">
+                        {newCandidates}</span>
                 </div>
                 <div className="flex items-center gap-1">
                     <span>Hired</span>
-                    <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold text-green-600 bg-green-200 rounded-full">{candidates.filter((c) => c.status === "hired").length}</span>
+                    <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold text-green-600 bg-green-200 rounded-full">
+                        {hiredCandidates}</span>
                 </div>
                 <div className="flex items-center gap-1">
                     <span>Declined</span>
-                    <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold text-red-600 bg-red-200 rounded-full">{candidates.filter((c) => c.status === "declined").length}</span>
+                    <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold text-red-600 bg-red-200 rounded-full">
+                        {declinedCandidates}</span>
                 </div>
             </div>
             <br/>
