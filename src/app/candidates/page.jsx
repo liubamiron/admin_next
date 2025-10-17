@@ -221,19 +221,19 @@ export default function CandidatesPage() {
                 {/* All + Badge */}
                 <div className="flex items-center gap-1">
                     <span>All</span>
-                    <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold bg-gray-200 rounded-full">2</span>
+                    <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold bg-gray-200 rounded-full">{candidates.total}</span>
                 </div>
                 <div className="flex items-center gap-1">
                     <span>New</span>
-                    <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold text-blue-600 bg-blue-200 rounded-full">2</span>
+                    <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold text-blue-600 bg-blue-200 rounded-full">{candidates.filter((c) => c.status === "new").length}</span>
                 </div>
                 <div className="flex items-center gap-1">
                     <span>Hired</span>
-                    <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold text-green-600 bg-green-200 rounded-full">2</span>
+                    <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold text-green-600 bg-green-200 rounded-full">{candidates.filter((c) => c.status === "hired").length}</span>
                 </div>
                 <div className="flex items-center gap-1">
                     <span>Declined</span>
-                    <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold text-red-600 bg-red-200 rounded-full">2</span>
+                    <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold text-red-600 bg-red-200 rounded-full">{candidates.filter((c) => c.status === "declined").length}</span>
                 </div>
             </div>
             <br/>
