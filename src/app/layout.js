@@ -4,12 +4,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ThemeModeScript, ThemeProvider } from "flowbite-react";
 import { DashboardNavbar } from "@/components/dashboard/navbar";
-import { usePathname } from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import { SidebarProvider, useSidebarContext } from "@/contexts/sidebar-context";
 import { SimpleSidebar } from "@/components/dashboard/simpleSidebar";
 import {customTheme} from "@/theme/customTheme";
 import "./globals.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import {useEffect} from "react";
+import {useSessionTimer} from "@/hooks/useSessionTimer";
 
 
 const queryClient = new QueryClient();
@@ -42,6 +44,25 @@ function LayoutContent({ children, isLogin }) {
     );
 }
 
+// 🔒 Session protection layout
+function ProtectedLayout({ children }) {
+    const expired = useSessionTimer(7);
+    const router = useRouter();
+
+    useEffect(() => {
+        if (expired) {
+            alert("Your session has expired. Please log in again.");
+            localStorage.removeItem("loginTime");
+            localStorage.removeItem("user");
+            router.push("/login");
+        }
+    }, [expired, router]);
+
+    return <>{children}</>;
+}
+
+
+
 export default function RootLayout({ children }) {
     const pathname = usePathname();
     const isLogin = pathname.startsWith("/login");
@@ -56,7 +77,14 @@ export default function RootLayout({ children }) {
         <QueryClientProvider client={queryClient}>
             <ThemeProvider theme={customTheme} >
                 <SidebarProvider>
-                    <LayoutContent isLogin={isLogin}>{children}</LayoutContent>
+                    {isLogin ? (
+                        <LayoutContent isLogin>{children}</LayoutContent>
+                    ) : (
+                        <ProtectedLayout>
+                            <LayoutContent>{children}</LayoutContent>
+                        </ProtectedLayout>
+                    )}
+                    {/*<LayoutContent isLogin={isLogin}>{children}</LayoutContent>*/}
                 </SidebarProvider>
             </ThemeProvider>
             <ReactQueryDevtools initialIsOpen={false} />

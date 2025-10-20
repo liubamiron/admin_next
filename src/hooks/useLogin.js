@@ -42,6 +42,7 @@ export function useLogin() {
 
             if (typeof window !== "undefined") {
                 localStorage.setItem("user", JSON.stringify(user));
+                localStorage.setItem("loginTime", Date.now().toString()); // ⏰ save login time
             }
 
             return { token, user };
