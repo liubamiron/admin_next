@@ -12,6 +12,7 @@ import "./globals.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {useEffect} from "react";
 import {useSessionTimer} from "@/hooks/useSessionTimer";
+import Cookies from "js-cookie";
 
 
 const queryClient = new QueryClient();
@@ -54,6 +55,8 @@ function ProtectedLayout({ children }) {
             alert("Your session has expired. Please log in again.");
             localStorage.removeItem("loginTime");
             localStorage.removeItem("user");
+            // Remove token cookie
+            Cookies.remove("token"); // <-- important!
             router.push("/login");
         }
     }, [expired, router]);
