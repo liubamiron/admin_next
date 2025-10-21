@@ -40,6 +40,14 @@ export default function CandidatesPage() {
     // Store total for "All" separately
     const [totalAllCandidates, setTotalAllCandidates] = useState(0);
 
+    const { data: allData } = useCandidates(1, "all", null);
+
+    useEffect(() => {
+        if (allData?.total) {
+            setTotalAllCandidates(allData.total);
+        }
+    }, [allData]);
+
     const { data, isLoading, isError } = useCandidates(
         page,
         statusFilter,
@@ -224,7 +232,7 @@ export default function CandidatesPage() {
             </div>
 
             {/* Status filter badges */}
-            <div className="flex justify-center gap-4 bg-white p-4 rounded-lg max-w-[500px] mx-auto">
+            <div className="flex justify-center gap-4 bg-white p-4 rounded-lg max-w-[500px] mx-auto dark:border-gray-700 dark:bg-gray-800">
                 {statusOptions.map((status) => {
                     const bgLightMap = {
                         all: "bg-blue-100",
