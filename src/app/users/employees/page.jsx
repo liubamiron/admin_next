@@ -493,12 +493,12 @@ export default function EmployeesPage() {
                                     <TableCell className="text-center">
                                         <div className="flex items-center gap-3 justify-center">
                                             {canEditEmployees && (
-                                                <Link href={`/users/employees/${emp.id}/edit`} className="text-blue-600 hover:underline">
+                                                <Link href={`/users/employees/${emp.id}/edit`} className="text-blue-600 hover:underline" prefetch={false}>
                                                     <img src="/icons/edit.svg" alt="edit" className="w-5 h-5 min-w-[25px]"/>
                                                 </Link>
                                             )}
                                             {canViewEmployees && (
-                                                <Link href={`/users/employees/${emp.id}/view`} className="text-blue-600 hover:underline">
+                                                <Link href={`/users/employees/${emp.id}/view`} className="text-blue-600 hover:underline" prefetch={false}>
                                                     <img src="/icons/eye.svg" alt="view" className="w-5 h-5 min-w-[25px]"/>
                                                 </Link>
                                             )}
