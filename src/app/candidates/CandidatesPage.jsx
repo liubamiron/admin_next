@@ -147,7 +147,7 @@ export default function CandidatesPage() {
     if (isError) return <p className="text-red-600">Something went wrong...</p>;
 
     return (
-        <div className="p-4 pt-18 space-y-6">
+        <div className="p-4 space-y-6">
             {/* Breadcrumb */}
             <Breadcrumb aria-label="Breadcrumb">
                 <BreadcrumbItem href="/" icon={HiHome}>

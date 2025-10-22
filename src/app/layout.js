@@ -26,12 +26,10 @@ function LayoutContent({ children, isLogin }) {
         <>
             {!isLogin && <DashboardNavbar />}
 
-            {/*<div className="flex pt-11">*/}
-            <div>
+            <div className={'pt-14'}>
                 {!isLogin && <SimpleSidebar />}
 
                 <div
-                    // className="flex-1 p-6 transition-all duration-300 md:ml-[var(--sidebar-width)] dark:bg-black"
                     className="flex-1 transition-all duration-300 md:ml-[var(--sidebar-width)] dark:bg-black"
                     style={
                         {

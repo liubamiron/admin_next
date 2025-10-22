@@ -223,7 +223,7 @@ export default function EmployeesPage() {
     });
 
     return (
-        <div className="space-y-6 pt-18">
+        <div className="space-y-6">
             <Breadcrumb className="flex items-center gap-2">
                 <BreadcrumbItem href="/" icon={HiHome}>Home</BreadcrumbItem>
                 {crumbs.map((c, i) => (
