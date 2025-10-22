@@ -147,7 +147,7 @@ export default function CandidatesPage() {
     if (isError) return <p className="text-red-600">Something went wrong...</p>;
 
     return (
-        <div className="p-4 space-y-6 flex flex-col">
+        <div className="p-4 pt-18 space-y-6">
             {/* Breadcrumb */}
             <Breadcrumb aria-label="Breadcrumb">
                 <BreadcrumbItem href="/" icon={HiHome}>
@@ -209,7 +209,13 @@ export default function CandidatesPage() {
             </div>
 
             {/* Status badges */}
-            <div className="flex justify-center gap-4 bg-white p-4 rounded-lg max-w-[500px] mx-auto dark:border-gray-700 dark:bg-gray-800">
+            <div   className="
+    grid grid-cols-2
+    md:flex md:flex-row md:justify-center
+    gap-4 bg-white p-4 rounded-lg mx-auto
+    dark:border-gray-700 dark:bg-gray-800
+  "
+            >
                 {statusOptions.map((status) => {
                     const bgLightMap = { all: "bg-blue-100", new: "bg-violet-100", hired: "bg-green-100", declined: "bg-red-100" };
                     const textColorMap = { all: "text-blue-800", new: "text-violet-800", hired: "text-green-800", declined: "text-red-800" };

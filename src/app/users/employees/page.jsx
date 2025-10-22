@@ -223,7 +223,7 @@ export default function EmployeesPage() {
     });
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 pt-18">
             <Breadcrumb className="flex items-center gap-2">
                 <BreadcrumbItem href="/" icon={HiHome}>Home</BreadcrumbItem>
                 {crumbs.map((c, i) => (
@@ -267,7 +267,6 @@ export default function EmployeesPage() {
 
             {/* Columns Selection Modal */}
             <Modal show={columnsModalOpen} onClose={() => setColumnsModalOpen(false)}
-                   // className="max-w-[650px] mx-auto mt-[60px] z-30"
             >
                 <div className="max-w-[600px] w-full mx-auto">
                 <ModalHeader>Customize Columns</ModalHeader>
@@ -317,7 +316,6 @@ export default function EmployeesPage() {
 
             {/* Filter Modal */}
             <Modal show={filterOpen} onClose={() => setFilterOpen(false)}
-                   // className="max-w-[1000px] mx-auto z-30"
             >
                 <div className="max-w-[800px] w-full mx-auto">
                 <ModalHeader>Filters</ModalHeader>

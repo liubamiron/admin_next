@@ -89,8 +89,7 @@ export function SimpleSidebar() {
           ${sidebar.mobile.isOpen ? "translate-x-0" : "-translate-x-full"}
         `}
             >
-                <div className="mx-4 my-3">
-                    <div className="w-[55px]">
+                <div className="px-3 py-5">
                         {sidebar.desktop.collapsed && (
                             <Link href={'/'}>
                                 <img
@@ -100,8 +99,8 @@ export function SimpleSidebar() {
                                 />
                             </Link>
                         )}
-                    </div>
-                    <ul>
+
+                    <ul className={'text-center'}>
                         {menuItems.map((item) => {
                             const hasSubmenu = !!item.submenu;
                             const isActiveMain = !hasSubmenu && pathname === item.href;
@@ -113,13 +112,13 @@ export function SimpleSidebar() {
                                 (!sidebar.desktop.collapsed || sidebar.mobile.isOpen);
 
                             return (
-                                <li key={item.label}>
+                                <li key={item.label} className={'p-1'}>
                                     {/* Main Item */}
                                     {!hasSubmenu ? (
                                         <Link
                                             href={item.href}
                                             className={`
-                        flex items-center gap-3 p-2 rounded cursor-pointer 
+                        flex items-center gap-3 p-1 rounded cursor-pointer 
                         ${isActiveMain ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300" : "hover:bg-[#EBF5FF] dark:hover:bg-gray-700"}
                       `}
                                         >
