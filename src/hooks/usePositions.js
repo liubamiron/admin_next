@@ -23,14 +23,8 @@ export function usePositions() {
 
             const json = await res.json();
 
-            // ✅ Extract from nested pagination object
-            const positions = json?.data?.data || [];
+            return  json?.data || [];
 
-            // ✅ Convert to react-select options
-            return positions.map((p) => ({
-                value: p.id,
-                label: p.name,
-            }));
         },
     });
 }

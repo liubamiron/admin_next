@@ -28,7 +28,7 @@ export function SimpleSidebar() {
         {
             icon: <img src="/icons/structure.svg" alt="Structure"/>,
             label: "Structure",
-            href: "/structure",
+            href: "/structure/offices",
         },
         {
             icon: <img src="/icons/users.svg" alt="Users"/>,

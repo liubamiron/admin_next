@@ -23,14 +23,7 @@ export function useDepartments() {
 
             const json = await res.json();
 
-            // ✅ Extract from nested `data.data`
-            const departments = json?.data?.data || [];
-
-            // ✅ Transform for react-select
-            return departments.map((d) => ({
-                value: d.id,
-                label: d.name,
-            }));
+            return json?.data || [];
         },
     });
 }

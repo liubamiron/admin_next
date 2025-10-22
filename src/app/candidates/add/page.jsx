@@ -55,7 +55,32 @@ export default function CandidateAddPage() {
     const { data: departmentsData = [], isLoading: depLoading } = useDepartments();
     const { data: positionsData = [], isLoading: posLoading } = usePositions();
     const { data: officesData = [], isLoading: offLoading } = useOffices();
+
     const router = useRouter();
+
+    const officeOptions = Array.isArray(officesData.data)
+        ? officesData.data.map((office) => ({
+            value: office.id,
+            label: office.name,
+        }))
+        : [];
+
+    const departmentOptions = Array.isArray(departmentsData.data)
+        ? departmentsData.data.map((dept) => ({
+            value: dept.id,
+            label: dept.name,
+        }))
+        : [];
+
+    const positionOptions = Array.isArray(positionsData.data)
+        ? positionsData.data.map((pos) => ({
+            value: pos.id,
+            label: pos.name,
+        }))
+        : [];
+
+ console.log(officeOptions, 'officiesData')
+
 
     const {
         register,
@@ -234,7 +259,7 @@ export default function CandidateAddPage() {
                         <div className="space-y-4">
                             <Label>Office</Label>
                             <Select
-                                options={officesData}
+                                options={officeOptions}
                                 onChange={(val) => setValue("office_id", val?.value)}
                                 isLoading={offLoading}
                                 placeholder="Select office..."
@@ -243,7 +268,7 @@ export default function CandidateAddPage() {
 
                             <Label>Department</Label>
                             <Select
-                                options={departmentsData}
+                                options={departmentOptions}
                                 onChange={(val) => setValue("department_id", val?.value)}
                                 isLoading={depLoading}
                                 placeholder="Select department..."
@@ -252,7 +277,7 @@ export default function CandidateAddPage() {
 
                             <Label>Position</Label>
                             <Select
-                                options={positionsData}
+                                options={positionOptions}
                                 onChange={(val) => setValue("position_id", val?.value)}
                                 isLoading={posLoading}
                                 placeholder="Select position..."

@@ -3,14 +3,14 @@ import Cookies from "js-cookie";
 
 const host = process.env.NEXT_PUBLIC_HOST || "https://hrm.webng.life/api";
 
-export function useOffices() {
+export function useManagers() {
     return useQuery({
         queryKey: ["offices"],
         queryFn: async () => {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
-            const res = await fetch(`${host}/offices`, {
+            const res = await fetch(`${host}/managers`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -18,7 +18,7 @@ export function useOffices() {
 
             if (!res.ok) {
                 const errData = await res.json().catch(() => ({}));
-                throw new Error(errData.message || "Failed to fetch offices");
+                throw new Error(errData.message || "Failed to fetch data");
             }
 
             const json = await res.json();
