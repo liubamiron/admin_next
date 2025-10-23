@@ -21,10 +21,15 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { usePositions } from "@/hooks/positions/usePositions";
 import { useState } from "react";
+import {useCreatePosition} from "@/hooks/positions/useCreatePosition";
+import {useEditPosition} from "@/hooks/positions/useEditPosition";
 
 export default function PositionsPage() {
     const { data: allData } = usePositions(1, "all", null);
     const positions = allData;
+
+    const { mutateAsync: createPosition } = useCreatePosition();
+    const { mutateAsync: editPosition } = useEditPosition();
 
     const [openModal, setOpenModal] = useState(false);
     const [openModalEdit, setOpenModalEdit] = useState(false);
@@ -48,13 +53,17 @@ export default function PositionsPage() {
         { href: "/structure/public-holidays", icon: "/icons/public_holidays.svg", label: "Public Holidays" },
     ];
 
-    // --- Handlers ---
-    const handleAddSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("New Position:", { name });
-        setName("");
-        setOpenModal(false);
+        try {
+            await createPosition({ name });
+            setName("");
+            setOpenModal(false);
+        } catch (error) {
+            console.error("Failed to create holiday:", error);
+        }
     };
+
 
     const handleEditClick = (position) => {
         setSelectedPosition(position);
@@ -62,12 +71,18 @@ export default function PositionsPage() {
         setOpenModalEdit(true);
     };
 
-    const handleEditSubmit = (e) => {
+    const handleEditSubmit = async (e) => {
         e.preventDefault();
-        console.log("Updated Position:", { id: selectedPosition?.id, name });
-        setSelectedPosition(null);
-        setName("");
-        setOpenModalEdit(false);
+        try {
+            await editPosition({
+                id: selectedPosition.id,
+                name,
+            });
+            setSelectedPosition(null);
+            setOpenModalEdit(false);
+        } catch (err) {
+            console.log(err.message);
+        }
     };
 
     return (
@@ -154,7 +169,7 @@ export default function PositionsPage() {
             <Modal show={openModal} onClose={() => setOpenModal(false)}>
                 <ModalHeader>Add New Position</ModalHeader>
                 <ModalBody>
-                    <form onSubmit={handleAddSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
                             <Label htmlFor="name" value="Position Name" />
                             <TextInput

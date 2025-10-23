@@ -11,7 +11,7 @@ export function useCreatePosition() {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
-            const res = await fetch(`${host}/office`, {
+            const res = await fetch(`${host}/position`, {
                 method: "POST",
                 headers: {
                     'Accept': 'application/json',
