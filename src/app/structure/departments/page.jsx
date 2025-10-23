@@ -367,7 +367,7 @@ export default function DepartmentsPage() {
                                 <TableRow>
                                     <TableHeadCell>Office</TableHeadCell>
                                     <TableHeadCell>Name</TableHeadCell>
-                                    <TableHeadCell>Employees Count</TableHeadCell>
+                                    <TableHeadCell>Manager</TableHeadCell>
                                     <TableHeadCell>Actions</TableHeadCell>
                                 </TableRow>
                             </TableHead>

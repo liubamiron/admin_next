@@ -29,9 +29,6 @@ export default function CandidateEditPage() {
     const { slug } = useParams(); // ✅ get ID from URL
     const { data: candidate, isLoading: loadingCandidate } = useIdCandidate(slug);
     const editCandidate = useEditCandidate();
-    const {data: departmentsData = [], isLoading: depLoading} = useDepartments();
-    const {data: positionsData = [], isLoading: posLoading} = usePositions();
-    const {data: officesData = [], isLoading: offLoading} = useOffices();
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
@@ -46,7 +43,33 @@ export default function CandidateEditPage() {
     const [mounted, setMounted] = useState(false);
     const [successMsg, setSuccessMsg] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
-    const [newStatus, setNewStatus] = useState("")
+    const [newStatus, setNewStatus] = useState("");
+
+    const { data: departmentsData = [], isLoading: depLoading } = useDepartments();
+    const { data: positionsData = [], isLoading: posLoading } = usePositions();
+    const { data: officesData = [], isLoading: offLoading } = useOffices();
+
+
+    const officeOptions = Array.isArray(officesData.data)
+        ? officesData.data.map((office) => ({
+            value: office.id,
+            label: office.name,
+        }))
+        : [];
+
+    const departmentOptions = Array.isArray(departmentsData.data)
+        ? departmentsData.data.map((dept) => ({
+            value: dept.id,
+            label: dept.name,
+        }))
+        : [];
+
+    const positionOptions = Array.isArray(positionsData.data)
+        ? positionsData.data.map((pos) => ({
+            value: pos.id,
+            label: pos.name,
+        }))
+        : [];
 
     // Convert YYYY-MM-DD to a Date object in local timezone
     const parseDob = (dateString) => {
@@ -293,7 +316,7 @@ export default function CandidateEditPage() {
                         <div className="space-y-4">
                             <Label>Office</Label>
                             <Select
-                                options={officesData}
+                                options={officeOptions}
                                 value={offices}
                                 onChange={setOffices}
                                 isLoading={offLoading}
@@ -303,7 +326,7 @@ export default function CandidateEditPage() {
 
                             <Label>Department</Label>
                             <Select
-                                options={departmentsData}
+                                options={departmentOptions}
                                 value={departments}
                                 onChange={setDepartments}
                                 isLoading={depLoading}
@@ -313,7 +336,7 @@ export default function CandidateEditPage() {
 
                             <Label>Position</Label>
                             <Select
-                                options={positionsData}
+                                options={positionOptions}
                                 value={positions}
                                 onChange={setPositions}
                                 isLoading={posLoading}
