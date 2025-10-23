@@ -8,7 +8,7 @@ import Select from "react-select";
 import {useIdCandidate} from "@/hooks/candidates/useIdCandidate";
 import {useDepartments} from "@/hooks/useDepartments";
 import {usePositions} from "@/hooks/usePositions";
-import {useOffices} from "@/hooks/useOffices";
+import {useOffices} from "@/hooks/officies/useOffices";
 import {countryOptions, genderOptions, operatorOptions} from "@/components/constants/filterOptions";
 
 export default function CandidateViewPage() {

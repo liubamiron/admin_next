@@ -261,7 +261,7 @@ import { HiHome } from "react-icons/hi";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useDepartments } from "@/hooks/useDepartments";
-import { useOffices } from "@/hooks/useOffices";
+import { useOffices } from "@/hooks/officies/useOffices";
 import { useState } from "react";
 
 export default function DepartmentsPage() {

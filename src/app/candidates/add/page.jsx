@@ -14,7 +14,7 @@ import {HiCheck, HiHome} from "react-icons/hi";
 import {usePathname, useRouter} from "next/navigation";
 import { useDepartments } from "@/hooks/useDepartments";
 import { usePositions } from "@/hooks/usePositions";
-import { useOffices } from "@/hooks/useOffices";
+import { useOffices } from "@/hooks/officies/useOffices";
 import Select from "react-select";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";

@@ -20,7 +20,7 @@ import {useIdCandidate} from "@/hooks/candidates/useIdCandidate";
 import {useEditCandidate} from "@/hooks/candidates/useEditCandidate";
 import {useDepartments} from "@/hooks/useDepartments";
 import {usePositions} from "@/hooks/usePositions";
-import {useOffices} from "@/hooks/useOffices";
+import {useOffices} from "@/hooks/officies/useOffices";
 import {countryOptions, genderOptions, operatorOptions} from "@/components/constants/filterOptions";
 import {reactSelectHeightFix} from "@/components/ui/reactSelectHeightFix";
 

@@ -18,15 +18,19 @@ import {
 } from "flowbite-react";
 import { HiHome } from "react-icons/hi";
 import { usePathname } from "next/navigation";
-import { useOffices } from "@/hooks/useOffices";
+import { useOffices } from "@/hooks/officies/useOffices";
 import Link from "next/link";
 import { useState } from "react";
+import {useCreateOffice} from "@/hooks/officies/useCreateOffice";
+import {useEditOffice} from "@/hooks/officies/useEditOffice";
 
 export default function OfficePage() {
     const { data: allData } = useOffices(1, "all", null);
     const offices = allData?.data ?? [];
 
-    console.log( allData, offices)
+    const { mutate: createOffice, isPending: creating } = useCreateOffice();
+    const { mutateAsync: editOffice, isPending: editing } = useEditOffice();
+
 
     const pathname = usePathname();
     const segments = pathname.split("/").filter(Boolean);
@@ -50,14 +54,22 @@ export default function OfficePage() {
     const [location, setLocation] = useState("");
     const [selectedOffice, setSelectedOffice] = useState(null);
 
-    // Create new office
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("New Office:", { name, location });
 
-        setName("");
-        setLocation("");
-        setOpenModal(false);
+        createOffice(
+            { name, location },
+            {
+                onSuccess: () => {
+                    setOpenModal(false);
+                    setName("");
+                    setLocation("");
+                },
+                onError: (error) => {
+                    alert(error.message || "Failed to create office");
+                },
+            }
+        );
     };
 
     // Open edit modal with prefilled data
@@ -68,17 +80,19 @@ export default function OfficePage() {
         setOpenModalEdit(true);
     };
 
-    // Handle edit submit
     const handleEditSubmit = async (e) => {
         e.preventDefault();
-        console.log("Updated Office:", {
-            id: selectedOffice.id,
-            name,
-            location,
-        });
-
-        setSelectedOffice(null);
-        setOpenModalEdit(false);
+        try {
+            await editOffice({
+                id: selectedOffice.id,
+                name,
+                location,
+            });
+            setSelectedOffice(null);
+            setOpenModalEdit(false);
+        } catch (err) {
+            alert(err.message);
+        }
     };
 
     return (
