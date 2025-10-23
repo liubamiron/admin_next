@@ -15,71 +15,21 @@ const departments = [
     },
     {
         id: 2,
-        name: "Micle",
+        name: "Frontend",
         manager: [
-            { id: 1, full_name: "Neil Sims", position: "Team Lead", img: "/images/neil-sims.png" },
+            { id: 2, full_name: "Alice Johnson", position: "Lead Developer", img: "/images/alice.png" },
         ],
-        total_employees: "60",
+        total_employees: "6",
         employees: [],
-        children: [4, 5],
+        children: [],
     },
     {
         id: 3,
-        name: "FinancePro",
+        name: "Backend",
         manager: [
-            { id: 1, full_name: "Sarah Green", position: "Finance Director", img: "/images/neil-sims.png" },
+            { id: 3, full_name: "Bob Smith", position: "Lead Developer", img: "/images/bob.png" },
         ],
-        total_employees: "25",
-        employees: [],
-        children: [],
-    },
-    {
-        id: 4,
-        name: "TechLab",
-        manager: [
-            { id: 1, full_name: "Alice Brown", position: "CTO", img: "/images/neil-sims.png" },
-        ],
-        total_employees: "40",
-        employees: [],
-        children: [],
-    },
-    {
-        id: 5,
-        name: "DesignHub",
-        manager: [
-            { id: 1, full_name: "Olivia Martin", position: "Creative Director", img: "/images/neil-sims.png" },
-        ],
-        total_employees: "18",
-        employees: [],
-        children: [6, 7],
-    },
-    {
-        id: 6,
-        name: "SupportPlus",
-        manager: [
-            { id: 1, full_name: "James Carter", position: "Support Lead", img: "/images/neil-sims.png" },
-        ],
-        total_employees: "30",
-        employees: [],
-        children: [],
-    },
-    {
-        id: 7,
-        name: "SalesBoost",
-        manager: [
-            { id: 1, full_name: "Robert Hall", position: "Sales Director", img: "/images/neil-sims.png" },
-        ],
-        total_employees: "22",
-        employees: [],
-        children: [8],
-    },
-    {
-        id: 8,
-        name: "MarketingVision",
-        manager: [
-            { id: 1, full_name: "Emma Watson", position: "Marketing Head", img: "/images/neil-sims.png" },
-        ],
-        total_employees: "50",
+        total_employees: "8",
         employees: [],
         children: [],
     },
