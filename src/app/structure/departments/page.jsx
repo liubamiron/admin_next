@@ -263,14 +263,17 @@ import Link from "next/link";
 import { useDepartments } from "@/hooks/departments/useDepartments";
 import { useOffices } from "@/hooks/officies/useOffices";
 import { useState } from "react";
+import {useManagers} from "@/hooks/useManagers";
 
 export default function DepartmentsPage() {
     const { data: allData } = useDepartments(1, "all", null);
     const { data: offices } = useOffices();
+    const { data: managers } = useManagers();
 
     const [openModal, setOpenModal] = useState(false);
     const [openModalEdit, setOpenModalEdit] = useState(false);
     const [selectedOffice, setSelectedOffice] = useState("");
+    const [selectedManager, setSelectedManager] = useState("");
     const [name, setName] = useState("");
     const [selectedDepartment, setSelectedDepartment] = useState(null);
 
@@ -315,6 +318,7 @@ export default function DepartmentsPage() {
         resetForm();
         setOpenModalEdit(false);
     };
+    console.log(managers, 'managers');
 
     return (
         <div className="space-y-6">
@@ -379,7 +383,7 @@ export default function DepartmentsPage() {
                                             {offices?.data.find((o) => o.id === item?.office_id)?.name}
                                         </TableCell>
                                         <TableCell className="font-medium text-gray-900 dark:text-white">{item?.name}</TableCell>
-                                        <TableCell>{item?.userCount}</TableCell>
+                                        <TableCell> {managers?.[0]?.office?.departments?.find((o) => o.id === item?.manager_id)?.name}</TableCell>
                                         <TableCell>
                                             <Button size="xs" color="info" onClick={() => handleEditClick(item)}>
                                                 <img src="/icons/edit.svg" alt="edit" className="w-5 h-5" />
@@ -410,6 +414,23 @@ export default function DepartmentsPage() {
                                 {offices?.data.map((office) => (
                                     <option key={office.id} value={office.id}>
                                         {office.name}
+                                    </option>
+                                ))}
+                            </Select>
+                        </div>
+
+                        <div>
+                            <Label htmlFor="add-manager" value="Select Manager" />
+                            <Select
+                                id="add-manager"
+                                required
+                                value={selectedManager}
+                                onChange={(e) => setSelectedManager(e.target.value)}
+                            >
+                                <option value="">Select Manager</option>
+                                {managers?.[0]?.office?.departments?.map((manager) => (
+                                    <option key={manager.id} value={manager.id}>
+                                        {manager.name}
                                     </option>
                                 ))}
                             </Select>

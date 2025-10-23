@@ -5,7 +5,7 @@ const host = process.env.NEXT_PUBLIC_HOST || "https://hrm.webng.life/api";
 
 export function usePublicHolidays() {
     return useQuery({
-        queryKey: ["positions"],
+        queryKey: ["holidays"],
         queryFn: async () => {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
@@ -18,7 +18,7 @@ export function usePublicHolidays() {
 
             if (!res.ok) {
                 const errData = await res.json().catch(() => ({}));
-                throw new Error(errData.message || "Failed to fetch positions");
+                throw new Error(errData.message || "Failed to fetch public holidays");
             }
 
             const json = await res.json();
