@@ -11,25 +11,67 @@ const departments = [
         ],
         total_employees: "14",
         employees: [],
-        children: [2, 3],
+        children: [2, 3, 4],
     },
     {
         id: 2,
         name: "Frontend",
         manager: [
-            { id: 2, full_name: "Alice Johnson", position: "Lead Developer", img: "/images/alice.png" },
+            { id: 2, full_name: "Alice Johnson", position: "Lead Developer", img: "/images/neil-sims.png" },
         ],
         total_employees: "6",
         employees: [],
-        children: [],
+        children: [7, 5, 6, 4],
     },
     {
         id: 3,
         name: "Backend",
         manager: [
-            { id: 3, full_name: "Bob Smith", position: "Lead Developer", img: "/images/bob.png" },
+            { id: 3, full_name: "Bob Smith", position: "Lead Developer", img: "/images/neil-sims.png" },
         ],
         total_employees: "8",
+        employees: [],
+        children: [5,6,7],
+    },
+    {
+        id: 4,
+        name: "BackendTest4",
+        manager: [
+            { id: 4, full_name: "Edited Bob Smith", position: "Lead Front Developer", img: "/images/neil-sims.png" },
+        ],
+        total_employees: "3",
+        employees: [],
+        children: [],
+    },
+    {
+        id: 5,
+        name: "BackendTest4",
+        manager: [
+            { id: 4, full_name: "Edited Bob Smith", position: "Lead Front Developer", img: "/images/neil-sims.png" },
+        ],
+        total_employees: "3",
+        employees: [],
+        children: [],
+    },
+    {
+        id: 6,
+        name: "BackendTest4",
+        manager: [
+            { id: 4, full_name: "Edited Bob Smith", position: "Lead Front Developer", img: "/images/neil-sims.png" },
+        ],
+        total_employees: "3",
+        employees: [],
+        children: [],
+    },
+    {
+        id: 7,
+        name: "BackendTest4",
+        manager: [
+            { id: 7, full_name: "Edited Bob Smith", position: "Lead Front Developer", img: "/images/neil-sims.png" },
+            { id: 8, full_name: "Edited Bob Smith", position: "Lead Front Developer", img: "/images/neil-sims.png" },
+            { id: 9, full_name: "Edited Bob Smith", position: "Lead Front Developer", img: "/images/neil-sims.png" },
+        ],
+        total_employees: "3",
         employees: [],
         children: [],
     },
@@ -49,7 +91,7 @@ export default function OrgChartPage() {
 
     const renderCard = (dept, level) => {
         const isTopLevel = level === 0;
-        const cardWidth = isTopLevel ? "w-[320px]" : "w-[280px]";
+        const cardWidth = isTopLevel ? "w-[320px]" : "w-[230px]";
         const imgSize = isTopLevel ? "h-14 w-14" : "h-12 w-12";
         const nameSize = isTopLevel ? "text-lg" : "text-base";
 
@@ -112,7 +154,7 @@ export default function OrgChartPage() {
         );
     };
 
-    const renderLevel = (parentIds, level = 0) => (
+    const renderLevel2 = (parentIds, level = 0) => (
         <div className="flex flex-wrap justify-center gap-8 mt-6">
             {parentIds.map((id) => {
                 const dept = departments.find((d) => d.id === id);
@@ -146,8 +188,45 @@ export default function OrgChartPage() {
         </div>
     );
 
+    const renderLevel = (parentIds, level = 0) => (
+        <div className={`grid grid-cols-${parentIds.length} gap-8 mt-6`}>
+            {parentIds.map((id) => {
+                const dept = departments.find((d) => d.id === id);
+                if (!dept) return null;
+
+                return (
+                    <div key={dept.id} className="flex flex-col items-center">
+                        {renderCard(dept, level)}
+
+                        {expanded.includes(dept.id) && dept.children.length > 0 && (
+                            <>
+                                {/* Connector */}
+                                <div className="flex justify-center items-center mt-2 w-full">
+                                    <img
+                                        src="/images/blue_connector_line_left.png"
+                                        alt="line left"
+                                        className="w-20 sm:w-42"
+                                    />
+                                    <img
+                                        src="/images/blue_connector_line_right.png"
+                                        alt="line right"
+                                        className="w-20 sm:w-42"
+                                    />
+                                </div>
+
+                                {/* Children level */}
+                                {renderLevel(dept.children, level + 1)}
+                            </>
+                        )}
+                    </div>
+                );
+            })}
+        </div>
+    );
+
+
     return (
-        <div>
+        <div className={'w-full'}>
             <h1 className="text-2xl font-semibold mb-12 mt-12 text-center dark:text-white">
                 Organization Chart
             </h1>
@@ -189,7 +268,10 @@ export default function OrgChartPage() {
             )}
 
             {/* Chart */}
-            <div className="flex flex-col items-center">{renderLevel([1])}</div>
+            {/*<div className="flex flex-col items-center">{renderLevel([1])}</div>*/}
+            <div className="mt-6 w-full overflow-x-auto">{renderLevel([1])}</div>
+            <br/>
+            <div>&nbsp;</div>
         </div>
     );
 }
