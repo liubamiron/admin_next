@@ -28,7 +28,7 @@ export default function OfficePage() {
     const { data: allData } = useOffices(1, "all", null);
     const offices = allData?.data ?? [];
 
-    const { mutate: createOffice, isPending: creating } = useCreateOffice();
+    const { mutate: createOffice } = useCreateOffice();
     const { mutateAsync: editOffice, isPending: editing } = useEditOffice();
 
 
@@ -57,20 +57,25 @@ export default function OfficePage() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        console.log("Submitting new office:", { name, location }); // log to console
+
         createOffice(
             { name, location },
             {
                 onSuccess: () => {
+                    console.log("Office created successfully!");
                     setOpenModal(false);
                     setName("");
                     setLocation("");
                 },
                 onError: (error) => {
+                    console.error("Create office failed:", error);
                     alert(error.message || "Failed to create office");
                 },
             }
         );
     };
+
 
     // Open edit modal with prefilled data
     const handleEditClick = (office) => {
@@ -195,41 +200,42 @@ export default function OfficePage() {
             <Modal show={openModal} onClose={() => setOpenModal(false)}>
                 <ModalHeader>Add New Office</ModalHeader>
                 <ModalBody>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <Label htmlFor="name" value="Office Name" />
-                            <TextInput
-                                id="name"
-                                type="text"
-                                required
-                                placeholder="Enter office name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                        </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                    <Label htmlFor="name" value="Office Name" />
+                    <TextInput
+                        id="name"
+                        type="text"
+                        required
+                        placeholder="Enter office name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+                </div>
 
-                        <div>
-                            <Label htmlFor="location" value="Location" />
-                            <TextInput
-                                id="location"
-                                type="text"
-                                placeholder="Enter location"
-                                value={location}
-                                onChange={(e) => setLocation(e.target.value)}
-                            />
-                        </div>
+                <div>
+                    <Label htmlFor="location" value="Location" />
+                    <TextInput
+                        id="location"
+                        type="text"
+                        placeholder="Enter location"
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                    />
+                </div>
 
-                        <div className="flex justify-end space-x-2 pt-2">
-                            <Button color="gray" onClick={() => setOpenModal(false)} type="button">
-                                Cancel
-                            </Button>
-                            <Button color="success" type="submit">
-                                Save
-                            </Button>
-                        </div>
-                    </form>
+                <div className="flex justify-end space-x-2 pt-2">
+                    <Button color="gray" onClick={() => setOpenModal(false)} type="button">
+                        Cancel
+                    </Button>
+                    <Button color="success" type="submit">
+                        Save
+                    </Button>
+                </div>
+            </form>
                 </ModalBody>
             </Modal>
+
 
             {/*  Edit Modal */}
             <Modal show={openModalEdit} onClose={() => setOpenModalEdit(false)}>
