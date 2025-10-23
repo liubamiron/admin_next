@@ -7,7 +7,7 @@ export function useEditPublicHolidays() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({ id, name, location }) => {
+        mutationFn: async ({ id, name, date }) => {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
