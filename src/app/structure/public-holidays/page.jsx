@@ -19,8 +19,10 @@ import {
 import { HiHome } from "react-icons/hi";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { usePublicHolidays } from "@/hooks/usePublicHolidays";
+import { usePublicHolidays } from "@/hooks/publicHolidays/usePublicHolidays";
 import { useState } from "react";
+import {useCreatePublicHolidays} from "@/hooks/publicHolidays/useCreatePublicHolidays";
+import {useEditPublicHolidays} from "@/hooks/publicHolidays/useEditPublicHolidays";
 
 export default function PublicHolidaysPage() {
     const { data: allData } = usePublicHolidays(1, "all", null);
@@ -39,6 +41,9 @@ export default function PublicHolidaysPage() {
         return { name: seg[0].toUpperCase() + seg.slice(1), href };
     });
 
+    const { mutateAsync: createHoliday } = useCreatePublicHolidays();
+    const { mutateAsync: editPublicHolidays } = useEditPublicHolidays();
+
     const menuItems = [
         { href: "/structure/offices", icon: "/icons/office_img.svg", label: "Offices" },
         { href: "/structure/departments", icon: "/icons/departments_img.svg", label: "Departments" },
@@ -48,10 +53,15 @@ export default function PublicHolidaysPage() {
 
     const handleAddSubmit = async (e) => {
         e.preventDefault();
-        console.log("Add Holiday:", { name, date });
-        setName("");
-        setDate("");
-        setOpenModal(false);
+
+        try {
+            await createHoliday({ name, date });
+            setName("");
+            setDate("");
+            setOpenModal(false);
+        } catch (error) {
+            console.error("Failed to create holiday:", error);
+        }
     };
 
     const handleEditClick = (holiday) => {
@@ -61,13 +71,22 @@ export default function PublicHolidaysPage() {
         setOpenModalEdit(true);
     };
 
+
     const handleEditSubmit = async (e) => {
         e.preventDefault();
-        console.log("Edit Holiday:", { id: selectedHoliday?.id, name, date });
-        setSelectedHoliday(null);
-        setName("");
-        setDate("");
-        setOpenModalEdit(false);
+        try {
+            await editPublicHolidays({
+                id: selectedHoliday.id,
+                name,
+                date,
+            });
+            setName("");
+            setDate("");
+            setSelectedHoliday(null);
+            setOpenModalEdit(false);
+        } catch (err) {
+            console.log(err.message);
+        }
     };
 
     return (

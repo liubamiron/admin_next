@@ -260,7 +260,7 @@ import {
 import { HiHome } from "react-icons/hi";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { useDepartments } from "@/hooks/useDepartments";
+import { useDepartments } from "@/hooks/departments/useDepartments";
 import { useOffices } from "@/hooks/officies/useOffices";
 import { useState } from "react";
 

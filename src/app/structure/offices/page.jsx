@@ -29,7 +29,7 @@ export default function OfficePage() {
     const offices = allData?.data ?? [];
 
     const { mutate: createOffice } = useCreateOffice();
-    const { mutateAsync: editOffice, isPending: editing } = useEditOffice();
+    const { mutateAsync: editOffice } = useEditOffice();
 
 
     const pathname = usePathname();

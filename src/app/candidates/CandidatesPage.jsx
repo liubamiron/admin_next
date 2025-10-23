@@ -25,7 +25,7 @@ import { useCandidates } from "@/hooks/candidates/useCandidates";
 import { HiHome } from "react-icons/hi";
 import { useRouter, useSearchParams } from "next/navigation";
 import Select from "react-select";
-import { usePositions } from "@/hooks/usePositions";
+import { usePositions } from "@/hooks/positions/usePositions";
 
 export default function CandidatesPage() {
     const router = useRouter();

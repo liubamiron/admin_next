@@ -14,8 +14,8 @@ import {useState} from "react";
 import {usePathname} from "next/navigation";
 import dynamic from "next/dynamic";
 import {RiDeleteBin6Fill} from "react-icons/ri";
-import {useDepartments} from "@/hooks/useDepartments";
-import {usePositions} from "@/hooks/usePositions";
+import {useDepartments} from "@/hooks/departments/useDepartments";
+import {usePositions} from "@/hooks/positions/usePositions";
 import {useOffices} from "@/hooks/officies/useOffices";
 import {reactSelectHeightFix} from "@/components/ui/reactSelectHeightFix";
 

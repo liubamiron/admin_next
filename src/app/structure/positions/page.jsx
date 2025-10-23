@@ -19,7 +19,7 @@ import {
 import { HiHome } from "react-icons/hi";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { usePositions } from "@/hooks/usePositions";
+import { usePositions } from "@/hooks/positions/usePositions";
 import { useState } from "react";
 
 export default function PositionsPage() {

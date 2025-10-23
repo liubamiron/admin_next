@@ -12,8 +12,8 @@ import {
 } from "flowbite-react";
 import {HiCheck, HiHome} from "react-icons/hi";
 import {usePathname, useRouter} from "next/navigation";
-import { useDepartments } from "@/hooks/useDepartments";
-import { usePositions } from "@/hooks/usePositions";
+import { useDepartments } from "@/hooks/departments/useDepartments";
+import { usePositions } from "@/hooks/positions/usePositions";
 import { useOffices } from "@/hooks/officies/useOffices";
 import Select from "react-select";
 import { useForm, useFieldArray } from "react-hook-form";

@@ -3,7 +3,8 @@ import Cookies from "js-cookie";
 
 const host = process.env.NEXT_PUBLIC_HOST || "https://hrm.webng.life/api";
 
-export function useCreateOffice() {
+
+export function useCreatePublicHolidays() {
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -11,7 +12,7 @@ export function useCreateOffice() {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
-            const res = await fetch(`${host}/office`, {
+            const res = await fetch(`${host}/public-holiday`, {
                 method: "POST",
                 headers: {
                     'Accept': 'application/json',
@@ -23,13 +24,13 @@ export function useCreateOffice() {
             });
 
             const data = await res.json().catch(() => ({}));
-            if (!res.ok) throw new Error(data.message || "Failed to create office");
+            if (!res.ok) throw new Error(data.message || "Failed to create public holidays");
 
             return data;
         },
         onSuccess: () => {
             // Refresh the office list after successful creation
-            queryClient.invalidateQueries(["offices"]);
+            queryClient.invalidateQueries(["holidays"]);
         },
     });
 }

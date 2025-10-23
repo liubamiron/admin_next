@@ -6,8 +6,8 @@ import {Breadcrumb, BreadcrumbItem, Button, Datepicker, FileInput, Label, TextIn
 import {HiHome, HiMinus,} from "react-icons/hi";
 import Select from "react-select";
 import {useIdCandidate} from "@/hooks/candidates/useIdCandidate";
-import {useDepartments} from "@/hooks/useDepartments";
-import {usePositions} from "@/hooks/usePositions";
+import {useDepartments} from "@/hooks/departments/useDepartments";
+import {usePositions} from "@/hooks/positions/usePositions";
 import {useOffices} from "@/hooks/officies/useOffices";
 import {countryOptions, genderOptions, operatorOptions} from "@/components/constants/filterOptions";
 

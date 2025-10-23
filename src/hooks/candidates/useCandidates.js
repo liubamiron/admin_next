@@ -24,7 +24,6 @@ export const fetchCandidates = async ({ page = 1, status, positionId }) => {
         full: json,        // full JSON response (pagination, meta, etc.)
         data: json.data,   // only candidates array
     };
-    // return json.data;
 };
 
 export const useCandidates = (page = 1, status = "all", positionId = null) => {
