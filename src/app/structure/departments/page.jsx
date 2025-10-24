@@ -26,6 +26,8 @@ import { useState } from "react";
 import {useManagers} from "@/hooks/useManagers";
 import {useCreatePublicHolidays} from "@/hooks/publicHolidays/useCreatePublicHolidays";
 import {useEditPublicHolidays} from "@/hooks/publicHolidays/useEditPublicHolidays";
+import {useCreateDepartment} from "@/hooks/departments/useCreateDepartment";
+import {useEditDepartment} from "@/hooks/departments/useEditDepartment";
 
 export default function DepartmentsPage() {
     const { data: allData } = useDepartments(1, "all", null);
@@ -47,8 +49,8 @@ export default function DepartmentsPage() {
         href: "/" + segments.slice(0, idx + 1).join("/"),
     }));
 
-    const { mutateAsync: createDepartment } = useCreatePublicHolidays();
-    const { mutateAsync: editDepartment } = useEditPublicHolidays();
+    const { mutateAsync: createDepartment } = useCreateDepartment();
+    const { mutateAsync: editDepartment } = useEditDepartment();
 
     const menuItems = [
         { href: "/structure/offices", icon: "/icons/office_img.svg", label: "Offices" },
