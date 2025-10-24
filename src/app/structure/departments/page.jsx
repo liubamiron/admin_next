@@ -69,7 +69,11 @@ export default function DepartmentsPage() {
         e.preventDefault();
 
         try {
-            await createDepartment({ name, selectedOffice, selectedManager });
+            await createDepartment({
+                name: name.trim(),
+                office_id: Number(selectedOffice),
+                manager_id: selectedManager ? Number(selectedManager) : null
+            });
             setName("");
             setSelectedOffice("");
             setSelectedManager("");
