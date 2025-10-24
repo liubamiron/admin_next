@@ -3,7 +3,7 @@
 import { useRef, useEffect } from "react";
 import { OrgChart } from "d3-org-chart";
 
-export const OrgChartComponent = ({ data, setClick }) => {
+export const OrgChartComponent = ({ data, onNodeClick }) => {
     const d3Container = useRef(null);
     const chartRef = useRef(null);
 
@@ -13,10 +13,10 @@ export const OrgChartComponent = ({ data, setClick }) => {
         chartRef.current = new OrgChart()
             .container(d3Container.current)
             .data(data)
-            .nodeWidth(d => 180)       // width of each node
-            .nodeHeight(d => 125)      // height of each node
-            .childrenMargin(d => 40)   // vertical margin between nodes
-            .compactMarginBetween(d => 25)
+            .nodeWidth(() => 180)
+            .nodeHeight(() => 125)
+            .childrenMargin(() => 40)
+            .compactMarginBetween(() => 25)
             .nodeContent(d => {
                 const dept = d.data;
                 return `
@@ -29,15 +29,11 @@ export const OrgChartComponent = ({ data, setClick }) => {
                 `;
             })
             .onNodeClick(d => {
-                if (setClick) setClick(d);
+                if (onNodeClick) onNodeClick(d.data.id); // Pass ID to parent
             })
             .render();
 
-        if (setClick) {
-            setClick(node => chartRef.current.addNode(node));
-        }
-
-    }, [data]);
+    }, [data, onNodeClick]);
 
     return <div ref={d3Container} />;
 };
