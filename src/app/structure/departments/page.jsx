@@ -68,12 +68,16 @@ export default function DepartmentsPage() {
     const handleAddSubmit = async (e) => {
         e.preventDefault();
 
+        const payload = {
+            name: name.trim(),
+            office_id: Number(selectedOffice),
+            manager_id: selectedManager ? Number(selectedManager) : null,
+        };
+
+        console.log("Payload to send:", payload); // <-- see payload in console
+
         try {
-            await createDepartment({
-                name: name.trim(),
-                office_id: Number(selectedOffice),
-                manager_id: selectedManager ? Number(selectedManager) : null
-            });
+            await createDepartment(payload);
             setName("");
             setSelectedOffice("");
             setSelectedManager("");
