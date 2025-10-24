@@ -221,7 +221,6 @@ export default function DepartmentsPage() {
                             <Label htmlFor="add-manager" value="Select Manager" />
                             <Select
                                 id="add-manager"
-                                required
                                 value={selectedManager}
                                 onChange={(e) => setSelectedManager(e.target.value)}
                             >
