@@ -101,7 +101,7 @@ export default function OfficePage() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 p-6">
             {/* Breadcrumb */}
             <Breadcrumb className="flex items-center gap-2">
                 <BreadcrumbItem href="/" icon={HiHome}>
@@ -114,16 +114,16 @@ export default function OfficePage() {
                 ))}
             </Breadcrumb>
 
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Offices</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-12">Offices</h2>
 
 
-            <div className="flex justify-between items-center">
+            <div className="flex justify-end items-end">
                 <Button onClick={() => setOpenModal(true)}>+ New Office</Button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6">
+            <div className="flex flex-col lg:flex-row gap-8 ">
                 {/* Sidebar */}
-                <div className="space-y-2 bg-white p-4 rounded-lg shadow dark:bg-gray-800">
+                <div className="space-y-2 bg-white p-4 rounded-lg shadow dark:bg-gray-800 md:w-[30%] w-full">
                     {menuItems.map((item) => {
                         const isActive = pathname === item.href;
 
@@ -158,13 +158,13 @@ export default function OfficePage() {
                 </div>
 
                 {/* Table */}
-                <div className="rounded-lg p-6 mb-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800">
+                <div className="rounded-lg p-6 mb-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800 md:w-[69%] w-full">
                     <div className="overflow-x-auto">
                         <Table>
                             <TableHead>
                                 <TableRow>
                                     <TableHeadCell>Name</TableHeadCell>
-                                    <TableHeadCell>Employees Count</TableHeadCell>
+                                    <TableHeadCell>Employees<br/>Count</TableHeadCell>
                                     <TableHeadCell>Location</TableHeadCell>
                                     <TableHeadCell>Actions</TableHeadCell>
                                 </TableRow>

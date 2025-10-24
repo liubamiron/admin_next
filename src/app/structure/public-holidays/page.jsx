@@ -90,7 +90,7 @@ export default function PublicHolidaysPage() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 p-6">
             <Breadcrumb className="flex items-center gap-2">
                 <BreadcrumbItem href="/" icon={HiHome}>Home</BreadcrumbItem>
                 {crumbs.map((c, i) => (
@@ -100,15 +100,15 @@ export default function PublicHolidaysPage() {
                 ))}
             </Breadcrumb>
 
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Public Holidays</h1>
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white mt-12">Public Holidays</h1>
 
-            <div className="flex justify-between items-center">
+            <div className="flex justify-end items-end h-full ">
                 <Button onClick={() => setOpenModal(true)}>+ New Holiday</Button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6">
+            <div className="flex flex-col lg:flex-row gap-8">
                 {/* Left menu */}
-                <div className="space-y-2 bg-white p-4 rounded-lg shadow dark:bg-gray-800">
+                <div className="bg-white p-4 rounded-lg shadow dark:bg-gray-800 md:w-[30%] w-full">
                     {menuItems.map((item) => {
                         const isActive = pathname === item.href;
                         return (
@@ -136,7 +136,7 @@ export default function PublicHolidaysPage() {
                 </div>
 
                 {/* Right main content */}
-                <div className="rounded-lg p-6 mb-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800">
+                <div className="rounded-lg p-6 mb-6 shadow-sm bg-[#F9FAFB] dark:bg-gray-800 md:w-[69%] w-full">
                     <div className="overflow-x-auto">
                         <Table>
                             <TableHead>
