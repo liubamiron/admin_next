@@ -99,7 +99,7 @@ export default function DepartmentsPage() {
             id: selectedDepartment.id,
             name: name.trim(),
             office_id: Number(selectedOffice),
-            manager_id: selectedManager ? Number(selectedManager) : null,
+            manager_id: selectedManager ? parseInt(selectedManager, 10) : null,
         };
 
         console.log("Edit payload:", payload); // see payload before request
