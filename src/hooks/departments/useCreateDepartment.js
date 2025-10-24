@@ -7,7 +7,7 @@ export function useCreateDepartment() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({ name, officeId, managerId }) => {
+        mutationFn: async ({ name, office_id, manager_id }) => {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
@@ -18,7 +18,7 @@ export function useCreateDepartment() {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({  name, officeId, managerId }),
+                body: JSON.stringify({  name, office_id, manager_id }),
                 credentials: 'include',
             });
 
