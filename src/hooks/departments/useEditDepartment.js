@@ -14,10 +14,12 @@ export function useEditDepartment() {
             const res = await fetch(`${host}/department/${id}`, {
                 method: "PATCH",
                 headers: {
+                    'Accept': 'application/json',
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({ name, office_id, manager_id}),
+                credentials: 'include',
             });
 
             const data = await res.json().catch(() => ({}));
