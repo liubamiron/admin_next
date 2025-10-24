@@ -7,7 +7,7 @@ export function useEditDepartment() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({ id, name }) => {
+        mutationFn: async ({ id, name,  office_id, manager_id }) => {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
@@ -17,7 +17,7 @@ export function useEditDepartment() {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ name }),
+                body: JSON.stringify({ name, office_id, manager_id}),
             });
 
             const data = await res.json().catch(() => ({}));

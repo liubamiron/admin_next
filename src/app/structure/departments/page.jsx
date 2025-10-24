@@ -94,20 +94,26 @@ export default function DepartmentsPage() {
 
     const handleEditSubmit = async (e) => {
         e.preventDefault();
+
+        const payload = {
+            id: selectedDepartment.id,
+            name: name.trim(),
+            office_id: Number(selectedOffice),
+            manager_id: selectedManager ? Number(selectedManager) : null,
+        };
+
+        console.log("Edit payload:", payload); // see payload before request
+
         try {
-            await editDepartment({
-                id: selectedDepartment.id,
-                name,
-                selectedOffice,
-                selectedManager,
-            });
-            setSelectedOffice(null);
-            setSelectedManager(null);
+            await editDepartment(payload);
+            setSelectedOffice("");
+            setSelectedManager("");
             setOpenModalEdit(false);
         } catch (err) {
-            console.log(err.message);
+            console.log("Failed to edit department:", err.message);
         }
     };
+
 
 
     return (
