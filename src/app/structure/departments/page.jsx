@@ -74,8 +74,6 @@ export default function DepartmentsPage() {
             manager_id: selectedManager ? Number(selectedManager) : null,
         };
 
-        console.log("Payload to send:", payload); // <-- see payload in console
-
         try {
             await createDepartment(payload);
             setName("");
@@ -273,17 +271,16 @@ export default function DepartmentsPage() {
                         </div>
 
                         <div>
-                            <Label htmlFor="edit-office" value="Select Office" />
+                            <Label htmlFor="edit-manager" value="Select Manager" />
                             <Select
-                                id="edit-office"
+                                id="edit-manager"
                                 required
-                                value={selectedOffice}
-                                onChange={(e) => setSelectedOffice(e.target.value)}
+                                value={selectedManager}
+                                onChange={(e) => setSelectedManager(e.target.value)}
                             >
-                                <option value="">Select Office</option>
-                                {offices?.data.map((office) => (
-                                    <option key={office.id} value={office.id}>
-                                        {office.name}
+                                {managers?.[0]?.office?.departments?.map((manager) => (
+                                    <option key={manager.id} value={manager.id}>
+                                        {manager.name}
                                     </option>
                                 ))}
                             </Select>
