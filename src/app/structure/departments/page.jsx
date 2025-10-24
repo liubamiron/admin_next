@@ -62,6 +62,7 @@ export default function DepartmentsPage() {
     const resetForm = () => {
         setName("");
         setSelectedOffice("");
+        setSelectedManager("");
         setSelectedDepartment(null);
     };
 
@@ -89,6 +90,7 @@ export default function DepartmentsPage() {
         setSelectedDepartment(department);
         setName(department.name || "");
         setSelectedOffice(department.office_id?.toString() || "");
+        setSelectedManager(department.manager_id?.toString() || "");
         setOpenModalEdit(true);
     };
 
