@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
     Breadcrumb,
@@ -23,16 +23,12 @@ import Link from "next/link";
 import { useDepartments } from "@/hooks/departments/useDepartments";
 import { useOffices } from "@/hooks/officies/useOffices";
 import { useState } from "react";
-import {useManagers} from "@/hooks/useManagers";
-import {useCreatePublicHolidays} from "@/hooks/publicHolidays/useCreatePublicHolidays";
-import {useEditPublicHolidays} from "@/hooks/publicHolidays/useEditPublicHolidays";
-import {useCreateDepartment} from "@/hooks/departments/useCreateDepartment";
-import {useEditDepartment} from "@/hooks/departments/useEditDepartment";
+import { useCreateDepartment } from "@/hooks/departments/useCreateDepartment";
+import { useEditDepartment } from "@/hooks/departments/useEditDepartment";
 
 export default function DepartmentsPage() {
     const { data: allData } = useDepartments(1, "all", null);
     const { data: offices } = useOffices();
-    const { data: managers } = useManagers();
 
     const [openModal, setOpenModal] = useState(false);
     const [openModalEdit, setOpenModalEdit] = useState(false);
@@ -77,9 +73,7 @@ export default function DepartmentsPage() {
 
         try {
             await createDepartment(payload);
-            setName("");
-            setSelectedOffice("");
-            setSelectedManager("");
+            resetForm();
             setOpenModal(false);
         } catch (error) {
             console.log("Failed to create department:", error);
@@ -104,19 +98,16 @@ export default function DepartmentsPage() {
             manager_id: selectedManager ? parseInt(selectedManager, 10) : null,
         };
 
-        console.log("Edit payload:", payload); // see payload before request
-
         try {
             await editDepartment(payload);
-            setSelectedOffice("");
-            setSelectedManager("");
+            resetForm();
             setOpenModalEdit(false);
         } catch (err) {
             console.log("Failed to edit department:", err.message);
         }
     };
 
-
+    const allDepartments = allData?.data || [];
 
     return (
         <div className="space-y-4 p-6">
@@ -129,6 +120,7 @@ export default function DepartmentsPage() {
                     </BreadcrumbItem>
                 ))}
             </Breadcrumb>
+
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-12">Departments</h2>
 
             <div className="flex justify-end items-end">
@@ -145,7 +137,7 @@ export default function DepartmentsPage() {
                                 key={item.href}
                                 href={item.href}
                                 className={`flex items-center gap-3 p-3 rounded-lg transition
-                  ${isActive ? "bg-blue-100 text-blue-600 dark:bg-blue-900/40" : "hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                                    ${isActive ? "bg-blue-100 text-blue-600 dark:bg-blue-900/40" : "hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                             >
                                 <img
                                     src={item.icon}
@@ -154,8 +146,8 @@ export default function DepartmentsPage() {
                                     style={isActive ? { filter: "brightness(0) saturate(100%) invert(34%) sepia(99%) saturate(2461%) hue-rotate(194deg) brightness(95%) contrast(96%)" } : {}}
                                 />
                                 <span className={`font-medium ${isActive ? "text-blue-600 dark:text-blue-400" : "text-gray-900 dark:text-gray-100"}`}>
-                  {item.label}
-                </span>
+                                    {item.label}
+                                </span>
                             </Link>
                         );
                     })}
@@ -170,20 +162,24 @@ export default function DepartmentsPage() {
                                     <TableHeadCell>Office</TableHeadCell>
                                     <TableHeadCell>Name</TableHeadCell>
                                     <TableHeadCell>Manager</TableHeadCell>
-                                    <TableHeadCell>Employees <br/>count</TableHeadCell>
+                                    <TableHeadCell>Employees<br />count</TableHeadCell>
                                     <TableHeadCell>Actions</TableHeadCell>
                                 </TableRow>
                             </TableHead>
 
                             <TableBody className="divide-y">
-                                {allData?.data?.map((item) => (
+                                {allDepartments.map((item) => (
                                     <TableRow key={item.id} className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
                                         <TableCell className="font-medium text-gray-900 dark:text-white">
-                                            {offices?.data.find((o) => o.id === item?.office_id)?.name}
+                                            {offices?.data.find((o) => o.id === item.office_id)?.name}
                                         </TableCell>
-                                        <TableCell className="font-medium text-gray-900 dark:text-white">{item?.name}</TableCell>
-                                        <TableCell> {managers?.[0]?.office?.departments?.find((o) => o.id === item?.manager_id)?.name}</TableCell>
-                                        <TableCell className="font-medium text-gray-900 dark:text-white">{item?.userCount}</TableCell>
+                                        <TableCell className="font-medium text-gray-900 dark:text-white">{item.name}</TableCell>
+                                        <TableCell className="font-medium text-gray-900 dark:text-white">
+                                            {item.manager?.full_name || "-"}
+                                        </TableCell>
+                                        <TableCell className="font-medium text-gray-900 dark:text-white">
+                                            {item.userCount}
+                                        </TableCell>
                                         <TableCell>
                                             <Button size="xs" color="info" onClick={() => handleEditClick(item)}>
                                                 <img src="/icons/edit.svg" alt="edit" className="w-5 h-5" />
@@ -220,18 +216,20 @@ export default function DepartmentsPage() {
                         </div>
 
                         <div>
-                            <Label htmlFor="add-manager" value="Select Manager" />
+                            <Label htmlFor="add-manager" value="Select Manager (optional)" />
                             <Select
                                 id="add-manager"
                                 value={selectedManager}
                                 onChange={(e) => setSelectedManager(e.target.value)}
                             >
                                 <option value="">Select Manager</option>
-                                {managers?.[0]?.office?.departments?.map((manager) => (
-                                    <option key={manager.id} value={manager.id}>
-                                        {manager.name}
-                                    </option>
-                                ))}
+                                {allDepartments
+                                    .filter((d) => d.manager)
+                                    .map((d) => (
+                                        <option key={d.manager.id} value={d.manager.id}>
+                                            {d.manager.full_name}
+                                        </option>
+                                    ))}
                             </Select>
                         </div>
 
@@ -248,7 +246,7 @@ export default function DepartmentsPage() {
                         </div>
 
                         <div className="flex justify-end space-x-2 pt-2">
-                            <Button color="gray" onClick={() => setOpenModal(false)} type="button">Cancel</Button>
+                            <Button color="gray" type="button" onClick={() => setOpenModal(false)}>Cancel</Button>
                             <Button color="success" type="submit">Save</Button>
                         </div>
                     </form>
@@ -278,18 +276,20 @@ export default function DepartmentsPage() {
                         </div>
 
                         <div>
-                            <Label htmlFor="edit-manager" value="Select Manager" />
+                            <Label htmlFor="edit-manager" value="Select Manager (optional)" />
                             <Select
                                 id="edit-manager"
-                                required
                                 value={selectedManager}
                                 onChange={(e) => setSelectedManager(e.target.value)}
                             >
-                                {managers?.[0]?.office?.departments?.map((manager) => (
-                                    <option key={manager.id} value={manager.id}>
-                                        {manager.name}
-                                    </option>
-                                ))}
+                                <option value="">Select Manager</option>
+                                {allDepartments
+                                    ?.filter((d) => d.manager)
+                                    .map((d) => (
+                                        <option key={d.manager.id} value={d.manager.id}>
+                                            {d?.manager?.full_name}
+                                        </option>
+                                    ))}
                             </Select>
                         </div>
 
@@ -306,7 +306,7 @@ export default function DepartmentsPage() {
                         </div>
 
                         <div className="flex justify-end space-x-2 pt-2">
-                            <Button color="gray" onClick={() => setOpenModalEdit(false)} type="button">Cancel</Button>
+                            <Button color="gray" type="button" onClick={() => setOpenModalEdit(false)}>Cancel</Button>
                             <Button color="info" type="submit">Update</Button>
                         </div>
                     </form>
