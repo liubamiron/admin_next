@@ -1,49 +1,126 @@
 "use client";
 
-import {OrgChartComponent} from "@/lib/OrgChart";
-import {useState, useEffect} from "react";
+import { OrgChartComponent } from "@/lib/OrgChart";
+import { useState, useEffect } from "react";
+import { useOffices } from "@/hooks/officies/useOffices";
+import {useManagers} from "@/hooks/useManagers";
 
 export default function TestPage() {
-    const [data, setData] = useState([]);
-    const [selectedDept, setSelectedDept] = useState(null);
+    const [chartData, setChartData] = useState([]);
+    const [selectedNode, setSelectedNode] = useState(null);
 
-    const departments = [
-        { id: 1, name: "WebNG Global", location: "Global", position: "Chief", image: '/images/users/neil-sims.png', userCount: 5 },
-        { id: 2, parentId: 1, name: "CTO", location: "King", position: "Chief", image: '/images/users/neil-sims.png', userCount: 3 },
-        { id: 3, parentId: 1, name: "CFO", location: "King", position: "Chief", image: '/images/users/neil-sims.png', userCount: 2 },
-        { id: 4, parentId: 2, name: "Lead Dev", location: "King", position: "Chief", image: '/images/users/neil-sims.png', userCount: 4 },
-        { id: 5, parentId: 2, name: "QA Manager", location: "King", position: "Chief", image: '/images/users/neil-sims.png', userCount: 6 },
-    ];
+    const { data: offices = [], isLoading: loadingOffices, isError: errorOffices } = useOffices();
+    const { data: managers = [], isLoading: loadingManagers } = useManagers();
 
+    // Prepare chart data
     useEffect(() => {
-        setData(departments);
-    }, []);
+        if (!offices?.data) return;
 
-    const deptDetails = departments.find(d => d.id === selectedDept);
+        const dataWithRoot = [
+            { id: 0, parentId: null, name: "WebNG Global", type: "root" },
+            ...offices.data.flatMap((office) => {
+                const officeNode = {
+                    id: office.id,
+                    parentId: 0,
+                    name: office.name,
+                    type: "office",
+                    departments: office.departments || [],
+                };
+
+                const departmentNodes = (office.departments || []).map((dept) => ({
+                    id: 1000 + dept.id,
+                    parentId: office.id,
+                    name: dept.name,
+                    type: "department",
+                    manager_id: dept.manager_id || null,
+                }));
+
+                return [officeNode, ...departmentNodes];
+            }),
+        ];
+
+        setChartData(dataWithRoot);
+    }, [offices]);
+
+    if (loadingOffices) return <div>Loading offices...</div>;
+    if (errorOffices) return <div>Failed to load offices</div>;
+
+    // Get manager details by id
+    const getManagerName = (id) => {
+        const manager = managers?.find((m) => m.id === id);
+        return manager ? manager.name : "-";
+    };
+
+    const getIcon = (type) => {
+        if (type === "root") return "/images/logo_sidebar.png";
+        if (type === "office") return "🏢";
+        return "👤";
+    };
 
     return (
-        <div className="flex min-h-screen relative">
-            <div className="flex-1">
-                <OrgChartComponent
-                    data={data}
-                    onNodeClick={(id) => setSelectedDept(id)}
-                />
+        <div className="w-full h-screen relative">
+            <OrgChartComponent
+                data={chartData}
+                onNodeClick={(id) => setSelectedNode(chartData.find((d) => d.id === id))}
+            />
 
-            </div>
+            {/* Sidebar */}
+            {selectedNode && (
+                <div className="fixed right-0 top-12 w-80 h-[70%] bg-white shadow-lg border-l flex flex-col">
+                    <div className="p-4 flex flex-col items-center">
+                        {/* Node Icon */}
+                        {selectedNode.type === "root" ? (
+                            <img
+                                src={getIcon(selectedNode.type)}
+                                className="w-20 h-20 rounded-full mb-2"
+                                alt="logo"
+                            />
+                        ) : (
+                            <div className="w-20 h-20 rounded-full bg-blue-200 flex items-center justify-center text-4xl mb-2">
+                                {getIcon(selectedNode.type)}
+                            </div>
+                        )}
 
-            {/* Right Sidebar */}
-            {deptDetails && (
-                <div className="fixed right-0 top-0 h-full w-80 bg-white shadow-lg border-l p-4 overflow-y-auto">
-                    <h2 className="text-xl font-bold mb-4">{deptDetails.name}</h2>
-                    <img src={deptDetails.image} className="w-20 h-20 rounded-full mb-2" alt={'img_org'}/>
-                    <div className="font-semibold">{deptDetails.location}</div>
-                    <div className="text-gray-500 mb-2">{deptDetails.position}</div>
-                    <div className="bg-blue-100 text-blue-500 p-1 rounded mb-4">
-                        Employees: {deptDetails.userCount}
+                        {/* Node Name */}
+                        <h2 className="text-xl font-bold mb-4">{selectedNode.name}</h2>
+
+                        {/* If office, show departments */}
+                        {selectedNode.type === "office" && (
+                            <div className="w-full overflow-y-auto">
+                                <h3 className="font-semibold mb-2">Departments:</h3>
+                                {selectedNode.departments.length > 0 ? (
+                                    selectedNode.departments.map((dept) => (
+                                        <div
+                                            key={dept.id}
+                                            className="border-b py-1 px-2"
+                                        >
+                                            <div>{dept.name}</div>
+                                            <div className="text-gray-500 text-xs">
+                                                Manager: {dept.manager_id ? getManagerName(dept.manager_id) : "-"}
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div>No departments</div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* If department, show manager */}
+                        {selectedNode.type === "department" && (
+                            <div className="w-full">
+                                <h3 className="font-semibold mb-2">Department Details:</h3>
+                                <div>Name: {selectedNode.name}</div>
+                                <div className="text-gray-500 text-xs">
+                                    Manager: {selectedNode.manager_id ? getManagerName(selectedNode.manager_id) : "-"}
+                                </div>
+                            </div>
+                        )}
                     </div>
+
                     <button
-                        onClick={() => setSelectedDept(null)}
-                        className="w-full bg-gray-200 hover:bg-gray-300 rounded py-2 transition"
+                        onClick={() => setSelectedNode(null)}
+                        className="w-full bg-gray-200 hover:bg-gray-300 rounded py-2 transition mt-auto"
                     >
                         Close
                     </button>
