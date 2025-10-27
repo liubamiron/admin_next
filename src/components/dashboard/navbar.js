@@ -111,7 +111,7 @@ export function DashboardNavbar() {
                         label={
                             <span>
                                 <span className="sr-only">User menu</span>
-                                <Avatar alt="" img="/images/neil-sims.png" rounded size="sm"/>
+                                <Avatar alt="" img="/images/neil-sims.png" rounded size="sm" className="w-[40px] rounded-full" />
                             </span>
                         }
                     >

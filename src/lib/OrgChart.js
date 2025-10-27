@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useEffect } from "react";
-import { OrgChart } from "d3-org-chart";
+import {useRef, useEffect} from "react";
+import {OrgChart} from "d3-org-chart";
 
-export const OrgChartComponent = ({ data, onNodeClick }) => {
+export const OrgChartComponent = ({data, onNodeClick}) => {
     const d3Container = useRef(null);
     const chartRef = useRef(null);
     const onNodeClickRef = useRef(onNodeClick);
@@ -22,7 +22,7 @@ export const OrgChartComponent = ({ data, onNodeClick }) => {
 
             const root = data.find(n => !n.parentId);
 
-            const initialData = data.map(n => ({ ...n, expanded: false }));
+            const initialData = data.map(n => ({...n, expanded: false}));
             if (root) {
                 const rootIndex = initialData.findIndex(n => n.id === root.id);
                 initialData[rootIndex].expanded = true;
@@ -31,23 +31,29 @@ export const OrgChartComponent = ({ data, onNodeClick }) => {
             chart
                 .container(d3Container.current)
                 .data(initialData)
-                .nodeWidth(() => 180)
-                .nodeHeight(() => 125)
+                // .nodeWidth(() => 180)
+                // .nodeHeight(() => 125)
                 .childrenMargin(() => 40)
                 .compactMarginBetween(() => 25)
-                .nodeContent(d => {
+                .nodeContent((d) => {
                     const dept = d.data;
                     return `
-            <div class="p-2 border rounded bg-white cursor-pointer text-center org-node" data-id="${dept.id}">
-              <img src="${dept.image}" alt="${dept.name}" width="50" height="50" style="border-radius:50%; margin-bottom:5px;" />
-              <div><strong>${dept.name} ${dept.lastName || ''}</strong></div>
-              <div>${dept.position}</div>
-              <div>Employees: ${dept.userCount || 0}</div>
-              ${
-                        data.some(n => n.parentId === dept.id)
-                            ? `<button class="expand-btn" data-id="${dept.id}" style="margin-top:5px; padding:2px 6px; border:none; background:#e2e8f0; border-radius:4px; cursor:pointer;">▼</button>`
-                            : ""
-                    }
+            <div class="border rounded-xl shadow-sm bg-white cursor-pointer h-[140px] text-center org-node transition hover:shadow-md" data-id="${dept.id}">
+              <div class="bg-blue-200 h-[20px] rounded-t-xl"></div>
+              <div class="p-4">
+                <div class="flex items-center space-x-4">
+                  <img 
+                    src="${dept.image || "/default-avatar.png"}" 
+                    alt="${dept.name}" 
+                    class="w-12 h-12 rounded-full object-cover border border-gray-300"
+                  />
+                  <div class="flex flex-col items-start">
+                    <span class="font-semibold text-gray-800 text-sm leading-tight">${dept.name}</span>
+                    <span class="text-gray-500 text-xs">${dept.position || ""}</span>
+                    <span class="text-gray-400 text-xs">Employees: ${dept.userCount || 0}</span>
+                  </div>
+                </div>
+              </div>
             </div>
           `;
                 })
@@ -76,5 +82,5 @@ export const OrgChartComponent = ({ data, onNodeClick }) => {
         }
     }, [data]);
 
-    return <div ref={d3Container} />;
+    return <div ref={d3Container}/>;
 };

@@ -8,11 +8,11 @@ export default function TestPage() {
     const [selectedDept, setSelectedDept] = useState(null);
 
     const departments = [
-        { id: 1, name: "CEO", lastName: "King", position: "Chief", image: '/images/users/neil-sims.png', userCount: 5 },
-        { id: 2, parentId: 1, name: "CTO", lastName: "King", position: "Chief", image: '/images/users/neil-sims.png', userCount: 3 },
-        { id: 3, parentId: 1, name: "CFO", lastName: "King", position: "Chief", image: '/images/users/neil-sims.png', userCount: 2 },
-        { id: 4, parentId: 2, name: "Lead Dev", lastName: "King", position: "Chief", image: '/images/users/neil-sims.png', userCount: 4 },
-        { id: 5, parentId: 2, name: "QA Manager", lastName: "King", position: "Chief", image: '/images/users/neil-sims.png', userCount: 6 },
+        { id: 1, name: "WebNG Global", location: "Global", position: "Chief", image: '/images/users/neil-sims.png', userCount: 5 },
+        { id: 2, parentId: 1, name: "CTO", location: "King", position: "Chief", image: '/images/users/neil-sims.png', userCount: 3 },
+        { id: 3, parentId: 1, name: "CFO", location: "King", position: "Chief", image: '/images/users/neil-sims.png', userCount: 2 },
+        { id: 4, parentId: 2, name: "Lead Dev", location: "King", position: "Chief", image: '/images/users/neil-sims.png', userCount: 4 },
+        { id: 5, parentId: 2, name: "QA Manager", location: "King", position: "Chief", image: '/images/users/neil-sims.png', userCount: 6 },
     ];
 
     useEffect(() => {
@@ -36,7 +36,7 @@ export default function TestPage() {
                 <div className="fixed right-0 top-0 h-full w-80 bg-white shadow-lg border-l p-4 overflow-y-auto">
                     <h2 className="text-xl font-bold mb-4">{deptDetails.name}</h2>
                     <img src={deptDetails.image} className="w-20 h-20 rounded-full mb-2" alt={'img_org'}/>
-                    <div className="font-semibold">{deptDetails.name} {deptDetails.lastName}</div>
+                    <div className="font-semibold">{deptDetails.location}</div>
                     <div className="text-gray-500 mb-2">{deptDetails.position}</div>
                     <div className="bg-blue-100 text-blue-500 p-1 rounded mb-4">
                         Employees: {deptDetails.userCount}
