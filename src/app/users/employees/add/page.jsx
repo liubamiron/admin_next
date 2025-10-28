@@ -9,7 +9,8 @@ import {
     Tabs,
     TextInput, Tooltip
 } from "flowbite-react";
-import {HiHome, HiMinus, HiUpload} from "react-icons/hi";
+import {HiHome, HiMinus} from "react-icons/hi";
+import {GoDownload} from "react-icons/go";
 import {useState} from "react";
 import {usePathname} from "next/navigation";
 import dynamic from "next/dynamic";
@@ -695,6 +696,11 @@ export default function EmployeeEditPage() {
                         </div>
                     </TabItem>
                     <TabItem title="Documents">
+                        <div className="flex justify-end">
+                            <Button className="flex items-center gap-2 mb-6">
+                                + New Document
+                            </Button>
+                        </div>
                         <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white dark:bg-gray-800">
                             <Table hoverable={true}>
                                 <TableHead>
@@ -736,14 +742,15 @@ export default function EmployeeEditPage() {
                                                 <TableCell className="text-center text-gray-700 dark:text-gray-300">
                                                     {template?.documents_count || "-"}
                                                 </TableCell>
-                                                <TableCell className="text-center">
+                                                <TableCell className="flex justify-center items-center">
                                                     <Tooltip content="Upload document">
                                                         <Button
                                                             color="gray"
                                                             size="xs"
                                                             onClick={() => handleUpload(template.id)}
+                                                            className="flex items-center justify-center"
                                                         >
-                                                            <HiUpload className="w-4 h-4" />
+                                                            <GoDownload className="w-4 h-4" />
                                                         </Button>
                                                     </Tooltip>
                                                 </TableCell>
@@ -764,10 +771,19 @@ export default function EmployeeEditPage() {
                         </div>
                     </TabItem>
                     <TabItem title="Notes">
+                        <div className="flex justify-end">
+                            <Button className="flex items-center gap-2 mb-6">
+                                + New Note
+                            </Button>
+                        </div>
                     </TabItem>
                     <TabItem title="Day Off">
 
-
+                        <div className="flex justify-end">
+                            <Button className="flex items-center gap-2 mb-6">
+                                + New Off Day
+                            </Button>
+                        </div>
                     </TabItem>
                 </Tabs>
 
