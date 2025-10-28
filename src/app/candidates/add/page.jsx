@@ -79,9 +79,6 @@ export default function CandidateAddPage() {
         }))
         : [];
 
- console.log(officeOptions, 'officiesData')
-
-
     const {
         register,
         handleSubmit,

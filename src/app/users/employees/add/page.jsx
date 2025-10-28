@@ -19,9 +19,41 @@ import {usePositions} from "@/hooks/positions/usePositions";
 import {useOffices} from "@/hooks/officies/useOffices";
 import {reactSelectHeightFix} from "@/components/ui/reactSelectHeightFix";
 import {useTemplates} from "@/hooks/useTemplates";
-
+import {
+    citizenshipOptions, countryOptions,
+    genderOptions,
+    maritalStatusOption, operatorOptions, SHIFT_DAY_OPTIONS,
+    statusOptions,
+    workTimeOptions
+} from "@/components/constants/filterOptions";
+import {useCreateEmployee} from "@/hooks/users/useCreateEmployee";
+import * as toast from "zod";
 
 const Select = dynamic(() => import("react-select"), {ssr: false});
+
+
+const employeeSchema = z.object({
+    first_name: z.string().min(1, "First name is required"),
+    last_name: z.string().min(1, "Last name is required"),
+    email: z.string().email("Invalid email").min(1, "Email is required"),
+    telegram: z.string().optional(),
+    office_id: z.any().optional(),
+    department_id: z.any().optional(),
+    position_id: z.any().optional(),
+    sex: z.string().min(1, "Gender is required"),
+    dob: z.string().min(1, "Date of Birth is required"),
+    phones: z
+        .array(
+            z.object({
+                code: z.string().min(1),
+                phone: z.string().min(1, "Phone is required"),
+                operator: z.string().optional(),
+            })
+        )
+        .nonempty("At least one phone number is required"),
+    file: z.any().optional(),
+});
+
 
 export default function EmployeeEditPage() {
     const pathname = usePathname();
@@ -50,6 +82,55 @@ export default function EmployeeEditPage() {
     const [employeeFiles, setEmployeeFiles] = useState("");
     const { data: templates, isLoading, isError, error } = useTemplates();
 
+    const createEmployeeMutation = useCreateEmployee();
+
+    const handleSaveEmployee = () => {
+        const fd = new FormData();
+
+        // ==== Required fields ====
+        fd.append("first_name", firstName || "");
+        fd.append("last_name", lastName || "");
+        fd.append("phone", phones?.[0]?.phone || ""); // primary phone
+        fd.append("email", email || "");
+        fd.append("sex", gender || "");
+        fd.append("dob", dob || "");
+        fd.append("date_of_placement", placementDate || "");
+
+        // ==== Optional fields ====
+        if (offices) fd.append("office_id", offices.value);
+        if (departments) fd.append("department_id", departments.value);
+        if (positions) fd.append("position_id", positions.value);
+        if (maritalStatus) fd.append("marital_status", maritalStatus);
+        if (citizenship) fd.append("citizenship", citizenship);
+        if (workName) fd.append("work_name", workName);
+        if (corporateEmail) fd.append("corporate_email", corporateEmail);
+        if (officialPosition) fd.append("official_position", officialPosition);
+        if (address) fd.append("address", address);
+
+        // ==== Image/File ====
+        if (selectedFile) fd.append("image", selectedFile);
+
+        // ==== Phones array ====
+        if (phones && phones.length > 0) {
+            fd.append("phones", JSON.stringify(phones));
+        }
+
+        // ==== Optional extra arrays ====
+        if (children?.length) fd.append("children", JSON.stringify(children));
+
+        // ==== Call mutation ====
+        createEmployeeMutation.mutate(fd, {
+            onSuccess: (data) => {
+                console.log("Employee created:", data);
+                toast.success("Employee created successfully!");
+                // Reset form if needed
+            },
+            onError: (error) => {
+                console.log(error);
+            },
+        });
+    };
+
 
     const employeeFilesOptions = [
         {value: "resume", label: "Resume"},
@@ -63,56 +144,6 @@ export default function EmployeeEditPage() {
     ]
 
 
-    const genderOptions = [
-        {value: "male", label: "Male"},
-        {value: "female", label: "Female"},
-        {value: "other", label: "Other"},
-    ];
-    const statusOptions = [
-        {value: "active", label: "Active"},
-        {value: "inactive", label: "Inactive"},
-        {value: "suspended", label: "Suspended"},
-    ];
-    const workTimeOptions = [
-        {value: "full-time", label: "Full-time"},
-        {value: "part-time", label: "Part-time"},
-        {value: "contractor", label: "Contractor"}
-    ]
-    const maritalStatusOption = [
-        {value: "single", label: "Single"},
-        {value: "married", label: "Married"},
-        {value: "divorced", label: "Divorced"},
-    ]
-    const citizenshipOptions = [
-        {value: "md", label: "MDA"},
-        {value: "ro", label: "RO"},
-        {value: "ru", label: "RU"},
-        {value: "us", label: "USA"},
-        {value: "uk", label: "UK"},
-        {value: "fr", label: "France"},
-    ]
-
-    const countryOptions = [
-        {value: "+373", label: "🇲🇩 +373"},
-        {value: "+40", label: "🇷🇴 +40"},
-    ];
-
-    const operatorOptions = [
-        {value: "moldcell", label: "moldcell"},
-        {value: "unite", label: "unite"},
-        {value: "orange", label: "orange"},
-    ];
-
-    const SHIFT_DAY_OPTIONS = [
-        {value: "1", label: "Mon"},
-        {value: "2", label: "Tue"},
-        {value: "3", label: "Wed"},
-        {value: "4", label: "Thu"},
-        {value: "5", label: "Fri"},
-        {value: "6", label: "Sat"},
-        {value: "7", label: "Sun"},
-    ];
-
     const [phones, setPhones] = useState([{
         phone: "", operator: "", countryCode: ""
     }]);
@@ -120,7 +151,7 @@ export default function EmployeeEditPage() {
     const handleFileChange = (event) => {
         const file = event.target.files?.[0];
         if (file) {
-            setFileName(file.name);
+            setFileName(file);
         }
     };
 
@@ -138,8 +169,8 @@ export default function EmployeeEditPage() {
         setPhones(updated);
     };
 
-    function handleUpload(templateId) {
-        // TODO: implement file upload modal or direct upload logic
+    function handleDownload(templateId) {
+        // TODO: implement file download logic
         console.log("Upload for template:", templateId);
     }
 
@@ -747,7 +778,7 @@ export default function EmployeeEditPage() {
                                                         <Button
                                                             color="gray"
                                                             size="xs"
-                                                            onClick={() => handleUpload(template.id)}
+                                                            onClick={() => handleDownload(template.id)}
                                                             className="flex items-center justify-center"
                                                         >
                                                             <GoDownload className="w-4 h-4" />
@@ -790,7 +821,7 @@ export default function EmployeeEditPage() {
             </div>
 
             <div className="flex justify-end mt-6">
-                <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+                <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700" onClick={handleSaveEmployee}>
                     Save Employee
                 </button>
             </div>

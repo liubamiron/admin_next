@@ -19,7 +19,7 @@ import {
     Breadcrumb,
 } from "flowbite-react";
 import { FaFilter } from "react-icons/fa";
-import { useEmployees } from "@/hooks/useEmployees";
+import { useEmployees } from "@/hooks/users/useEmployees";
 import PaginationComponent from "@/components/pagination/PaginationComponent";
 import { useAuthStore } from "@/store/useAuthStore";
 import Select from "react-select";

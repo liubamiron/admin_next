@@ -7,7 +7,7 @@ import {usePathname} from "next/navigation";
 import {HiChevronDown, HiChevronUp} from "react-icons/hi";
 
 import {useSidebarContext} from "@/contexts/sidebar-context";
-import {useEmployees} from "@/hooks/useEmployees";
+import {useEmployees} from "@/hooks/users/useEmployees";
 
 export function SimpleSidebar() {
     const sidebar = useSidebarContext();

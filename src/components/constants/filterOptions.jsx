@@ -30,19 +30,28 @@ export const citizenshipOptions = [
     { value: "fr", label: "France" },
 ];
 
-// export const roleOptions = [
-//     { value: "admin", label: "Admin" },
-//     { value: "employer", label: "Employer" },
-//     { value: "hr", label: "HR" },
-//     { value: "manager", label: "Manager" },
-//     { value: "attorney", label: "Attorney" },
-// ];
-//
-// export const departmentOptions = [
-//     { value: "pf cc", label: "PF CC" },
-//     { value: "pf it", label: "PF IT" },
-//     { value: "ada", label: "ADA" },
-// ];
+export const workTimeOptions = [
+    {value: "full-time", label: "Full-time"},
+    {value: "part-time", label: "Part-time"},
+    {value: "contractor", label: "Contractor"}
+]
+export const maritalStatusOption = [
+    {value: "single", label: "Single"},
+    {value: "married", label: "Married"},
+    {value: "divorced", label: "Divorced"},
+]
+
+
+
+export const SHIFT_DAY_OPTIONS = [
+    {value: "1", label: "Mon"},
+    {value: "2", label: "Tue"},
+    {value: "3", label: "Wed"},
+    {value: "4", label: "Thu"},
+    {value: "5", label: "Fri"},
+    {value: "6", label: "Sat"},
+    {value: "7", label: "Sun"},
+];
 
 export const typeOptions = [
     { value: "full", label: "Full" },
