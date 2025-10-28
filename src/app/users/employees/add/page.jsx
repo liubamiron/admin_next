@@ -5,19 +5,19 @@ import {
     BreadcrumbItem, Button, Datepicker,
     FileInput,
     Label,
-    TabItem,
+    TabItem, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow,
     Tabs,
-    TextInput
+    TextInput, Tooltip
 } from "flowbite-react";
-import {HiHome, HiMinus, HiPlus} from "react-icons/hi";
+import {HiHome, HiMinus, HiUpload} from "react-icons/hi";
 import {useState} from "react";
 import {usePathname} from "next/navigation";
 import dynamic from "next/dynamic";
-import {RiDeleteBin6Fill} from "react-icons/ri";
 import {useDepartments} from "@/hooks/departments/useDepartments";
 import {usePositions} from "@/hooks/positions/usePositions";
 import {useOffices} from "@/hooks/officies/useOffices";
 import {reactSelectHeightFix} from "@/components/ui/reactSelectHeightFix";
+import {useTemplates} from "@/hooks/useTemplates";
 
 
 const Select = dynamic(() => import("react-select"), {ssr: false});
@@ -44,6 +44,23 @@ export default function EmployeeEditPage() {
     const [dob, setDob] = useState("");
     const [citizenship, setCitizenship] = useState("");
     const [maritalStatus, setMaritalStatus] = useState("");
+    const [fileType, setFileType] = useState("");
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [employeeFiles, setEmployeeFiles] = useState("");
+    const { data: templates, isLoading, isError, error } = useTemplates();
+
+
+    const employeeFilesOptions = [
+        {value: "resume", label: "Resume"},
+        {value: "id", label: "ID"},
+        {value: "military_id", label: "Military ID"},
+        {value: "application", label: "Application"},
+        {value: "ordin", label: "Ordin"},
+        {value: "contract", label: "Contract"},
+        {value: "nda", label: "NDA"},
+        {value: "gdpr", label: "GDPR"},
+    ]
+
 
     const genderOptions = [
         {value: "male", label: "Male"},
@@ -85,6 +102,16 @@ export default function EmployeeEditPage() {
         {value: "orange", label: "orange"},
     ];
 
+    const SHIFT_DAY_OPTIONS = [
+        {value: "1", label: "Mon"},
+        {value: "2", label: "Tue"},
+        {value: "3", label: "Wed"},
+        {value: "4", label: "Thu"},
+        {value: "5", label: "Fri"},
+        {value: "6", label: "Sat"},
+        {value: "7", label: "Sun"},
+    ];
+
     const [phones, setPhones] = useState([{
         phone: "", operator: "", countryCode: ""
     }]);
@@ -110,6 +137,10 @@ export default function EmployeeEditPage() {
         setPhones(updated);
     };
 
+    function handleUpload(templateId) {
+        // TODO: implement file upload modal or direct upload logic
+        console.log("Upload for template:", templateId);
+    }
 
     return (
         <div className="p-0 space-y-6 md:p-6">
@@ -392,21 +423,21 @@ export default function EmployeeEditPage() {
                                                 />
                                             </div>
 
-                                        {/* Buttons */}
-                                        <div className="flex items-end gap-2 self-end">
-                                            {index === phones.length - 1 ? (<> {phones.length > 1 && (
-                                                    <Button color="failure" onClick={() => handleRemovePhone(index)}
-                                                            size="xs"
-                                                            className="flex items-center justify-center h-[42px] w-[42px] rounded-lg border bg-red-700 hover:bg-red-800 text-white text-lg"> - {/*<RiDeleteBin6Fill color="darkred" size="xs" />*/} </Button>)}
-                                                    <Button onClick={handleAddPhone}
-                                                            className="flex items-center justify-center h-[42px] w-[42px] rounded-lg border bg-blue-700 hover:bg-blue-800 text-white text-lg"> + </Button> </>) :
-                                                (<Button color="failure" onClick={() => handleRemovePhone(index)}
-                                                         size="xs"
-                                                         className="flex items-center justify-center h-[42px] text-white color-white">
-                                                    <HiMinus/>
-                                                </Button>)
-                                            }
-                                        </div>
+                                            {/* Buttons */}
+                                            <div className="flex items-end gap-2 self-end">
+                                                {index === phones.length - 1 ? (<> {phones.length > 1 && (
+                                                        <Button color="failure" onClick={() => handleRemovePhone(index)}
+                                                                size="xs"
+                                                                className="flex items-center justify-center h-[42px] w-[42px] rounded-lg border bg-red-700 hover:bg-red-800 text-white text-lg"> - {/*<RiDeleteBin6Fill color="darkred" size="xs" />*/} </Button>)}
+                                                        <Button onClick={handleAddPhone}
+                                                                className="flex items-center justify-center h-[42px] w-[42px] rounded-lg border bg-blue-700 hover:bg-blue-800 text-white text-lg"> + </Button> </>) :
+                                                    (<Button color="failure" onClick={() => handleRemovePhone(index)}
+                                                             size="xs"
+                                                             className="flex items-center justify-center h-[42px] text-white color-white">
+                                                        <HiMinus/>
+                                                    </Button>)
+                                                }
+                                            </div>
                                         </div>
                                     </div>
 
@@ -509,32 +540,228 @@ export default function EmployeeEditPage() {
                                 </div>
                             </div>
 
+                            <div className=" rounded-lg p-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800">
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 ">
+                                    <div>
+                                        <label className="block mb-1 font-medium">Start Time</label>
+                                        <input
+                                            type="time"
+                                            className="w-full border rounded px-2 py-1"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block mb-1 font-medium">End Time</label>
+                                        <input
+                                            type="time"
+                                            className="w-full border rounded px-2 py-1"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block mb-1 font-medium">Workdays</label>
+                                        <Select
+                                            isMulti
+                                            options={SHIFT_DAY_OPTIONS}
+                                            // value={SHIFT_DAY_OPTIONS.filter(opt => filters.shift_day.includes(opt.value))}
+                                            // onChange={selected => handleFilterChange("shift_day", selected?.map(opt => opt.value) || [])}
+                                            className="basic-multi-select"
+                                            classNamePrefix="select"
+                                            placeholder="Select Workdays"
+                                            // styles={reactSelectHeightFix}
+                                        />
+                                    </div>
+                                    <div className="flex items-end gap-2 self-end">
+                                        <Button
+                                            color="failure"
+                                            onClick={() => remove(index)}
+                                            size="xs"
+                                            className="flex items-center justify-center h-[42px] w-[42px] rounded-lg border bg-red-700 hover:bg-red-800 text-white text-lg"
+                                        >
+                                            −
+                                        </Button>
 
+                                        <Button
+                                            color="blue"
+                                            onClick={() =>
+                                                append({ code: "+373", phone: "", operator: "" })
+                                            }
+                                            size="xs"
+                                            className="flex items-center justify-center h-[42px] w-[42px] rounded-lg border bg-blue-700 hover:bg-blue-800 text-white text-lg"
+                                        >
+                                            +
+                                        </Button>
+                                    </div>
+
+                                </div>
+                            </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
-                                {/* Email */}
-                                <div className="flex flex-col space-y-2">
-                                    <Label htmlFor="email">Email Address</Label>
-                                    <TextInput id="email" type="email" placeholder="john@example.com"/>
+                                <div>
+                                    <div className="mb-1 block">
+                                        <Label htmlFor="dob">Date of Placement</Label>
+                                    </div>
+                                    <Datepicker
+                                        selected={dob ? new Date(dob) : null}
+                                        onChange={(date) => {
+                                            if (date instanceof Date && !isNaN(date)) {
+                                                // Format in local time to YYYY-MM-DD
+                                                const year = date.getFullYear();
+                                                const month = String(date.getMonth() + 1).padStart(2, "0"); // months are 0-indexed
+                                                const day = String(date.getDate()).padStart(2, "0");
+
+                                                const formattedDate = `${year}-${month}-${day}`;
+                                                setDob(formattedDate);
+                                            } else {
+                                                setDob("");
+                                                console.warn("Invalid date selected:", date);
+                                            }
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <div className="mb-1 block">
+                                        <Label htmlFor="dob">Date of Dismissal</Label>
+                                    </div>
+                                    <Datepicker
+                                        selected={dob ? new Date(dob) : null}
+                                        onChange={(date) => {
+                                            if (date instanceof Date && !isNaN(date)) {
+                                                // Format in local time to YYYY-MM-DD
+                                                const year = date.getFullYear();
+                                                const month = String(date.getMonth() + 1).padStart(2, "0"); // months are 0-indexed
+                                                const day = String(date.getDate()).padStart(2, "0");
+
+                                                const formattedDate = `${year}-${month}-${day}`;
+                                                setDob(formattedDate);
+                                            } else {
+                                                setDob("");
+                                                console.warn("Invalid date selected:", date);
+                                            }
+                                        }}
+                                    />
+
                                 </div>
 
-                                {/* Position */}
-                                <div className="flex flex-col space-y-2">
-                                    <Label htmlFor="position">Position</Label>
-                                    <TextInput id="position" placeholder="Position"/>
-                                </div>
-
-                                {/* Department */}
-                                <div className="flex flex-col space-y-2 md:col-span-2">
-                                    <Label htmlFor="department">Department</Label>
-                                    <TextInput id="department" placeholder="Department"/>
-                                </div>
                             </div>
                         </div>
                     </TabItem>
                     <TabItem title="Files">
+                        <div className=" rounded-lg p-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
+
+                            <div className="flex flex-col gap-2">
+                                <div id="fileUpload" className="max-w-md">
+                                    <Label className="mb-2 block" htmlFor="file">
+                                        Upload file
+                                    </Label>
+                                    <FileInput id="file"/>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-medium text-gray-700">Select file type</label>
+                                <Select
+                                    id="file-type"
+                                    options={employeeFilesOptions}
+                                    value={employeeFiles}
+                                    onChange={setEmployeeFiles}
+                                    placeholder="Select an option..."
+                                    // styles={reactSelectHeightFix}
+                                />
+                            </div>
+                            <div className="flex items-end gap-2 self-end">
+                                <Button
+                                    color="failure"
+                                    onClick={() => remove(index)}
+                                    size="xs"
+                                    className="flex items-center justify-center h-[42px] w-[42px] rounded-lg border bg-red-700 hover:bg-red-800 text-white text-lg"
+                                >
+                                    −
+                                </Button>
+
+                                <Button
+                                    color="blue"
+                                    onClick={() =>
+                                        append({ code: "+373", phone: "", operator: "" })
+                                    }
+                                    size="xs"
+                                    className="flex items-center justify-center h-[42px] w-[42px] rounded-lg border bg-blue-700 hover:bg-blue-800 text-white text-lg"
+                                >
+                                    +
+                                </Button>
+                            </div>
+
+                        </div>
+
+                        </div>
                     </TabItem>
                     <TabItem title="Documents">
+                        <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white dark:bg-gray-800">
+                            <Table hoverable={true}>
+                                <TableHead>
+                                    <TableRow>
+                                    <TableHeadCell className="font-semibold text-gray-700 dark:text-gray-200">
+                                        Name
+                                    </TableHeadCell>
+                                    <TableHeadCell className="font-semibold text-gray-700 dark:text-gray-200">
+                                        Created At
+                                    </TableHeadCell>
+                                    <TableHeadCell className="font-semibold text-gray-700 dark:text-gray-200">
+                                        Created By
+                                    </TableHeadCell>
+                                    <TableHeadCell className="font-semibold text-gray-700 dark:text-gray-200 text-center">
+                                        Nr Documents
+                                    </TableHeadCell>
+                                    <TableHeadCell className="text-center font-semibold text-gray-700 dark:text-gray-200">
+                                        Action
+                                    </TableHeadCell>
+                                    </TableRow>
+                                </TableHead>
+
+                                <TableBody className="divide-y">
+                                    {templates?.length > 0 ? (
+                                        templates.map((template) => (
+                                            <TableRow
+                                                key={template.id}
+                                                className="bg-white dark:bg-gray-900 dark:border-gray-700"
+                                            >
+                                                <TableCell className="font-medium text-gray-900 dark:text-gray-100">
+                                                    {template.name}
+                                                </TableCell>
+                                                <TableCell className="text-gray-700 dark:text-gray-300">
+                                                    {new Date(template.created_at).toLocaleDateString()}
+                                                </TableCell>
+                                                <TableCell className="text-gray-700 dark:text-gray-300">
+                                                    {template?.created_by || "—"}
+                                                </TableCell>
+                                                <TableCell className="text-center text-gray-700 dark:text-gray-300">
+                                                    {template?.documents_count || "-"}
+                                                </TableCell>
+                                                <TableCell className="text-center">
+                                                    <Tooltip content="Upload document">
+                                                        <Button
+                                                            color="gray"
+                                                            size="xs"
+                                                            onClick={() => handleUpload(template.id)}
+                                                        >
+                                                            <HiUpload className="w-4 h-4" />
+                                                        </Button>
+                                                    </Tooltip>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell
+                                                colSpan={5}
+                                                className="text-center py-6 text-gray-500 dark:text-gray-400"
+                                            >
+                                                No templates found.
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </div>
                     </TabItem>
                     <TabItem title="Notes">
                     </TabItem>

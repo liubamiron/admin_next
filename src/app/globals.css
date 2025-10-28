@@ -2,7 +2,9 @@
 @plugin 'flowbite-react/plugin/tailwindcss';
 
 @source '../.flowbite-react/class-list.json';
+@source '../../node_modules/flowbite-react';
 @source '../../node_modules/flowbite-datepicker';
+@source '../../node_modules/flowbite';
 
 @custom-variant dark (&:is(.dark *));
 

@@ -9,7 +9,7 @@ export default function EmployeeViewPage() {
     return (
         <div>
             <h2 className="text-xl font-semibold mb-4">View Employee {id}</h2>
-            {/* Form content */}
+
         </div>
     );
 }
