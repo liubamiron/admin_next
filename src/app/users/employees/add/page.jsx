@@ -181,10 +181,6 @@ export default function EmployeeAddPage() {
     const router = useRouter();
 
     useEffect(() => setMounted(true), []);
-
-    const createEmployee = useCreateEmployee();
-
-
     const [phones, setPhones] = useState([{
         phone: "", operator: "", countryCode: ""
     }]);
@@ -239,6 +235,10 @@ export default function EmployeeAddPage() {
             },],
         },
     });
+
+    useEffect(() => {
+        console.log("Form errors:", errors);
+    }, [errors]);
 
 
 // ✅ Give each useFieldArray its own name
@@ -313,6 +313,11 @@ export default function EmployeeAddPage() {
         createEmployeeMutation.mutate(formData);
     };
 
+    if (!mounted)
+        return <div className="text-center text-gray-500">Loading form...</div>;
+
+
+
     return (
         <div className="p-0 space-y-6 md:p-6">
             {/* Breadcrumb */}
@@ -328,7 +333,13 @@ export default function EmployeeAddPage() {
             <h2 className="text-xl font-semibold mb-4">Add Employee</h2>
 
             {/* Two-column layout */}
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    console.log("Raw submit triggered");
+                    handleSubmit(onSubmit)(e);
+                }}
+            >
                 <div className="grid grid-cols-1  lg:grid-cols-[30%_70%] gap-6">
                     {/* Left Column */}
                     <div className="space-y-4 bg-white p-4 rounded-lg shadow dark:bg-gray-800">
@@ -498,6 +509,7 @@ export default function EmployeeAddPage() {
                                         <div className="flex flex-col space-y-2">
                                             <Label htmlFor="first_name">First Name</Label>
                                             <TextInput id="name" placeholder="First Name"/>
+                                            {errors.first_name && <p className="text-red-500 text-sm">{errors.first_name.message}</p>}
                                         </div>
                                         <div className="flex flex-col space-y-2">
                                             <Label htmlFor="last_name">Last Name</Label>
