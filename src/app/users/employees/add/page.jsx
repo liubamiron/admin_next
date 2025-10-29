@@ -187,9 +187,9 @@ export default function EmployeeEditPage() {
     }]);
 
     const {
+        register,
         control,
         handleSubmit,
-        register,
         setValue,
         getValues,
         formState: {errors},
@@ -296,42 +296,18 @@ export default function EmployeeEditPage() {
         setPhones(updated);
     };
 
+    const createEmployeeMutation = useCreateEmployee();
+
+
     const onSubmit = async (data) => {
-        console.log("Form submitted:", data);
+        console.log("Submitting data:", data);
 
-        try {
-            const formData = new FormData();
-            Object.entries(data).forEach(([key, value]) => {
-                if (key === "phones") {
-                    formData.append("phone", JSON.stringify(value));
-                } else if (key === "file" && value) {
-                    formData.append("file", value);
-                } else {
-                    formData.append(key, value || "");
-                }
-            });
+        const formData = new FormData();
+        Object.entries(data).forEach(([key, value]) => {
+            formData.append(key, value);
+        });
 
-            await createEmployee.mutateAsync(formData);
-            setSuccessMsg("Employee created successfully!");
-            console.log("✅ Employee created successfully!");
-            setTimeout(() => {
-                router.push("/users/employees");
-            }, 5000);
-        } catch (err) {
-            console.error("❌ Error:", err);
-            let rawMsg = err?.response?.data?.message || err?.message || "Failed to create employee. Please try again.";
-
-            // Extract from "Key" to first period
-            const keyIndex = rawMsg.indexOf("Key");
-            let cleanMsg = rawMsg;
-            if (keyIndex !== -1) {
-                const periodIndex = rawMsg.indexOf("(Connection: pgsql", keyIndex);
-                cleanMsg = periodIndex !== -1 ? rawMsg.slice(keyIndex, periodIndex + 1) : rawMsg.slice(keyIndex);
-            }
-
-            setSuccessMsg("");
-            setErrorMsg(cleanMsg);
-        }
+        createEmployeeMutation.mutate(formData);
     };
 
     return (
