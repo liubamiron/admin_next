@@ -34,84 +34,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 
 const Select = dynamic(() => import("react-select"), {ssr: false});
 
-const employeeSchema = z.object({
-    image: z.any().optional(),
-    status: z.any().optional(),
-    type: z.any().optional(),
-    date_placement: z.string().optional(),
-    date_dismissal: z.string().min(1, "Date of Dismissal is required"),
-    first_name: z.string().min(1, "First name is required"),
-    last_name: z.string().min(1, "Last name is required"),
-    sex: z.string().min(1, "Gender is required"),
-    dob: z.string().min(1, "Date of Birth is required"),
-    email: z.string().email("Invalid email").min(1, "Email is required"),
 
-    marital_status: z.string().optional(),
-    citizenship: z.string().optional(),
-    address: z.string().optional(),
-    telegram: z.string().optional(),
-    education: z.string().optional(),
-    languages: z.string().optional(),
-    transport_type: z.string().optional(),
-    driver_license: z.string().optional(),
-    phones: z
-        .array(
-            z.object({
-                code: z.string().min(1),
-                phone: z.string().min(1, "Phone is required"),
-                operator: z.string().optional(),
-            })
-        )
-        .nonempty("At least one phone number is required"),
-
-    primary_contact: z.string().optional(),
-    primary_contact_phone: z
-        .array(
-            z.object({
-                code: z.string().min(1).optional(),
-                phone: z.string().optional(),
-                operator: z.string().optional(),
-            })
-        )
-        .optional(),
-
-    children: z
-        .array(
-            z.object({
-                name: z.string().min(1, "Child name is required"),
-                gender: z.string().min(1, "Child gender is required"),
-                dob: z.string().min(1, "Child DOB is required"),
-            })
-        )
-        .optional(),
-
-    // company info
-    office_id: z.any().optional(),
-    department_id: z.any().optional(),
-    position_id: z.any().optional(),
-    official_position_id: z.any().optional(),
-    work_name: z.string().optional(),
-    work_email: z.string().email("Invalid email").optional(),
-    shifts: z
-        .array(
-            z.object({
-                start_time: z.string().min(1, "Start time is required"),
-                end_time: z.string().min(1, "End time is required"),
-                work_days: z
-                    .array(z.string().min(1))
-                    .nonempty("At least one work day is required"),
-            })
-        )
-        .optional(),
-    files: z
-        .array(
-            z.object({
-                file_type: z.string().min(1, "File type is required"),
-                file: z.any().optional(),
-            })
-        )
-        .optional(),
-});
 
 // documents: z
 //     .array(
@@ -140,7 +63,7 @@ const employeeSchema = z.object({
 //     .optional(),
 
 
-export default function EmployeeEditPage() {
+export default function EmployeeAddPage() {
     const [mounted, setMounted] = useState(false);
     const [successMsg, setSuccessMsg] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
@@ -152,6 +75,86 @@ export default function EmployeeEditPage() {
         const href = "/" + segments.slice(0, idx + 1).join("/");
         return {name: seg[0].toUpperCase() + seg.slice(1), href};
     });
+
+    const employeeSchema = z.object({
+        image: z.any().optional(),
+        status: z.any().optional(),
+        type: z.any().optional(),
+        date_placement: z.string().optional(),
+        date_dismissal: z.string().min(1, "Date of Dismissal is required"),
+        first_name: z.string().min(1, "First name is required"),
+        last_name: z.string().min(1, "Last name is required"),
+        sex: z.string().min(1, "Gender is required"),
+        dob: z.string().min(1, "Date of Birth is required"),
+        email: z.string().email("Invalid email").min(1, "Email is required"),
+
+        marital_status: z.string().optional(),
+        citizenship: z.string().optional(),
+        address: z.string().optional(),
+        telegram: z.string().optional(),
+        education: z.string().optional(),
+        languages: z.string().optional(),
+        transport_type: z.string().optional(),
+        driver_license: z.string().optional(),
+        phones: z
+            .array(
+                z.object({
+                    code: z.string().min(1),
+                    phone: z.string().min(1, "Phone is required"),
+                    operator: z.string().optional(),
+                })
+            )
+            .nonempty("At least one phone number is required"),
+
+        primary_contact: z.string().optional(),
+        primary_contact_phone: z
+            .array(
+                z.object({
+                    code: z.string().min(1).optional(),
+                    phone: z.string().optional(),
+                    operator: z.string().optional(),
+                })
+            )
+            .optional(),
+
+        children: z
+            .array(
+                z.object({
+                    name: z.string().min(1, "Child name is required"),
+                    gender: z.string().min(1, "Child gender is required"),
+                    dob: z.string().min(1, "Child DOB is required"),
+                })
+            )
+            .optional(),
+
+        // company info
+        office_id: z.any().optional(),
+        department_id: z.any().optional(),
+        position_id: z.any().optional(),
+        official_position_id: z.any().optional(),
+        work_name: z.string().optional(),
+        work_email: z.string().email("Invalid email").optional(),
+        shifts: z
+            .array(
+                z.object({
+                    start_time: z.string().min(1, "Start time is required"),
+                    end_time: z.string().min(1, "End time is required"),
+                    work_days: z
+                        .array(z.string().min(1))
+                        .nonempty("At least one work day is required"),
+                })
+            )
+            .optional(),
+        files: z
+            .array(
+                z.object({
+                    file_type: z.string().min(1, "File type is required"),
+                    file: z.any().optional(),
+                })
+            )
+            .optional(),
+    });
+
     const {data: departmentsData = [], isLoading: depLoading} = useDepartments();
     const {data: positionsData = [], isLoading: posLoading} = usePositions();
     const {data: officesData = [], isLoading: offLoading} = useOffices();
