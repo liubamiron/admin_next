@@ -3,11 +3,11 @@ import Cookies from "js-cookie";
 
 const host = process.env.NEXT_PUBLIC_HOST;
 
-export function useCreateEmployee() {
+export function useCreateEmployee(formData) {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (formData) => {
+        mutationFn: async () => {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
