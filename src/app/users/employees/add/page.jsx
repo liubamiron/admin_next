@@ -19,6 +19,8 @@ import {usePositions} from "@/hooks/positions/usePositions";
 import {useOffices} from "@/hooks/officies/useOffices";
 import {reactSelectHeightFix} from "@/components/ui/reactSelectHeightFix";
 import {useTemplates} from "@/hooks/useTemplates";
+import { Controller } from "react-hook-form";
+
 import {
     citizenshipOptions, countryOptions, driverLicenseOptions, educationOptions, employeeFilesOptions,
     genderOptions, languagesOptions,
@@ -480,23 +482,51 @@ export default function EmployeeAddPage() {
                         <div className="mb-2 block">
                             <Label htmlFor="datepicker2">Date of Dismissal</Label>
                         </div>
-                        <Datepicker
-                            selected={dismissalDate ? new Date(dismissalDate) : null}
-                            onChange={(date) => {
-                                if (date instanceof Date && !isNaN(date)) {
-                                    // Format in local time to YYYY-MM-DD
-                                    const year = date.getFullYear();
-                                    const month = String(date.getMonth() + 1).padStart(2, "0"); // months are 0-indexed
-                                    const day = String(date.getDate()).padStart(2, "0");
 
-                                    const formattedDate = `${year}-${month}-${day}`;
-                                    setDismissalDate(formattedDate);
-                                } else {
-                                    setDismissalDate("");
-                                    console.warn("Invalid date selected:", date);
-                                }
-                            }}
+                        <Controller
+                            name="date_dismissal"
+                            control={control}
+                            render={({ field }) => (
+                                <>
+                                    <div className="mb-2 block">
+                                        <Label htmlFor="datepicker2">Date of Dismissal</Label>
+                                    </div>
+                                    <Datepicker
+                                        selected={field.value ? new Date(field.value) : null}
+                                        onChange={(date) => {
+                                            if (date instanceof Date && !isNaN(date)) {
+                                                const year = date.getFullYear();
+                                                const month = String(date.getMonth() + 1).padStart(2, "0");
+                                                const day = String(date.getDate()).padStart(2, "0");
+                                                field.onChange(`${year}-${month}-${day}`);
+                                            } else {
+                                                field.onChange("");
+                                            }
+                                        }}
+                                    />
+                                    {errors.date_dismissal && (
+                                        <p className="text-red-500 text-sm">{errors.date_dismissal.message}</p>
+                                    )}
+                                </>
+                            )}
                         />
+                        {/*<Datepicker*/}
+                        {/*    selected={dismissalDate ? new Date(dismissalDate) : null}*/}
+                        {/*    onChange={(date) => {*/}
+                        {/*        if (date instanceof Date && !isNaN(date)) {*/}
+                        {/*            // Format in local time to YYYY-MM-DD*/}
+                        {/*            const year = date.getFullYear();*/}
+                        {/*            const month = String(date.getMonth() + 1).padStart(2, "0"); // months are 0-indexed*/}
+                        {/*            const day = String(date.getDate()).padStart(2, "0");*/}
+
+                        {/*            const formattedDate = `${year}-${month}-${day}`;*/}
+                        {/*            setDismissalDate(formattedDate);*/}
+                        {/*        } else {*/}
+                        {/*            setDismissalDate("");*/}
+                        {/*            console.warn("Invalid date selected:", date);*/}
+                        {/*        }*/}
+                        {/*    }}*/}
+                        {/*/>*/}
                     </div>
 
                     {/* Right Column */}
