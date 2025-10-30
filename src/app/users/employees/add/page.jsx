@@ -355,13 +355,21 @@ export default function EmployeeAddPage() {
         try {
             const formData = new FormData();
 
-            formData.append("first_name", data.first_name);
-            formData.append("last_name", data.last_name);
-            formData.append("dob", data.dob);
-            formData.append("date_of_placement", data.date_of_placement);
-            formData.append("email", data.email);
-            formData.append("sex", data.sex);
-            formData.append("phone",  "+37312121212");
+            formData.append("first_name", "testL");
+            formData.append("last_name", "testM");
+            formData.append("date_of_placement", "2025-01-11");
+            formData.append("dob", "2011-01-22");
+            formData.append("email", "teserereail@gmail.com");
+            formData.append("phone", "+373157655");
+            formData.append("sex", "female");
+
+            // formData.append("first_name", data.first_name);
+            // formData.append("last_name", data.last_name);
+            // formData.append("dob", data.dob);
+            // formData.append("date_of_placement", data.date_of_placement);
+            // formData.append("email", data.email);
+            // formData.append("sex", data.sex);
+            // formData.append("phone",  "+37312121212");
 
             // const fullPhone = `${data.phone.code}${data.phone.phone}`;
 
