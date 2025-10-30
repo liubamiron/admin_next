@@ -305,7 +305,6 @@ export default function EmployeeAddPage() {
     //             (data.phone?.code || "") + (data.phone?.phone || "");
     //         formData.append("phone", fullPhone);
     //
-    //         // Primary contact phone as string
     //         formData.append("primary_contact_phone", data.primary_contact_phone || "");
     //
     //         // Children array as JSON string
