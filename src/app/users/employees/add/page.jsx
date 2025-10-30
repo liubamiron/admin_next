@@ -364,7 +364,7 @@ export default function EmployeeAddPage() {
 
 
             // const fullPhone = `${data.phone.code}${data.phone.phone}`;
-            formData.append("phone",  data.primary_contact_phone || "");
+            formData.append("phone",  "+37312121212");
 
             // formData.append("primary_contact_phone", data.primary_contact_phone || "");
             // formData.append("children", JSON.stringify(data.children || []));
