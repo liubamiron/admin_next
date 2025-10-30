@@ -96,15 +96,16 @@ export default function EmployeeAddPage() {
         languages: z.string().optional(),
         transport_type: z.string().optional(),
         driver_license: z.string().optional(),
-        phone: z
-            .array(
-                z.object({
-                    code: z.string().min(1),
-                    phone: z.string().min(1, "Phone is required"),
-                    operator: z.string().optional(),
-                })
-            )
-            .nonempty("At least one phone number is required"),
+        phone:z.string().min(1, 'phone is required'),
+        // phone: z
+        //     .array(
+        //         z.object({
+        //             code: z.string().min(1),
+        //             phone: z.string().min(1, "Phone is required"),
+        //             operator: z.string().optional(),
+        //         })
+        //     )
+        //     .nonempty("At least one phone number is required"),
 
         primary_contact: z.string().optional(),
         primary_contact_phone: z.string().optional(),
