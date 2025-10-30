@@ -293,28 +293,79 @@ export default function EmployeeAddPage() {
     const createEmployeeMutation = useCreateEmployee();
 
 
-    const onSubmit = (data) => {
-        console.log("Raw form data:", data);
+    // const onSubmit = (data) => {
+    //     console.log("Raw form data:", data);
+    //
+    //     const formData = new FormData();
+    //
+    //     // Loop through keys
+    //     Object.entries(data).forEach(([key, value]) => {
+    //         if (Array.isArray(value) || typeof value === "object") {
+    //             // Convert objects/arrays to JSON string
+    //             formData.append(key, JSON.stringify(value));
+    //         } else {
+    //             formData.append(key, value);
+    //         }
+    //     });
+    //
+    //     // Log FormData content
+    //     for (let [key, val] of formData.entries()) {
+    //         console.log(key, val);
+    //     }
+    //
+    //     createEmployeeMutation.mutate(formData);
+    // };
 
-        const formData = new FormData();
+    const onSubmit = async (data) => {
+        try {
+            const formData = new FormData();
 
-        // Loop through keys
-        Object.entries(data).forEach(([key, value]) => {
-            if (Array.isArray(value) || typeof value === "object") {
-                // Convert objects/arrays to JSON string
-                formData.append(key, JSON.stringify(value));
-            } else {
-                formData.append(key, value);
+            Object.entries(data).forEach(([key, value]) => {
+                // Phones array → backend expects "phone" as JSON string
+                if (key === "phones") {
+                    formData.append("phone", JSON.stringify(value));
+                }
+                // primary_contact_phone → string or empty
+                else if (key === "primary_contact_phone") {
+                    // Convert array/object to string if needed
+                    if (Array.isArray(value)) {
+                        formData.append(key, value.map(v => v.phone).join(", "));
+                    } else {
+                        formData.append(key, value || "");
+                    }
+                }
+                // children → JSON string or empty
+                else if (key === "children") {
+                    formData.append(key, value ? JSON.stringify(value) : "");
+                }
+                // image → append file if exists
+                else if (key === "image" && value) {
+                    formData.append(key, value);
+                }
+                else {
+                    // All other fields as string (or empty string if null/undefined)
+                    formData.append(key, value || "");
+                }
+            });
+
+            // Debug: log FormData content
+            for (let [key, val] of formData.entries()) {
+                console.log(key, val);
             }
-        });
 
-        // Log FormData content
-        for (let [key, val] of formData.entries()) {
-            console.log(key, val);
+            await createEmployeeMutation.mutateAsync(formData);
+
+            console.log("✅ Employee created successfully!");
+            setSuccessMsg("Employee created successfully!");
+            setTimeout(() => router.push("/users/employees"), 2000);
+
+        } catch (err) {
+            console.error("❌ Error:", err);
+            const rawMsg = err?.response?.data?.message || err?.message || "Failed to create employee.";
+            setErrorMsg(rawMsg);
         }
-
-        createEmployeeMutation.mutate(formData);
     };
+
     if (!mounted)
         return <div className="text-center text-gray-500">Loading form...</div>;
 
