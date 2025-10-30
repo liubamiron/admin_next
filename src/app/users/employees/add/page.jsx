@@ -307,7 +307,7 @@ export default function EmployeeAddPage() {
     //
     //         formData.append("primary_contact_phone", data.primary_contact_phone || "");
     //
-    //         // Children array as JSON string
+
     //         formData.append("children", JSON.stringify(data.children || []));
     //
     //         // Image file if exists
