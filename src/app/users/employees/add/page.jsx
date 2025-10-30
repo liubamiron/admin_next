@@ -317,42 +317,52 @@ export default function EmployeeAddPage() {
     // };
 
     const onSubmit = async (data) => {
+        console.log("Raw form data:", data);
+
         try {
             const formData = new FormData();
 
-            Object.entries(data).forEach(([key, value]) => {
-                // Phones array → backend expects "phone" as JSON string
-                if (key === "phones") {
-                    formData.append("phone", JSON.stringify(value));
-                }
-                // primary_contact_phone → string or empty
-                else if (key === "primary_contact_phone") {
-                    // Convert array/object to string if needed
-                    if (Array.isArray(value)) {
-                        formData.append(key, value.map(v => v.phone).join(", "));
-                    } else {
-                        formData.append(key, value || "");
-                    }
-                }
-                // children → JSON string or empty
-                else if (key === "children") {
-                    formData.append(key, value ? JSON.stringify(value) : "");
-                }
-                // image → append file if exists
-                else if (key === "image" && value) {
-                    formData.append(key, value);
-                }
-                else {
-                    // All other fields as string (or empty string if null/undefined)
-                    formData.append(key, value || "");
-                }
+            // Append required string fields
+            formData.append("first_name", data.first_name);
+            formData.append("last_name", data.last_name);
+            formData.append("date_of_placement", data.date_of_placement);
+            formData.append("dob", data.dob);
+            formData.append("email", data.email);
+            formData.append("sex", data.sex);
+
+            // Phone: take first phone in array or empty string
+            formData.append("phone", data.phones?.[0]?.phone || "");
+
+            // Primary contact phone as string
+            formData.append("primary_contact_phone", data.primary_contact_phone || "");
+
+            // Children array as JSON string
+            formData.append("children", JSON.stringify(data.children || []));
+
+            // Image file if exists
+            if (data.image instanceof File) {
+                formData.append("image", data.image);
+            }
+
+            // Optional fields: append only if not empty
+            const optionalFields = [
+                "status", "type", "date_of_dismissal", "marital_status",
+                "citizenship", "address", "telegram", "education",
+                "languages", "transport_type", "driver_license",
+                "office_id", "department_id", "position_id",
+                "work_name", "work_email"
+            ];
+
+            optionalFields.forEach((field) => {
+                if (data[field]) formData.append(field, data[field]);
             });
 
-            // Debug: log FormData content
+            // Log FormData for debugging
             for (let [key, val] of formData.entries()) {
                 console.log(key, val);
             }
 
+            // Send to backend
             await createEmployeeMutation.mutateAsync(formData);
 
             console.log("✅ Employee created successfully!");
@@ -365,6 +375,7 @@ export default function EmployeeAddPage() {
             setErrorMsg(rawMsg);
         }
     };
+
 
     if (!mounted)
         return <div className="text-center text-gray-500">Loading form...</div>;
