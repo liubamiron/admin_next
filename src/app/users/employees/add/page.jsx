@@ -367,7 +367,7 @@ export default function EmployeeAddPage() {
             formData.append("phone",  data.primary_contact_phone || "");
 
             formData.append("primary_contact_phone", data.primary_contact_phone || "");
-            formData.append("children", JSON.stringify(data.children || []));
+            // formData.append("children", JSON.stringify(data.children || []));
 
             if (data.image instanceof File) {
                 formData.append("image", data.image);
