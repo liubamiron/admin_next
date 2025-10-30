@@ -363,8 +363,8 @@ export default function EmployeeAddPage() {
             formData.append("sex", data.sex);
 
 
-            const fullPhone = `${data.phone.code}${data.phone.phone}`;
-            formData.append("phone", fullPhone);
+            // const fullPhone = `${data.phone.code}${data.phone.phone}`;
+            formData.append("phone",  data.primary_contact_phone || "");
 
             formData.append("primary_contact_phone", data.primary_contact_phone || "");
             formData.append("children", JSON.stringify(data.children || []));
@@ -373,17 +373,17 @@ export default function EmployeeAddPage() {
                 formData.append("image", data.image);
             }
 
-            const optionalFields = [
-                "status", "type", "date_of_dismissal", "marital_status",
-                "citizenship", "address", "telegram", "education",
-                "languages", "transport_type", "driver_license",
-                "office_id", "department_id", "position_id",
-                "work_name", "work_email"
-            ];
-
-            optionalFields.forEach((field) => {
-                if (data[field]) formData.append(field, data[field]);
-            });
+            // const optionalFields = [
+            //     "status", "type", "date_of_dismissal", "marital_status",
+            //     "citizenship", "address", "telegram", "education",
+            //     "languages", "transport_type", "driver_license",
+            //     "office_id", "department_id", "position_id",
+            //     "work_name", "work_email"
+            // ];
+            //
+            // optionalFields.forEach((field) => {
+            //     if (data[field]) formData.append(field, data[field]);
+            // });
 
             for (let [key, val] of formData.entries()) {
                 console.log(key, val);
