@@ -366,7 +366,7 @@ export default function EmployeeAddPage() {
             // const fullPhone = `${data.phone.code}${data.phone.phone}`;
             formData.append("phone",  data.primary_contact_phone || "");
 
-            formData.append("primary_contact_phone", data.primary_contact_phone || "");
+            // formData.append("primary_contact_phone", data.primary_contact_phone || "");
             // formData.append("children", JSON.stringify(data.children || []));
 
             if (data.image instanceof File) {
