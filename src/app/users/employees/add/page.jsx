@@ -293,17 +293,28 @@ export default function EmployeeAddPage() {
     const createEmployeeMutation = useCreateEmployee();
 
 
-    const onSubmit = async (data) => {
-        console.log("Submitting data:", data);
+    const onSubmit = (data) => {
+        console.log("Raw form data:", data);
 
         const formData = new FormData();
+
+        // Loop through keys
         Object.entries(data).forEach(([key, value]) => {
-            formData.append(key, value);
+            if (Array.isArray(value) || typeof value === "object") {
+                // Convert objects/arrays to JSON string
+                formData.append(key, JSON.stringify(value));
+            } else {
+                formData.append(key, value);
+            }
         });
+
+        // Log FormData content
+        for (let [key, val] of formData.entries()) {
+            console.log(key, val);
+        }
 
         createEmployeeMutation.mutate(formData);
     };
-
     if (!mounted)
         return <div className="text-center text-gray-500">Loading form...</div>;
 
@@ -484,7 +495,6 @@ export default function EmployeeAddPage() {
                                 )}
                             </div>
 
-                            {/* Date of Dismissal (Optional) */}
                             <div>
                                 <div className="mb-1 block">
                                     <Label htmlFor="date_of_dismissal">Date of Dismissal</Label>
@@ -512,69 +522,6 @@ export default function EmployeeAddPage() {
                                 />
                             </div>
                         </div>
-
-                        {/*<Datepicker*/}
-                        {/*    selected={placementDate ? new Date(placementDate) : null}*/}
-                        {/*    onChange={(date) => {*/}
-                        {/*        if (date instanceof Date && !isNaN(date)) {*/}
-                        {/*            // Format in local time to YYYY-MM-DD*/}
-                        {/*            const year = date.getFullYear();*/}
-                        {/*            const month = String(date.getMonth() + 1).padStart(2, "0"); // months are 0-indexed*/}
-                        {/*            const day = String(date.getDate()).padStart(2, "0");*/}
-
-                        {/*            const formattedDate = `${year}-${month}-${day}`;*/}
-                        {/*            setPlacementDate(formattedDate);*/}
-                        {/*        } else {*/}
-                        {/*            setPlacementDate("");*/}
-                        {/*            console.warn("Invalid date selected:", date);*/}
-                        {/*        }*/}
-                        {/*    }}*/}
-                        {/*/>*/}
-
-                        {/*<Controller*/}
-                        {/*    name="date_dismissal"*/}
-                        {/*    control={control}*/}
-                        {/*    render={({ field }) => (*/}
-                        {/*        <>*/}
-                        {/*            <div className="mb-2 block">*/}
-                        {/*                <Label htmlFor="datepicker2">Date of Dismissal</Label>*/}
-                        {/*            </div>*/}
-                        {/*            <Datepicker*/}
-                        {/*                selected={field.value ? new Date(field.value) : null}*/}
-                        {/*                onChange={(date) => {*/}
-                        {/*                    if (date instanceof Date && !isNaN(date)) {*/}
-                        {/*                        const year = date.getFullYear();*/}
-                        {/*                        const month = String(date.getMonth() + 1).padStart(2, "0");*/}
-                        {/*                        const day = String(date.getDate()).padStart(2, "0");*/}
-                        {/*                        field.onChange(`${year}-${month}-${day}`);*/}
-                        {/*                    } else {*/}
-                        {/*                        field.onChange("");*/}
-                        {/*                    }*/}
-                        {/*                }}*/}
-                        {/*            />*/}
-                        {/*            {errors.date_dismissal && (*/}
-                        {/*                <p className="text-red-500 text-sm">{errors.date_dismissal.message}</p>*/}
-                        {/*            )}*/}
-                        {/*        </>*/}
-                        {/*    )}*/}
-                        {/*/>*/}
-                        {/*<Datepicker*/}
-                        {/*    selected={dismissalDate ? new Date(dismissalDate) : null}*/}
-                        {/*    onChange={(date) => {*/}
-                        {/*        if (date instanceof Date && !isNaN(date)) {*/}
-                        {/*            // Format in local time to YYYY-MM-DD*/}
-                        {/*            const year = date.getFullYear();*/}
-                        {/*            const month = String(date.getMonth() + 1).padStart(2, "0"); // months are 0-indexed*/}
-                        {/*            const day = String(date.getDate()).padStart(2, "0");*/}
-
-                        {/*            const formattedDate = `${year}-${month}-${day}`;*/}
-                        {/*            setDismissalDate(formattedDate);*/}
-                        {/*        } else {*/}
-                        {/*            setDismissalDate("");*/}
-                        {/*            console.warn("Invalid date selected:", date);*/}
-                        {/*        }*/}
-                        {/*    }}*/}
-                        {/*/>*/}
                     </div>
 
                     {/* Right Column */}
@@ -681,32 +628,51 @@ export default function EmployeeAddPage() {
                                             )}
                                         </div>
 
+
                                         <div className="flex flex-col space-y-2">
                                             <Label htmlFor="marital_status">Marital Status</Label>
-                                            <Select
-                                                id="marital_status"
-                                                options={maritalStatusOption}
-                                                value={maritalStatus}
-                                                onChange={setMaritalStatus}
-                                                placeholder="Select an option..."
-                                                className="react-select-container"
-                                                classNamePrefix="react-select"
-                                                styles={reactSelectHeightFix}
+                                            <Controller
+                                                name="marital_status"
+                                                control={control}
+                                                render={({field}) => (
+                                                    <Select
+                                                        {...field}
+                                                        options={maritalStatusOption}
+                                                        value={maritalStatusOption.find(opt => opt.value === field.value) || null}
+                                                        onChange={(selected) => field.onChange(selected?.value)}
+                                                        placeholder="Select marital status..."
+                                                        className="react-select-container"
+                                                        classNamePrefix="react-select"
+                                                        styles={reactSelectHeightFix}
+                                                    />
+                                                )}
                                             />
+                                            {errors.sex && (
+                                                <p className="text-red-500 text-sm">{errors.sex.message}</p>
+                                            )}
                                         </div>
 
                                         <div className="flex flex-col space-y-2">
-                                            <Label htmlFor="gender">Citizenship</Label>
-                                            <Select
-                                                id="gender"
-                                                options={citizenshipOptions}
-                                                value={citizenship}
-                                                onChange={setCitizenship}
-                                                placeholder="Select any options..."
-                                                className="react-select-container"
-                                                classNamePrefix="react-select"
-                                                styles={reactSelectHeightFix}
+                                            <Label htmlFor="citizenship">Citizenship</Label>
+                                            <Controller
+                                                name="citizenship"
+                                                control={control}
+                                                render={({field}) => (
+                                                    <Select
+                                                        {...field}
+                                                        options={citizenshipOptions}
+                                                        value={citizenshipOptions.find(opt => opt.value === field.value) || null}
+                                                        onChange={(selected) => field.onChange(selected?.value)}
+                                                        placeholder="Select citizenship..."
+                                                        className="react-select-container"
+                                                        classNamePrefix="react-select"
+                                                        styles={reactSelectHeightFix}
+                                                    />
+                                                )}
                                             />
+                                            {errors.sex && (
+                                                <p className="text-red-500 text-sm">{errors.citizenship.message}</p>
+                                            )}
                                         </div>
                                     </div>
                                     <div>
@@ -1168,55 +1134,6 @@ export default function EmployeeAddPage() {
                                     ))}
 
                                 </div>
-
-                                {/*<div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">*/}
-                                {/*    <div>*/}
-                                {/*        <div className="mb-1 block">*/}
-                                {/*            <Label htmlFor="dob">Date of Placement</Label>*/}
-                                {/*        </div>*/}
-                                {/*        <Datepicker*/}
-                                {/*            selected={dob ? new Date(dob) : null}*/}
-                                {/*            onChange={(date) => {*/}
-                                {/*                if (date instanceof Date && !isNaN(date)) {*/}
-                                {/*                    // Format in local time to YYYY-MM-DD*/}
-                                {/*                    const year = date.getFullYear();*/}
-                                {/*                    const month = String(date.getMonth() + 1).padStart(2, "0"); // months are 0-indexed*/}
-                                {/*                    const day = String(date.getDate()).padStart(2, "0");*/}
-
-                                {/*                    const formattedDate = `${year}-${month}-${day}`;*/}
-                                {/*                    setDob(formattedDate);*/}
-                                {/*                } else {*/}
-                                {/*                    setDob("");*/}
-                                {/*                    console.warn("Invalid date selected:", date);*/}
-                                {/*                }*/}
-                                {/*            }}*/}
-                                {/*        />*/}
-                                {/*    </div>*/}
-                                {/*    <div>*/}
-                                {/*        <div className="mb-1 block">*/}
-                                {/*            <Label htmlFor="dob">Date of Dismissal</Label>*/}
-                                {/*        </div>*/}
-                                {/*        <Datepicker*/}
-                                {/*            selected={dob ? new Date(dob) : null}*/}
-                                {/*            onChange={(date) => {*/}
-                                {/*                if (date instanceof Date && !isNaN(date)) {*/}
-                                {/*                    // Format in local time to YYYY-MM-DD*/}
-                                {/*                    const year = date.getFullYear();*/}
-                                {/*                    const month = String(date.getMonth() + 1).padStart(2, "0"); // months are 0-indexed*/}
-                                {/*                    const day = String(date.getDate()).padStart(2, "0");*/}
-
-                                {/*                    const formattedDate = `${year}-${month}-${day}`;*/}
-                                {/*                    setDob(formattedDate);*/}
-                                {/*                } else {*/}
-                                {/*                    setDob("");*/}
-                                {/*                    console.warn("Invalid date selected:", date);*/}
-                                {/*                }*/}
-                                {/*            }}*/}
-                                {/*        />*/}
-
-                                {/*    </div>*/}
-
-                                {/*</div>*/}
                             </div>
                         </TabItem>
                         <TabItem title="Files">
