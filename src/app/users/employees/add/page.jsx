@@ -96,7 +96,11 @@ export default function EmployeeAddPage() {
         languages: z.string().optional(),
         transport_type: z.string().optional(),
         driver_license: z.string().optional(),
-        phone:z.string().min(1, 'phone is required'),
+        phone: z.object({
+            code: z.string().min(1, "Country code is required"),
+            phone: z.string().min(1, "Phone number is required"),
+            operator: z.string().optional(),
+        }),
         // phone: z
         //     .array(
         //         z.object({
@@ -368,8 +372,8 @@ export default function EmployeeAddPage() {
             formData.append("email", data.email);
             formData.append("sex", data.sex);
 
-            // ✅ Combine code + number
-            const fullPhone = `${data.phone?.code || ""}${data.phone?.phone || ""}`;
+
+            const fullPhone = `${data.phone.code}${data.phone.phone}`;
             formData.append("phone", fullPhone);
 
             formData.append("primary_contact_phone", data.primary_contact_phone || "");
