@@ -86,8 +86,7 @@ export default function EmployeeAddPage() {
         last_name: z.string().min(1, "Last name is required"),
         sex: z.string().min(1, "Gender is required"),
         dob: z.string().min(1, "Date of Birth is required"),
-        email: z.string().email("Invalid email").min(1, "Email is required"),
-
+        email: z.email("Invalid email").optional(),
         marital_status: z.string().optional(),
         citizenship: z.string().optional(),
         address: z.string().optional(),
@@ -508,12 +507,26 @@ export default function EmployeeAddPage() {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
                                         <div className="flex flex-col space-y-2">
                                             <Label htmlFor="first_name">First Name</Label>
-                                            <TextInput id="name" placeholder="First Name"/>
-                                            {errors.first_name && <p className="text-red-500 text-sm">{errors.first_name.message}</p>}
+                                            <TextInput
+                                                id="first_name"
+                                                placeholder="First Name"
+                                                {...register("first_name")}
+                                            />
+                                            {errors.first_name && (
+                                                <p className="text-red-500 text-sm">{errors.first_name.message}</p>
+                                            )}
                                         </div>
+
                                         <div className="flex flex-col space-y-2">
                                             <Label htmlFor="last_name">Last Name</Label>
-                                            <TextInput id="name" placeholder="Last Name"/>
+                                            <TextInput
+                                                id="last_name"
+                                                placeholder="Last Name"
+                                                {...register("last_name")}
+                                            />
+                                            {errors.first_name && (
+                                                <p className="text-red-500 text-sm">{errors.last_name.message}</p>
+                                            )}
                                         </div>
                                         <div>
                                             <div className="mb-1 block">
@@ -584,7 +597,7 @@ export default function EmployeeAddPage() {
                                         <div className="mb-2 block">
                                             <Label htmlFor="address">Your current address</Label>
                                         </div>
-                                        <TextInput id="address" type="text" placeholder="Write address here..."/>
+                                        <TextInput id="address" type="text" {...register("address")} placeholder="Write address here..."/>
                                     </div>
                                 </div>
                                 <div className="mb-2">Phone Number</div>
@@ -681,14 +694,14 @@ export default function EmployeeAddPage() {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
                                         <div className="flex flex-col space-y-2">
                                             <Label htmlFor="primary_contact">Primary Contact Name</Label>
-                                            <TextInput id="primary_contact" placeholder="Full Name"/>
+                                            <TextInput id="primary_contact"  {...register("primary_contact")} placeholder="Full Name"/>
                                         </div>
                                         <div className="flex flex-col space-y-2">
                                             <div className="max-w-md">
                                                 <div className="mb-1 block">
                                                     <Label htmlFor="primary_contact_phone">Primary Contact Phone</Label>
                                                 </div>
-                                                <TextInput id="primary_contact_phone" type="phone" icon={HiPhone} placeholder="123 456 78"/>
+                                                <TextInput id="primary_contact_phone" {...register("primary_contact_phone")} type="phone" icon={HiPhone} placeholder="123 456 78"/>
                                             </div>
                                     </div>
                                 </div>
@@ -763,12 +776,12 @@ export default function EmployeeAddPage() {
                                     {/* Email */}
                                     <div className="flex flex-col space-y-2">
                                         <Label htmlFor="email">Personal Email</Label>
-                                        <TextInput id="email" type="email" placeholder="john@example.com"/>
+                                        <TextInput id="email" type="email" {...register("email")} placeholder="john@example.com"/>
                                     </div>
 
                                     <div className="flex flex-col space-y-2">
                                         <Label htmlFor="telegram">Personal Telegram</Label>
-                                        <TextInput id="telegram" type="telegram" placeholder="@test"/>
+                                        <TextInput id="telegram" {...register("telegram")}  type="telegram" placeholder="@test"/>
                                     </div>
 
                                     <div className="flex flex-col space-y-2">
@@ -884,12 +897,12 @@ export default function EmployeeAddPage() {
 
                                         <div className="flex flex-col space-y-2">
                                             <Label htmlFor="work_name">Work Name</Label>
-                                            <TextInput id="work_name" placeholder="Work Name"/>
+                                            <TextInput id="work_name" {...register("work_name")} placeholder="Work Name"/>
                                         </div>
 
                                         <div className="flex flex-col space-y-2">
                                             <Label htmlFor="work_email">Work Email</Label>
-                                            <TextInput id="work_email" placeholder="Work Email"/>
+                                            <TextInput id="work_email"  {...register("work_email")}  placeholder="Work Email"/>
                                         </div>
                                     </div>
                                 </div>
