@@ -96,7 +96,7 @@ export default function EmployeeAddPage() {
         languages: z.string().optional(),
         transport_type: z.string().optional(),
         driver_license: z.string().optional(),
-        phones: z
+        phone: z
             .array(
                 z.object({
                     code: z.string().min(1),
@@ -204,7 +204,7 @@ export default function EmployeeAddPage() {
             languages: "",
             transport_type: "",
             driver_license: "",
-            phones: [{code: "+373", phone: "", operator: ""}],
+            phone: { code: "+373", phone: "", operator: "" },
             primary_contact: "",
             primary_contact_phone: "",
             children: [{name: "", genderChild: "", dob: ""}],
@@ -239,7 +239,7 @@ export default function EmployeeAddPage() {
         remove: removePhone,
     } = useFieldArray({
         control,
-        name: "phones",
+        name: "phone",
     });
 
     const {
@@ -317,7 +317,7 @@ export default function EmployeeAddPage() {
     // };
 
     const onSubmit = async (data) => {
-        console.log("Raw form data:", data);
+        console.log("Raw form data2:", data);
 
         try {
             const formData = new FormData();
@@ -330,8 +330,10 @@ export default function EmployeeAddPage() {
             formData.append("email", data.email);
             formData.append("sex", data.sex);
 
-            // Phone: take first phone in array or empty string
-            formData.append("phone", data.phones?.[0]?.phone || "");
+
+            const fullPhone =
+                (data.phone?.[0]?.code || "") + (data.phone?.[0]?.phone || "");
+            formData.append("phone", fullPhone);
 
             // Primary contact phone as string
             formData.append("primary_contact_phone", data.primary_contact_phone || "");
@@ -751,7 +753,7 @@ export default function EmployeeAddPage() {
                                         <div key={item.id} className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
 
                                             <div className="flex flex-col space-y-2">
-                                                <Label htmlFor={`phones.${index}.phone`} className="dark:text-white">
+                                                <Label htmlFor={`phone.${index}.phone`} className="dark:text-white">
                                                     Phone Number
                                                 </Label>
                                                 <div className="relative w-full border border-gray-300 rounded-lg">
@@ -759,7 +761,7 @@ export default function EmployeeAddPage() {
                                                     <div className="absolute inset-y-0 left-0 flex items-center">
                                                         <Select
                                                             value={countryOptions.find(opt => opt.value === item.countryCode) || countryOptions[0]}
-                                                            onChange={(selected) => setValue(`phones.${index}.code`, selected.value)}
+                                                            onChange={(selected) => setValue(`phone.${index}.code`, selected.value)}
                                                             options={countryOptions}
                                                             classNamePrefix="react-select"
                                                             isSearchable={false}
@@ -790,8 +792,8 @@ export default function EmployeeAddPage() {
 
                                                     {/* Phone input */}
                                                     <TextInput
-                                                        id={`phones.${index}.phone`}
-                                                        {...register(`phones.${index}.phone`)}
+                                                        id={`phone.${index}.phone`}
+                                                        {...register(`phone.${index}.phone`)}
                                                         placeholder="123 456 789"
                                                         className="pl-[105px] h-[42px] dark:bg-gray-700 dark:text-white border-none focus:none countryselect"
                                                     />
@@ -801,12 +803,12 @@ export default function EmployeeAddPage() {
                                             <div className="grid grid-cols-1 md:grid-cols-[2fr_auto] gap-4 items-end">
                                                 {/* Operator */}
                                                 <div className="flex flex-col space-y-2">
-                                                    <Label htmlFor={`phones.${index}.operator`}
+                                                    <Label htmlFor={`phone.${index}.operator`}
                                                            className="dark:text-white">
                                                         Operator
                                                     </Label>
                                                     <Select
-                                                        id={`phones.${index}.operator`}
+                                                        id={`phone.${index}.operator`}
                                                         placeholder="Select an option"
                                                         options={operatorOptions}
                                                         className="height-[42px] dark:bg-gray-700 dark:text-white dark:border-gray-600"
