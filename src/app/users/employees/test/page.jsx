@@ -123,7 +123,6 @@ export default function EmployeeAddPage() {
 
     return (
         <div className="p-0 space-y-6 md:p-6">
-            {/* Breadcrumbs */}
             <Breadcrumb className="flex items-center gap-2">
                 <BreadcrumbItem href="/" icon={HiHome}>Home</BreadcrumbItem>
                 {crumbs.map((c, i) => (
@@ -135,7 +134,6 @@ export default function EmployeeAddPage() {
 
             <h2 className="text-xl font-semibold mb-4">Add Employee</h2>
 
-            {/* ✅ Toasts */}
             {successMsg && (
                 <Toast>
                     <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500">
