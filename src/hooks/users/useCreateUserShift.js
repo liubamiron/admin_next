@@ -31,8 +31,7 @@ export function useCreateUserShift() {
             return data;
         },
         onSuccess: () => {
-            // optionally refetch if you have a "userShift" query
-            queryClient.invalidateQueries({ queryKey: ["userShift"] });
+            queryClient.invalidateQueries({ queryKey: ["user-shift"] });
         },
     });
 }
