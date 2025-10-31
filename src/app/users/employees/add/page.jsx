@@ -33,6 +33,7 @@ import * as toast from "zod";
 import {z} from "zod";
 import {useFieldArray, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {useCreateUserShift} from "@/hooks/users/useCreateUserShift";
 
 const Select = dynamic(() => import("react-select"), {ssr: false});
 
@@ -119,7 +120,7 @@ export default function EmployeeAddPage() {
         position_id: z.any().optional(),
         official_position_id: z.any().optional(),
         work_name: z.string().optional(),
-        work_email: z.email("Invalid email").optional(),
+        corporate_email: z.email("Invalid email").optional(),
         shifts: z
             .array(
                 z.object({
@@ -168,6 +169,27 @@ export default function EmployeeAddPage() {
 
     useEffect(() => setMounted(true), []);
 
+    const officeOptions = Array.isArray(officesData.data)
+        ? officesData.data.map((office) => ({
+            value: office.id,
+            label: office.name,
+        }))
+        : [];
+
+    const departmentOptions = Array.isArray(departmentsData.data)
+        ? departmentsData.data.map((dept) => ({
+            value: dept.id,
+            label: dept.name,
+        }))
+        : [];
+
+    const positionOptions = Array.isArray(positionsData.data)
+        ? positionsData.data.map((pos) => ({
+            value: pos.id,
+            label: pos.name,
+        }))
+        : [];
+
 
     const {
         register,
@@ -204,8 +226,9 @@ export default function EmployeeAddPage() {
             office_id: "",
             department_id: "",
             position_id: "",
+            official_position: "",
             work_name: "",
-            work_email: "",
+            corporate_email: "",
             shifts: [
                 {
                     start_time: "",
@@ -224,16 +247,6 @@ export default function EmployeeAddPage() {
         console.log("Form errors:", errors);
     }, [errors]);
 
-
-// ✅ Give each useFieldArray its own name
-//     const {
-//         fields: phoneFields,
-//         append: appendPhone,
-//         remove: removePhone,
-//     } = useFieldArray({
-//         control,
-//         name: "phone",
-//     });
 
     const {
         fields: childFields,
@@ -284,6 +297,7 @@ export default function EmployeeAddPage() {
     // };
 
     const createEmployeeMutation = useCreateEmployee();
+    const createUserShift = useCreateUserShift();
 
 
     // const onSubmit2 = async (data) => {
@@ -321,7 +335,7 @@ export default function EmployeeAddPage() {
     //             "citizenship", "address", "telegram", "education",
     //             "languages", "transport_type", "driver_license",
     //             "office_id", "department_id", "position_id",
-    //             "work_name", "work_email"
+    //             "work_name", "corporate_email"
     //         ];
     //
     //         optionalFields.forEach((field) => {
@@ -353,37 +367,25 @@ export default function EmployeeAddPage() {
 
         try {
             const formData = new FormData();
-
-            // formData.append("first_name", "testL");
-            // formData.append("last_name", "testM");
-            // formData.append("date_of_placement", "2025-01-11");
-            // formData.append("dob", "2011-01-22");
-            // formData.append("email", "teserereail@gmail.com");
-            // formData.append("phone", "+373157655");
-            // formData.append("sex", "female");
-
             formData.append("first_name", data.first_name);
             formData.append("last_name", data.last_name);
             formData.append("dob", data.dob);
             formData.append("date_of_placement", data.date_of_placement);
             formData.append("email", data.email);
             formData.append("sex", data.sex);
-
-
             const fullPhone = `${data.phone.code}${data.phone.phone}`;
             formData.append("phone",  fullPhone);
-
             formData.append("primary_contact_phone", data.primary_contact_phone || "");
-            // formData.append("children", JSON.stringify(data.children || []));
-            //
+            formData.append("children", JSON.stringify(data.children || []));
+
             formData.append("image", image);
 
             const optionalFields = [
                 "status", "type", "date_of_dismissal", "marital_status",
                 "citizenship", "address", "telegram", "education",
                 "languages", "transport_type", "driver_license",
-                "office_id", "department_id", "position_id",
-                "work_name", "work_email"
+                "office_id", "department_id", "position_id", "official_position",
+                "work_name", "corporate_email"
             ];
 
             optionalFields.forEach((field) => {
@@ -394,10 +396,27 @@ export default function EmployeeAddPage() {
                 console.log(key, val);
             }
 
-            await createEmployeeMutation.mutateAsync(formData);
-            console.log("✅ Employee created successfully!");
+            // await createEmployeeMutation.mutateAsync(formData);
+            // Create employee
+            const user = await createEmployeeMutation.mutateAsync(formData);
+            console.log("✅ Employee created:", user);
+
+            //  Create shift(s) if provided
+            if (data.shifts?.length > 0 && user.id) {
+                for (const shift of data.shifts) {
+                    const shiftPayload = {
+                        user_id: user.id,
+                        start_time: shift.start_time,
+                        end_time: shift.end_time,
+                        work_days: shift.work_days, // array of strings
+                    };
+                    console.log(" Creating shift:", shiftPayload);
+                    await createUserShift.mutateAsync(shiftPayload);
+                }
+            }
+
             setSuccessMsg("Employee created successfully!");
-            setTimeout(() => router.push("/users/employees"), 2000);
+            setTimeout(() => router.push("/users/employees"), 6000);
 
         } catch (err) {
             console.error("❌ Error:", err);
@@ -1124,11 +1143,11 @@ export default function EmployeeAddPage() {
                                 <div className=" rounded-lg p-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
                                         <div className="flex flex-col space-y-2">
+
                                             <Label>Office</Label>
                                             <Select
-                                                options={officesData}
-                                                value={offices}
-                                                onChange={setOffices}
+                                                options={officeOptions}
+                                                onChange={(val) => setValue("office_id", val?.value)}
                                                 isLoading={offLoading}
                                                 placeholder="Select office..."
                                                 styles={reactSelectHeightFix}
@@ -1137,20 +1156,19 @@ export default function EmployeeAddPage() {
                                         <div className="flex flex-col space-y-2">
                                             <Label>Department</Label>
                                             <Select
-                                                options={departmentsData}
-                                                value={departments}
-                                                onChange={setDepartments}
+                                                options={departmentOptions}
+                                                onChange={(val) => setValue("department_id", val?.value)}
                                                 isLoading={depLoading}
                                                 placeholder="Select department..."
                                                 styles={reactSelectHeightFix}
                                             />
+
                                         </div>
                                         <div className="flex flex-col space-y-2">
                                             <Label>Position</Label>
                                             <Select
-                                                options={positionsData}
-                                                value={positions}
-                                                onChange={setPositions}
+                                                options={positionOptions}
+                                                onChange={(val) => setValue("position_id", val?.value)}
                                                 isLoading={posLoading}
                                                 placeholder="Select position..."
                                                 styles={reactSelectHeightFix}
@@ -1159,14 +1177,8 @@ export default function EmployeeAddPage() {
 
                                         <div className="flex flex-col space-y-2">
                                             <Label>Official Position</Label>
-                                            <Select
-                                                options={positionsData}
-                                                value={positions}
-                                                onChange={setPositions}
-                                                isLoading={posLoading}
-                                                placeholder="Select position..."
-                                                styles={reactSelectHeightFix}
-                                            />
+                                            <TextInput id="official_position" {...register("official_position")}
+                                                       placeholder="Official Position"/>
                                         </div>
 
                                         <div className="flex flex-col space-y-2">
@@ -1176,63 +1188,14 @@ export default function EmployeeAddPage() {
                                         </div>
 
                                         <div className="flex flex-col space-y-2">
-                                            <Label htmlFor="work_email">Work Email</Label>
-                                            <TextInput id="work_email"  {...register("work_email")}
+                                            <Label htmlFor="corporate_email">Work Email</Label>
+                                            <TextInput id="corporate_email"  {...register("corporate_email")}
                                                        placeholder="Work Email"/>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className=" rounded-lg p-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800">
-                                    {/*<div className="grid grid-cols-1 md:grid-cols-4 gap-6 ">*/}
-                                    {/*    <div>*/}
-                                    {/*        <label className="block mb-1 font-medium">Start Time</label>*/}
-                                    {/*        <input*/}
-                                    {/*            type="time"*/}
-                                    {/*            className="w-full border rounded px-2 py-1"*/}
-                                    {/*        />*/}
-                                    {/*    </div>*/}
-                                    {/*    <div>*/}
-                                    {/*        <label className="block mb-1 font-medium">End Time</label>*/}
-                                    {/*        <input*/}
-                                    {/*            type="time"*/}
-                                    {/*            className="w-full border rounded px-2 py-1"*/}
-                                    {/*        />*/}
-                                    {/*    </div>*/}
-                                    {/*    <div>*/}
-                                    {/*        <label className="block mb-1 font-medium">Workdays</label>*/}
-                                    {/*        <Select*/}
-                                    {/*            isMulti*/}
-                                    {/*            options={SHIFT_DAY_OPTIONS}*/}
-                                    {/*            className="basic-multi-select"*/}
-                                    {/*            classNamePrefix="select"*/}
-                                    {/*            placeholder="Select Workdays"*/}
-                                    {/*        />*/}
-                                    {/*    </div>*/}
-                                    {/*    <div className="flex items-end gap-2 self-end">*/}
-                                    {/*        <Button*/}
-                                    {/*            color="failure"*/}
-                                    {/*            onClick={() => remove(index)}*/}
-                                    {/*            size="xs"*/}
-                                    {/*            className="flex items-center justify-center h-[42px] w-[42px] rounded-lg border bg-red-700 hover:bg-red-800 text-white text-lg"*/}
-                                    {/*        >*/}
-                                    {/*            −*/}
-                                    {/*        </Button>*/}
-
-                                    {/*        <Button*/}
-                                    {/*            color="blue"*/}
-                                    {/*            onClick={() =>*/}
-                                    {/*                append({code: "+373", phone: "", operator: ""})*/}
-                                    {/*            }*/}
-                                    {/*            size="xs"*/}
-                                    {/*            className="flex items-center justify-center h-[42px] w-[42px] rounded-lg border bg-blue-700 hover:bg-blue-800 text-white text-lg"*/}
-                                    {/*        >*/}
-                                    {/*            +*/}
-                                    {/*        </Button>*/}
-                                    {/*    </div>*/}
-
-                                    {/*</div>*/}
-
                                     {shiftFields.map((field, index) => (
                                         <div key={field.id} className="grid grid-cols-1 md:grid-cols-4 gap-6">
                                             {/* Start Time */}
@@ -1310,7 +1273,6 @@ export default function EmployeeAddPage() {
                                             </div>
                                         </div>
                                     ))}
-
                                 </div>
                             </div>
                         </TabItem>
