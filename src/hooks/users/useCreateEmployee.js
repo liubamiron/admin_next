@@ -7,7 +7,7 @@ export function useCreateEmployee(formData) {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async () => {
+        mutationFn: async (formData) => {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
@@ -21,12 +21,13 @@ export function useCreateEmployee(formData) {
                 credentials: 'include',
             });
 
+            const data = await res.json().catch(() => ({}));
+
             if (!res.ok) {
-                const errData = await res.json().catch(() => ({}));
-                throw new Error(errData.message || "Failed to create user/employee");
+                throw new Error(data.message || "Failed to create user/employee");
             }
 
-            return await res.json();
+            return data;
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["user"] });
