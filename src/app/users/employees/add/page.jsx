@@ -96,10 +96,15 @@ export default function EmployeeAddPage() {
         languages: z.array(z.string()).optional(),
         transport_type: z.string().optional(),
         driver_license: z.string().optional(),
-        phone: z.object({
-            code: z.string().regex(/^\+\d+$/, "Invalid country code"),
-            phone: z.string().min(6, "Phone number required"),
-        }),
+        phones: z
+            .array(
+                z.object({
+                    code: z.string().min(1),
+                    phone: z.string().min(1, "Phone is required"),
+                    operator: z.string().optional(),
+                })
+            )
+            .nonempty("At least one phone number is required"),
         primary_contact: z.string().optional(),
         primary_contact_phone: z.string().optional(),
         children: z
@@ -200,7 +205,7 @@ export default function EmployeeAddPage() {
             languages: [],
             transport_type: "",
             driver_license: "",
-            phone: {code: "+373", phone: "", operator: ""},
+            phone: [{code: "+373", tel: "", operator: ""}],
             primary_contact: "",
             primary_contact_phone: "",
             children: [{name: "", genderChild: "", dob: ""}],
@@ -256,6 +261,16 @@ export default function EmployeeAddPage() {
         name: "files",
     });
 
+    const {
+        fields: phoneFields,
+        append: appendPhone,
+        remove: removePhone,
+    } = useFieldArray({
+        control,
+        name: "phones",
+    });
+
+
     const handleFileChange = (event) => {
         const file = event.target.files?.[0];
         if (file) {
@@ -265,6 +280,7 @@ export default function EmployeeAddPage() {
 
     const createEmployeeMutation = useCreateEmployee();
     const createUserShift = useCreateUserShift();
+
 
 
     const onSubmit = async (data) => {
@@ -279,7 +295,7 @@ export default function EmployeeAddPage() {
             formData.append("email", data.email);
             formData.append("sex", data.sex);
             const fullPhone = `${data.phone.code}${data.phone.phone}`;
-            formData.append("phone", fullPhone);
+            formData.append("phone", JSON.stringify(fullPhone || []));
             formData.append("primary_contact_phone", data.primary_contact_phone || "");
             formData.append("primary_contact", data.primary_contact || "");
             formData.append("children", JSON.stringify(data.children || []));
@@ -707,189 +723,183 @@ export default function EmployeeAddPage() {
                                     </div>
                                 </div>
 
+                                {/*<div className="rounded-lg p-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800">*/}
+                                {/*    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">*/}
+
+                                {/*        /!* Phone number *!/*/}
+                                {/*        <div className="flex flex-col space-y-2">*/}
+                                {/*            <Controller*/}
+                                {/*                name="phone"*/}
+                                {/*                control={control}*/}
+                                {/*                render={({field}) => (*/}
+                                {/*                    <div className="flex flex-col space-y-2">*/}
+                                {/*                        <Label htmlFor="phone.phone" className="dark:text-white">*/}
+                                {/*                            Phone Number*/}
+                                {/*                        </Label>*/}
+
+                                {/*                        <div*/}
+                                {/*                            className="relative w-full border border-gray-300 rounded-lg">*/}
+                                {/*                            /!* Country Code Select *!/*/}
+                                {/*                            <div*/}
+                                {/*                                className="absolute inset-y-0 left-0 flex items-center">*/}
+                                {/*                                <Select*/}
+                                {/*                                    value={countryOptions.find(opt => opt.value === field.value.code) || countryOptions[0]}*/}
+                                {/*                                    onChange={(selected) => field.onChange({*/}
+                                {/*                                        ...field.value,*/}
+                                {/*                                        code: selected.value*/}
+                                {/*                                    })}*/}
+                                {/*                                    options={countryOptions}*/}
+                                {/*                                    classNamePrefix="react-select"*/}
+                                {/*                                    isSearchable={false}*/}
+                                {/*                                    className="text-[14px] width-[115px]"*/}
+                                {/*                                    styles={{*/}
+                                {/*                                        control: (provided) => ({*/}
+                                {/*                                            ...provided,*/}
+                                {/*                                            border: 'none',*/}
+                                {/*                                            boxShadow: 'none',*/}
+                                {/*                                            backgroundColor: 'transparent',*/}
+                                {/*                                        }),*/}
+                                {/*                                        indicatorsContainer: (provided) => ({*/}
+                                {/*                                            ...provided,*/}
+                                {/*                                            display: 'none',*/}
+                                {/*                                        }),*/}
+                                {/*                                        valueContainer: (provided) => ({*/}
+                                {/*                                            ...provided,*/}
+                                {/*                                            padding: '0 0 0 6px',*/}
+                                {/*                                        }),*/}
+                                {/*                                        singleValue: (provided) => ({*/}
+                                {/*                                            ...provided,*/}
+                                {/*                                            color: 'inherit',*/}
+                                {/*                                        }),*/}
+                                {/*                                    }}*/}
+                                {/*                                />*/}
+                                {/*                            </div>*/}
+
+                                {/*                            /!* Phone Input *!/*/}
+                                {/*                            <TextInput*/}
+                                {/*                                id="phone.phone"*/}
+                                {/*                                value={field.value.phone}*/}
+                                {/*                                onChange={(e) => field.onChange({*/}
+                                {/*                                    ...field.value,*/}
+                                {/*                                    phone: e.target.value*/}
+                                {/*                                })}*/}
+                                {/*                                placeholder="123 456 789"*/}
+                                {/*                                className="pl-[105px] h-[42px] dark:bg-gray-700 dark:text-white border-none focus:none countryselect"*/}
+                                {/*                            />*/}
+                                {/*                        </div>*/}
+
+                                {/*                        {errors.phone?.phone && (*/}
+                                {/*                            <p className="text-red-500 text-sm">{errors.phone.phone.message}</p>*/}
+                                {/*                        )}*/}
+                                {/*                    </div>*/}
+                                {/*                )}*/}
+                                {/*            />*/}
+
+                                {/*        </div>*/}
+
+                                {/*        /!* Operator *!/*/}
+                                {/*        <div className="flex flex-col space-y-2">*/}
+                                {/*            <Label htmlFor="phone.operator" className="dark:text-white">*/}
+                                {/*                Operator*/}
+                                {/*            </Label>*/}
+                                {/*            <Select*/}
+                                {/*                id="phone.operator"*/}
+                                {/*                placeholder="Select an option"*/}
+                                {/*                options={operatorOptions}*/}
+                                {/*                className="height-[42px] dark:bg-gray-700 dark:text-white dark:border-gray-600"*/}
+                                {/*                onChange={(selected) => setValue("phone.operator", selected.value)}*/}
+                                {/*                styles={reactSelectHeightFix}*/}
+                                {/*            />*/}
+                                {/*        </div>*/}
+                                {/*    </div>*/}
+                                {/*</div>*/}
+
+
                                 <div className="mb-2">Phone Number</div>
-                                <div className="rounded-lg p-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+                                {phoneFields?.map((item, index) => (
+                                    <div key={item.id} className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
 
-                                        {/* Phone number */}
+                                        {/* Phone Number + Code */}
                                         <div className="flex flex-col space-y-2">
-                                            <Controller
-                                                name="phone"
-                                                control={control}
-                                                render={({field}) => (
-                                                    <div className="flex flex-col space-y-2">
-                                                        <Label htmlFor="phone.phone" className="dark:text-white">
-                                                            Phone Number
-                                                        </Label>
+                                            <Label htmlFor={`phones.${index}.phone`} className="dark:text-white">
+                                                Phone Number
+                                            </Label>
 
-                                                        <div
-                                                            className="relative w-full border border-gray-300 rounded-lg">
-                                                            {/* Country Code Select */}
-                                                            <div
-                                                                className="absolute inset-y-0 left-0 flex items-center">
-                                                                <Select
-                                                                    value={countryOptions.find(opt => opt.value === field.value.code) || countryOptions[0]}
-                                                                    onChange={(selected) => field.onChange({
-                                                                        ...field.value,
-                                                                        code: selected.value
-                                                                    })}
-                                                                    options={countryOptions}
-                                                                    classNamePrefix="react-select"
-                                                                    isSearchable={false}
-                                                                    className="text-[14px] width-[115px]"
-                                                                    styles={{
-                                                                        control: (provided) => ({
-                                                                            ...provided,
-                                                                            border: 'none',
-                                                                            boxShadow: 'none',
-                                                                            backgroundColor: 'transparent',
-                                                                        }),
-                                                                        indicatorsContainer: (provided) => ({
-                                                                            ...provided,
-                                                                            display: 'none',
-                                                                        }),
-                                                                        valueContainer: (provided) => ({
-                                                                            ...provided,
-                                                                            padding: '0 0 0 6px',
-                                                                        }),
-                                                                        singleValue: (provided) => ({
-                                                                            ...provided,
-                                                                            color: 'inherit',
-                                                                        }),
-                                                                    }}
-                                                                />
-                                                            </div>
+                                            <div className="relative w-full border border-gray-300 rounded-lg">
+                                                {/* Country Code */}
+                                                <Controller
+                                                    name={`phones.${index}.code`}
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <Select
+                                                            {...field}
+                                                            value={countryOptions.find(opt => opt.value === field.value) || countryOptions[0]}
+                                                            onChange={(val) => field.onChange(val.value)}
+                                                            options={countryOptions}
+                                                            classNamePrefix="react-select"
+                                                            isSearchable={false}
+                                                            className="absolute inset-y-0 left-0 w-[105px]"
+                                                            styles={reactSelectHeightFix}
+                                                        />
+                                                    )}
+                                                />
 
-                                                            {/* Phone Input */}
-                                                            <TextInput
-                                                                id="phone.phone"
-                                                                value={field.value.phone}
-                                                                onChange={(e) => field.onChange({
-                                                                    ...field.value,
-                                                                    phone: e.target.value
-                                                                })}
-                                                                placeholder="123 456 789"
-                                                                className="pl-[105px] h-[42px] dark:bg-gray-700 dark:text-white border-none focus:none countryselect"
-                                                            />
-                                                        </div>
-
-                                                        {errors.phone?.phone && (
-                                                            <p className="text-red-500 text-sm">{errors.phone.phone.message}</p>
-                                                        )}
-                                                    </div>
-                                                )}
-                                            />
-
+                                                {/* Phone Input */}
+                                                <TextInput
+                                                    id={`phones.${index}.phone`}
+                                                    {...register(`phone.${index}.phone`)}
+                                                    placeholder="123 456 789"
+                                                    className="pl-[115px] h-[42px] dark:bg-gray-700 dark:text-white border-none"
+                                                />
+                                            </div>
                                         </div>
 
                                         {/* Operator */}
                                         <div className="flex flex-col space-y-2">
-                                            <Label htmlFor="phone.operator" className="dark:text-white">
+                                            <Label htmlFor={`phones.${index}.operator`} className="dark:text-white">
                                                 Operator
                                             </Label>
-                                            <Select
-                                                id="phone.operator"
-                                                placeholder="Select an option"
-                                                options={operatorOptions}
-                                                className="height-[42px] dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                                                onChange={(selected) => setValue("phone.operator", selected.value)}
-                                                styles={reactSelectHeightFix}
+                                            <Controller
+                                                name={`phones.${index}.operator`}
+                                                control={control}
+                                                render={({ field }) => (
+                                                    <Select
+                                                        {...field}
+                                                        value={operatorOptions.find(opt => opt.value === field.value) || null}
+                                                        onChange={(val) => field.onChange(val.value)}
+                                                        options={operatorOptions}
+                                                        placeholder="Select an option"
+                                                        className="height-[42px] dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                                                        styles={reactSelectHeightFix}
+                                                    />
+                                                )}
                                             />
                                         </div>
+
+                                        {/* Add / Remove Buttons */}
+                                        <div className="flex items-end gap-2">
+                                            {index === phoneFields.length - 1 ? (
+                                                <>
+                                                    {phoneFields.length > 1 && (
+                                                        <Button color="failure" onClick={() => removePhone(index)}> - </Button>
+                                                    )}
+                                                    <Button onClick={() => appendPhone({ code: "+373", phone: "", operator: "" })}> + </Button>
+                                                </>
+                                            ) : (
+                                                <Button color="failure" onClick={() => removePhone(index)}> - </Button>
+                                            )}
+                                        </div>
+
                                     </div>
+                                ))}
+
+
+                                <div>
+
                                 </div>
 
 
-                                {/*<div className="mb-2">Phone Number</div>*/}
-                                {/*<div className="rounded-lg p-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800">*/}
-                                {/*    {phoneFields.map((item, index) => (*/}
-                                {/*        <div key={item.id} className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">*/}
 
-                                {/*            <div className="flex flex-col space-y-2">*/}
-                                {/*                <Label htmlFor={`phone.${index}.phone`} className="dark:text-white">*/}
-                                {/*                    Phone Number*/}
-                                {/*                </Label>*/}
-                                {/*                <div className="relative w-full border border-gray-300 rounded-lg">*/}
-                                {/*                    /!* Country Code Select *!/*/}
-                                {/*                    <div className="absolute inset-y-0 left-0 flex items-center">*/}
-                                {/*                        <Select*/}
-                                {/*                            value={countryOptions.find(opt => opt.value === item.countryCode) || countryOptions[0]}*/}
-                                {/*                            onChange={(selected) => setValue(`phone.${index}.code`, selected.value)}*/}
-                                {/*                            options={countryOptions}*/}
-                                {/*                            classNamePrefix="react-select"*/}
-                                {/*                            isSearchable={false}*/}
-                                {/*                            className="text-[14px] width-[115px]"*/}
-                                {/*                            styles={{*/}
-                                {/*                                control: (provided) => ({*/}
-                                {/*                                    ...provided,*/}
-                                {/*                                    border: 'none',*/}
-                                {/*                                    boxShadow: 'none',*/}
-                                {/*                                    backgroundColor: 'transparent',*/}
-                                {/*                                }),*/}
-                                {/*                                indicatorsContainer: (provided) => ({*/}
-                                {/*                                    ...provided,*/}
-                                {/*                                    display: 'yes', // remove dropdown arrow*/}
-                                {/*                                }),*/}
-                                {/*                                valueContainer: (provided) => ({*/}
-                                {/*                                    ...provided,*/}
-                                {/*                                    padding: '0 0 0 6px',*/}
-                                {/*                                }),*/}
-                                {/*                                singleValue: (provided) => ({*/}
-                                {/*                                    ...provided,*/}
-                                {/*                                    color: 'inherit', // match text color*/}
-                                {/*                                }),*/}
-                                {/*                                reactSelectHeightFix*/}
-                                {/*                            }}*/}
-                                {/*                        />*/}
-                                {/*                    </div>*/}
-
-                                {/*                    /!* Phone input *!/*/}
-                                {/*                    <TextInput*/}
-                                {/*                        id={`phone.${index}.phone`}*/}
-                                {/*                        {...register(`phone.${index}.phone`)}*/}
-                                {/*                        placeholder="123 456 789"*/}
-                                {/*                        className="pl-[105px] h-[42px] dark:bg-gray-700 dark:text-white border-none focus:none countryselect"*/}
-                                {/*                    />*/}
-                                {/*                </div>*/}
-                                {/*            </div>*/}
-
-                                {/*            <div className="grid grid-cols-1 md:grid-cols-[2fr_auto] gap-4 items-end">*/}
-                                {/*                /!* Operator *!/*/}
-                                {/*                <div className="flex flex-col space-y-2">*/}
-                                {/*                    <Label htmlFor={`phone.${index}.operator`}*/}
-                                {/*                           className="dark:text-white">*/}
-                                {/*                        Operator*/}
-                                {/*                    </Label>*/}
-                                {/*                    <Select*/}
-                                {/*                        id={`phone.${index}.operator`}*/}
-                                {/*                        placeholder="Select an option"*/}
-                                {/*                        options={operatorOptions}*/}
-                                {/*                        className="height-[42px] dark:bg-gray-700 dark:text-white dark:border-gray-600"*/}
-                                {/*                        styles={reactSelectHeightFix}*/}
-                                {/*                    />*/}
-                                {/*                </div>*/}
-
-                                {/*                 Buttons*/}
-                                {/*                <div className="flex items-end gap-2 self-end">*/}
-                                {/*                    {index === phoneFields.length - 1 ? (<> {phoneFields.length > 1 && (*/}
-                                {/*                            <Button color="failure" onClick={() => removePhone(index)}*/}
-                                {/*                                    size="xs"*/}
-                                {/*                                    className="flex items-center justify-center h-[42px] w-[42px] rounded-lg border bg-red-700 hover:bg-red-800 text-white text-lg"> - /!*<RiDeleteBin6Fill color="darkred" size="xs" />*!/ </Button>)}*/}
-                                {/*                            <Button onClick={appendPhone}*/}
-                                {/*                                    className="flex items-center justify-center h-[42px] w-[42px] rounded-lg border bg-blue-700 hover:bg-blue-800 text-white text-lg"> + </Button> </>) :*/}
-                                {/*                        (<Button color="failure"*/}
-                                {/*                                 onClick={() => removePhone(index)}*/}
-                                {/*                                 size="xs"*/}
-                                {/*                                 className="flex items-center justify-center h-[42px] text-white color-white">*/}
-                                {/*                            <HiMinus/>*/}
-                                {/*                        </Button>)*/}
-                                {/*                    }*/}
-                                {/*                </div>*/}
-                                {/*            </div>*/}
-                                {/*        </div>*/}
-
-                                {/*    ))}*/}
-                                {/*</div>*/}
                                 <div className="mb-2">Primary Contact</div>
                                 <div className="rounded-lg p-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
