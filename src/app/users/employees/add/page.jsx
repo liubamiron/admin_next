@@ -212,11 +212,11 @@ export default function EmployeeAddPage() {
             dob: "",
             email: "",
             marital_status: "",
-            citizenship: "",
+            citizenship: [],
             address: "",
             telegram: "",
             education: "",
-            languages: "",
+            languages: [],
             transport_type: "",
             driver_license: "",
             phone: { code: "+373", phone: "", operator: "" },
@@ -376,14 +376,22 @@ export default function EmployeeAddPage() {
             const fullPhone = `${data.phone.code}${data.phone.phone}`;
             formData.append("phone",  fullPhone);
             formData.append("primary_contact_phone", data.primary_contact_phone || "");
+            formData.append("primary_contact", data.primary_contact || "");
             formData.append("children", JSON.stringify(data.children || []));
 
             formData.append("image", image);
 
+            if (Array.isArray(data.citizenship) && data.citizenship.length > 0) {
+                formData.append("citizenship", JSON.stringify(data.citizenship));
+            }
+
+            if (Array.isArray(data.languages) && data.languages.length > 0) {
+                formData.append("languages", JSON.stringify(data.languages));
+            }
+
             const optionalFields = [
                 "status", "type", "date_of_dismissal", "marital_status",
-                "citizenship", "address", "telegram", "education",
-                "languages", "transport_type", "driver_license",
+                "address", "telegram", "education", "transport_type", "driver_license",
                 "office_id", "department_id", "position_id", "official_position",
                 "work_name", "corporate_email"
             ];
@@ -400,12 +408,13 @@ export default function EmployeeAddPage() {
             // Create employee
             const user = await createEmployeeMutation.mutateAsync(formData);
             console.log("✅ Employee created:", user);
+            const userId = user?.data?.id;
 
             //  Create shift(s) if provided
-            if (data.shifts?.length > 0 && user.id) {
+            if (data.shifts?.length > 0 ) {
                 for (const shift of data.shifts) {
                     const shiftPayload = {
-                        user_id: user.id,
+                        user_id: userId,
                         start_time: shift.start_time,
                         end_time: shift.end_time,
                         work_days: shift.work_days, // array of strings
@@ -758,8 +767,8 @@ export default function EmployeeAddPage() {
                                                     />
                                                 )}
                                             />
-                                            {errors.sex && (
-                                                <p className="text-red-500 text-sm">{errors.sex.message}</p>
+                                            {errors.marital_status && (
+                                                <p className="text-red-500 text-sm">{errors.marital_status.message}</p>
                                             )}
                                         </div>
 
@@ -771,6 +780,7 @@ export default function EmployeeAddPage() {
                                                 render={({field}) => (
                                                     <Select
                                                         {...field}
+                                                        isMulti
                                                         options={citizenshipOptions}
                                                         value={citizenshipOptions.find(opt => opt.value === field.value) || null}
                                                         onChange={(selected) => field.onChange(selected?.value)}
@@ -1079,58 +1089,94 @@ export default function EmployeeAddPage() {
 
                                     <div className="flex flex-col space-y-2">
                                         <Label htmlFor="education">Education</Label>
-                                        <Select
-                                            id="education"
-                                            options={educationOptions}
-                                            value={education}
-                                            onChange={setEducation}
-                                            placeholder="Select education..."
-                                            className="react-select-container"
-                                            classNamePrefix="react-select"
-                                            styles={reactSelectHeightFix}
+                                        <Controller
+                                            name="education"
+                                            control={control}
+                                            render={({field}) => (
+                                                <Select
+                                                    {...field}
+                                                    options={educationOptions}
+                                                    value={educationOptions.find(opt => opt.value === field.value) || null}
+                                                    onChange={(selected) => field.onChange(selected?.value)}
+                                                    placeholder="Select education..."
+                                                    className="react-select-container"
+                                                    classNamePrefix="react-select"
+                                                    styles={reactSelectHeightFix}
+                                                />
+                                            )}
                                         />
+                                        {errors.education && (
+                                            <p className="text-red-500 text-sm">{errors.education.message}</p>
+                                        )}
                                     </div>
 
                                     <div className="flex flex-col space-y-2">
                                         <Label htmlFor="languages">Languages</Label>
-                                        <Select
-                                            id="languages"
-                                            options={languagesOptions}
-                                            value={languages}
-                                            onChange={setLanguages}
-                                            placeholder="Select languages..."
-                                            className="react-select-container"
-                                            classNamePrefix="react-select"
-                                            styles={reactSelectHeightFix}
+                                        <Controller
+                                            name="languages"
+                                            control={control}
+                                            render={({field}) => (
+                                                <Select
+                                                    {...field}
+                                                    options={languagesOptions}
+                                                    value={languagesOptions.find(opt => opt.value === field.value) || null}
+                                                    onChange={(selected) => field.onChange(selected?.value)}
+                                                    placeholder="Select languages..."
+                                                    className="react-select-container"
+                                                    classNamePrefix="react-select"
+                                                    styles={reactSelectHeightFix}
+                                                />
+                                            )}
                                         />
+                                        {errors.languages && (
+                                            <p className="text-red-500 text-sm">{errors.languages.message}</p>
+                                        )}
                                     </div>
 
                                     <div className="flex flex-col space-y-2">
                                         <Label htmlFor="transport_type">Transport Type</Label>
-                                        <Select
-                                            id="transport_type"
-                                            options={transportTypeOptions}
-                                            value={transportType}
-                                            onChange={setTransportType}
-                                            placeholder="Select any transport type..."
-                                            className="react-select-container"
-                                            classNamePrefix="react-select"
-                                            styles={reactSelectHeightFix}
+                                        <Controller
+                                            name="transport_type"
+                                            control={control}
+                                            render={({field}) => (
+                                                <Select
+                                                    {...field}
+                                                    options={driverLicenseOptions}
+                                                    value={driverLicenseOptions.find(opt => opt.value === field.value) || null}
+                                                    onChange={(selected) => field.onChange(selected?.value)}
+                                                    placeholder="Select transport type..."
+                                                    className="react-select-container"
+                                                    classNamePrefix="react-select"
+                                                    styles={reactSelectHeightFix}
+                                                />
+                                            )}
                                         />
+                                        {errors.transport_type && (
+                                            <p className="text-red-500 text-sm">{errors.transport_type.message}</p>
+                                        )}
                                     </div>
 
                                     <div className="flex flex-col space-y-2">
                                         <Label htmlFor="driver_license">Driver License</Label>
-                                        <Select
-                                            id="driver_license"
-                                            options={driverLicenseOptions}
-                                            value={driverLicense}
-                                            onChange={setDriverLicense}
-                                            placeholder="Select any driver license..."
-                                            className="react-select-container"
-                                            classNamePrefix="react-select"
-                                            styles={reactSelectHeightFix}
+                                        <Controller
+                                            name="driver_license"
+                                            control={control}
+                                            render={({field}) => (
+                                                <Select
+                                                    {...field}
+                                                    options={driverLicenseOptions}
+                                                    value={driverLicenseOptions.find(opt => opt.value === field.value) || null}
+                                                    onChange={(selected) => field.onChange(selected?.value)}
+                                                    placeholder="Select driver license..."
+                                                    className="react-select-container"
+                                                    classNamePrefix="react-select"
+                                                    styles={reactSelectHeightFix}
+                                                />
+                                            )}
                                         />
+                                        {errors.driver_license && (
+                                            <p className="text-red-500 text-sm">{errors.driver_license.message}</p>
+                                        )}
                                     </div>
                                 </div>
                             </div>
