@@ -111,7 +111,7 @@ export default function EmployeeAddPage() {
 
             await createEmployee.mutateAsync(formData);
             setSuccessMsg("Employee created successfully!");
-            setTimeout(() => router.push("/employees"), 2000);
+            setTimeout(() => router.push("/users/employees"), 2000);
         } catch (err) {
             console.error("❌ Error:", err);
             const rawMsg = err?.response?.data?.message || err?.message || "Failed to create employee.";
