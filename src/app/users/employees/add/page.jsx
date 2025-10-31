@@ -29,7 +29,6 @@ import {
     workTimeOptions
 } from "@/components/constants/filterOptions";
 import {useCreateEmployee} from "@/hooks/users/useCreateEmployee";
-import * as toast from "zod";
 import {z} from "zod";
 import {useFieldArray, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -98,9 +97,8 @@ export default function EmployeeAddPage() {
         transport_type: z.string().optional(),
         driver_license: z.string().optional(),
         phone: z.object({
-            code: z.string().min(1, "Country code is required"),
-            phone: z.string().min(1, "Phone number is required"),
-            operator: z.string().optional(),
+            code: z.string().regex(/^\+\d+$/, "Invalid country code"),
+            phone: z.string().min(6, "Phone number required"),
         }),
         primary_contact: z.string().optional(),
         primary_contact_phone: z.string().optional(),
@@ -118,7 +116,7 @@ export default function EmployeeAddPage() {
         office_id: z.any().optional(),
         department_id: z.any().optional(),
         position_id: z.any().optional(),
-        official_position_id: z.any().optional(),
+        official_position: z.string().optional(),
         work_name: z.string().optional(),
         corporate_email: z.email("Invalid email").optional(),
         shifts: z
@@ -147,23 +145,6 @@ export default function EmployeeAddPage() {
     const {data: officesData = [], isLoading: offLoading} = useOffices();
     const [image, setImage] = useState("");
     const [status, setStatus] = useState(null);
-    const [gender, setGender] = useState(null);
-    const [genderChild, setGenderChild] = useState(null);
-    const [departments, setDepartments] = useState(null);
-    const [offices, setOffices] = useState(null);
-    const [positions, setPositions] = useState(null);
-    const [datePlacement, setDatePlacement] = useState("");
-    const [dateDismissal, setDateDismissal] = useState("");
-    const [dob, setDob] = useState("");
-    const [citizenship, setCitizenship] = useState("");
-    const [maritalStatus, setMaritalStatus] = useState("");
-    const [languages, setLanguages] = useState("");
-    const [education, setEducation] = useState("");
-    const [transportType, setTransportType] = useState("");
-    const [driverLicense, setDriverLicense] = useState("");
-    const [fileType, setFileType] = useState("");
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [employeeFiles, setEmployeeFiles] = useState("");
     const {data: templates, isLoading, isError, error} = useTemplates();
     const router = useRouter();
 
@@ -219,7 +200,7 @@ export default function EmployeeAddPage() {
             languages: [],
             transport_type: "",
             driver_license: "",
-            phone: { code: "+373", phone: "", operator: "" },
+            phone: {code: "+373", phone: "", operator: ""},
             primary_contact: "",
             primary_contact_phone: "",
             children: [{name: "", genderChild: "", dob: ""}],
@@ -282,20 +263,6 @@ export default function EmployeeAddPage() {
         }
     };
 
-    // const handleAddPhone = () => {
-    //     setPhones([...phones, {phone: "", operator: ""}]);
-    // };
-    //
-    // const handleRemovePhone = (index) => {
-    //     setPhones(phones.filter((_, i) => i !== index));
-    // };
-    //
-    // const handleChange = (index, field, value) => {
-    //     const updated = [...phones];
-    //     updated[index][field] = value;
-    //     setPhones(updated);
-    // };
-
     const createEmployeeMutation = useCreateEmployee();
     const createUserShift = useCreateUserShift();
 
@@ -312,7 +279,7 @@ export default function EmployeeAddPage() {
             formData.append("email", data.email);
             formData.append("sex", data.sex);
             const fullPhone = `${data.phone.code}${data.phone.phone}`;
-            formData.append("phone",  fullPhone);
+            formData.append("phone", fullPhone);
             formData.append("primary_contact_phone", data.primary_contact_phone || "");
             formData.append("primary_contact", data.primary_contact || "");
             formData.append("children", JSON.stringify(data.children || []));
@@ -346,15 +313,23 @@ export default function EmployeeAddPage() {
             const userId = user?.data?.id;
 
             //  Create shift(s) if provided
-            if (data.shifts?.length > 0 ) {
+            if (data.shifts?.length > 0) {
                 for (const shift of data.shifts) {
+                    if (!shift.start_time || !shift.end_time) continue;
+
+                    // Construct valid datetime (Laravel-compatible)
+                    const today = new Date().toISOString().split("T")[0]; // e.g. "2025-10-31"
+                    const startDateTime = `${today} ${shift.start_time}`;
+                    const endDateTime = `${today} ${shift.end_time}`;
+
                     const shiftPayload = {
                         user_id: userId,
-                        start_time: shift.start_time,
-                        end_time: shift.end_time,
-                        work_days: shift.work_days, // array of strings
+                        start_time: startDateTime,
+                        end_time: endDateTime,
+                        work_days: shift.work_days || [],
                     };
-                    console.log(" Creating shift:", shiftPayload);
+
+                    console.log("🕒 Creating shift:", shiftPayload);
                     await createUserShift.mutateAsync(shiftPayload);
                 }
             }
@@ -711,7 +686,7 @@ export default function EmployeeAddPage() {
                                             <Controller
                                                 name="citizenship"
                                                 control={control}
-                                                render={({ field }) => (
+                                                render={({field}) => (
                                                     <Select
                                                         {...field}
                                                         isMulti
@@ -749,18 +724,23 @@ export default function EmployeeAddPage() {
                                             <Controller
                                                 name="phone"
                                                 control={control}
-                                                render={({ field }) => (
+                                                render={({field}) => (
                                                     <div className="flex flex-col space-y-2">
                                                         <Label htmlFor="phone.phone" className="dark:text-white">
                                                             Phone Number
                                                         </Label>
 
-                                                        <div className="relative w-full border border-gray-300 rounded-lg">
+                                                        <div
+                                                            className="relative w-full border border-gray-300 rounded-lg">
                                                             {/* Country Code Select */}
-                                                            <div className="absolute inset-y-0 left-0 flex items-center">
+                                                            <div
+                                                                className="absolute inset-y-0 left-0 flex items-center">
                                                                 <Select
                                                                     value={countryOptions.find(opt => opt.value === field.value.code) || countryOptions[0]}
-                                                                    onChange={(selected) => field.onChange({ ...field.value, code: selected.value })}
+                                                                    onChange={(selected) => field.onChange({
+                                                                        ...field.value,
+                                                                        code: selected.value
+                                                                    })}
                                                                     options={countryOptions}
                                                                     classNamePrefix="react-select"
                                                                     isSearchable={false}
@@ -792,7 +772,10 @@ export default function EmployeeAddPage() {
                                                             <TextInput
                                                                 id="phone.phone"
                                                                 value={field.value.phone}
-                                                                onChange={(e) => field.onChange({ ...field.value, phone: e.target.value })}
+                                                                onChange={(e) => field.onChange({
+                                                                    ...field.value,
+                                                                    phone: e.target.value
+                                                                })}
                                                                 placeholder="123 456 789"
                                                                 className="pl-[105px] h-[42px] dark:bg-gray-700 dark:text-white border-none focus:none countryselect"
                                                             />
@@ -1212,7 +1195,7 @@ export default function EmployeeAddPage() {
                                                 <Controller
                                                     control={control}
                                                     name={`shifts.${index}.work_days`}
-                                                    render={({ field }) => (
+                                                    render={({field}) => (
                                                         <Select
                                                             isMulti
                                                             options={SHIFT_DAY_OPTIONS}
