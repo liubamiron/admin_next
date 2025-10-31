@@ -90,11 +90,11 @@ export default function EmployeeAddPage() {
         dob: z.string().min(1, "Date of Birth is required"),
         email: z.email("Invalid email").optional(),
         marital_status: z.string().optional(),
-        citizenship: z.string().optional(),
+        citizenship: z.array(z.string()).optional(),
         address: z.string().optional(),
         telegram: z.string().optional(),
         education: z.string().optional(),
-        languages: z.string().optional(),
+        languages: z.array(z.string()).optional(),
         transport_type: z.string().optional(),
         driver_license: z.string().optional(),
         phone: z.object({
@@ -300,68 +300,6 @@ export default function EmployeeAddPage() {
     const createUserShift = useCreateUserShift();
 
 
-    // const onSubmit2 = async (data) => {
-    //     console.log("Raw form data2:", data);
-    //
-    //     try {
-    //         const formData = new FormData();
-    //
-    //         // Append required string fields
-    //         formData.append("first_name", data.first_name);
-    //         formData.append("last_name", data.last_name);
-    //         formData.append("date_of_placement", data.date_of_placement);
-    //         formData.append("dob", data.dob);
-    //         formData.append("email", data.email);
-    //         formData.append("sex", data.sex);
-    //
-    //
-    //         const fullPhone =
-    //             (data.phone?.code || "") + (data.phone?.phone || "");
-    //         formData.append("phone", fullPhone);
-    //
-    //         formData.append("primary_contact_phone", data.primary_contact_phone || "");
-    //
-
-    //         formData.append("children", JSON.stringify(data.children || []));
-    //
-    //         // Image file if exists
-    //         if (data.image instanceof File) {
-    //             formData.append("image", data.image);
-    //         }
-    //
-    //         // Optional fields: append only if not empty
-    //         const optionalFields = [
-    //             "status", "type", "date_of_dismissal", "marital_status",
-    //             "citizenship", "address", "telegram", "education",
-    //             "languages", "transport_type", "driver_license",
-    //             "office_id", "department_id", "position_id",
-    //             "work_name", "corporate_email"
-    //         ];
-    //
-    //         optionalFields.forEach((field) => {
-    //             if (data[field]) formData.append(field, data[field]);
-    //         });
-    //
-    //         // Log FormData for debugging
-    //         for (let [key, val] of formData.entries()) {
-    //             console.log(key, val);
-    //         }
-    //
-    //         // Send to backend
-    //         await createEmployeeMutation.mutateAsync(formData);
-    //
-    //         console.log("✅ Employee created successfully!");
-    //         setSuccessMsg("Employee created successfully!");
-    //         setTimeout(() => router.push("/users/employees"), 2000);
-    //
-    //     } catch (err) {
-    //         console.error("❌ Error:", err);
-    //         const rawMsg = err?.response?.data?.message || err?.message || "Failed to create employee.";
-    //         setErrorMsg(rawMsg);
-    //     }
-    // };
-
-
     const onSubmit = async (data) => {
         console.log("Raw form data:", data);
 
@@ -381,31 +319,28 @@ export default function EmployeeAddPage() {
 
             formData.append("image", image);
 
-            if (Array.isArray(data.citizenship) && data.citizenship.length > 0) {
-                formData.append("citizenship", JSON.stringify(data.citizenship));
-            }
-
-            if (Array.isArray(data.languages) && data.languages.length > 0) {
-                formData.append("languages", JSON.stringify(data.languages));
-            }
-
             const optionalFields = [
                 "status", "type", "date_of_dismissal", "marital_status",
                 "address", "telegram", "education", "transport_type", "driver_license",
+                "citizenship", "languages",
                 "office_id", "department_id", "position_id", "official_position",
                 "work_name", "corporate_email"
             ];
 
             optionalFields.forEach((field) => {
-                if (data[field]) formData.append(field, data[field]);
+                if (data[field]) {
+                    if (Array.isArray(data[field])) {
+                        formData.append(field, JSON.stringify(data[field]));
+                    } else {
+                        formData.append(field, data[field]);
+                    }
+                }
             });
 
             for (let [key, val] of formData.entries()) {
                 console.log(key, val);
             }
 
-            // await createEmployeeMutation.mutateAsync(formData);
-            // Create employee
             const user = await createEmployeeMutation.mutateAsync(formData);
             console.log("✅ Employee created:", user);
             const userId = user?.data?.id;
@@ -771,30 +706,30 @@ export default function EmployeeAddPage() {
                                                 <p className="text-red-500 text-sm">{errors.marital_status.message}</p>
                                             )}
                                         </div>
-
                                         <div className="flex flex-col space-y-2">
                                             <Label htmlFor="citizenship">Citizenship</Label>
                                             <Controller
                                                 name="citizenship"
                                                 control={control}
-                                                render={({field}) => (
+                                                render={({ field }) => (
                                                     <Select
                                                         {...field}
                                                         isMulti
                                                         options={citizenshipOptions}
-                                                        value={citizenshipOptions.find(opt => opt.value === field.value) || null}
-                                                        onChange={(selected) => field.onChange(selected?.value)}
+                                                        value={citizenshipOptions.filter(opt => field.value?.includes(opt.value))}
+                                                        onChange={(selected) => field.onChange(selected ? selected.map(opt => opt.value) : [])}
                                                         placeholder="Select citizenship..."
-                                                        className="react-select-container"
-                                                        classNamePrefix="react-select"
+                                                        className="basic-multi-select"
+                                                        classNamePrefix="select"
                                                         styles={reactSelectHeightFix}
                                                     />
                                                 )}
                                             />
-                                            {errors.sex && (
+                                            {errors.citizenship && (
                                                 <p className="text-red-500 text-sm">{errors.citizenship.message}</p>
                                             )}
                                         </div>
+
                                     </div>
                                     <div>
                                         <div className="mb-2 block">
@@ -1118,11 +1053,12 @@ export default function EmployeeAddPage() {
                                             render={({field}) => (
                                                 <Select
                                                     {...field}
+                                                    isMulti
                                                     options={languagesOptions}
-                                                    value={languagesOptions.find(opt => opt.value === field.value) || null}
-                                                    onChange={(selected) => field.onChange(selected?.value)}
+                                                    value={languagesOptions.filter(opt => field.value?.includes(opt.value))}
+                                                    onChange={(selected) => field.onChange(selected ? selected.map(opt => opt.value) : [])}
                                                     placeholder="Select languages..."
-                                                    className="react-select-container"
+                                                    className="basic-multi-select"
                                                     classNamePrefix="react-select"
                                                     styles={reactSelectHeightFix}
                                                 />
@@ -1141,8 +1077,8 @@ export default function EmployeeAddPage() {
                                             render={({field}) => (
                                                 <Select
                                                     {...field}
-                                                    options={driverLicenseOptions}
-                                                    value={driverLicenseOptions.find(opt => opt.value === field.value) || null}
+                                                    options={transportTypeOptions}
+                                                    value={transportTypeOptions.find(opt => opt.value === field.value) || null}
                                                     onChange={(selected) => field.onChange(selected?.value)}
                                                     placeholder="Select transport type..."
                                                     className="react-select-container"
