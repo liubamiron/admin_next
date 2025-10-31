@@ -14,7 +14,7 @@ export function useCreateEmployee(formData) {
             const res = await fetch(`${host}/user`, {
                 method: "POST",
                 headers: {
-                    'Accept': 'application/json',
+                    // 'Accept': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
                 body: formData,
