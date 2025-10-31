@@ -368,16 +368,15 @@ export default function EmployeeAddPage() {
             formData.append("date_of_placement", data.date_of_placement);
             formData.append("email", data.email);
             formData.append("sex", data.sex);
-            formData.append("phone",  "+37312121212");
 
-            // const fullPhone = `${data.phone.code}${data.phone.phone}`;
+
+            const fullPhone = `${data.phone.code}${data.phone.phone}`;
+            formData.append("phone",  fullPhone);
 
             formData.append("primary_contact_phone", data.primary_contact_phone || "");
             // formData.append("children", JSON.stringify(data.children || []));
             //
-            if (data.image instanceof File) {
-                formData.append("image", data.image);
-            }
+            formData.append("image", image);
 
             const optionalFields = [
                 "status", "type", "date_of_dismissal", "marital_status",
