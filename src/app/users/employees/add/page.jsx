@@ -315,21 +315,13 @@ export default function EmployeeAddPage() {
             //  Create shift(s) if provided
             if (data.shifts?.length > 0) {
                 for (const shift of data.shifts) {
-                    if (!shift.start_time || !shift.end_time) continue;
-
-                    // Construct valid datetime (Laravel-compatible)
-                    const today = new Date().toISOString().split("T")[0]; // e.g. "2025-10-31"
-                    const startDateTime = `${today} ${shift.start_time}`;
-                    const endDateTime = `${today} ${shift.end_time}`;
-
                     const shiftPayload = {
                         user_id: userId,
-                        start_time: startDateTime,
-                        end_time: endDateTime,
-                        work_days: shift.work_days || [],
+                        start_time: `${shift.start_time}:00`, // add seconds
+                        end_time: `${shift.end_time}:00`,     // add seconds
+                        work_days: shift.work_days.map(day => day.toString()), // ensure strings
                     };
-
-                    console.log("🕒 Creating shift:", shiftPayload);
+                    console.log("Creating shift:", shiftPayload);
                     await createUserShift.mutateAsync(shiftPayload);
                 }
             }
