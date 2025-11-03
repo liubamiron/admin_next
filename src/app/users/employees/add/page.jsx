@@ -182,6 +182,7 @@ export default function EmployeeAddPage() {
         control,
         handleSubmit,
         setValue,
+        watch,
         getValues,
         formState: {errors},
     } = useForm({
