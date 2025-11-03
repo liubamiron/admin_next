@@ -115,7 +115,7 @@ export default function EmployeeAddPage() {
                     dob: z.string().min(1, "Child DOB is required"),
                 })
             )
-            .optional(),
+            .default([]),
 
         // company info
         office_id: z.any().optional(),
@@ -134,7 +134,7 @@ export default function EmployeeAddPage() {
                         .nonempty("At least one work day is required"),
                 })
             )
-            .optional(),
+            .default([]),
         files: z
             .array(
                 z.object({
@@ -142,7 +142,7 @@ export default function EmployeeAddPage() {
                     file: z.any().optional(),
                 })
             )
-            .optional(),
+            .default([]),
     });
 
     const {data: departmentsData = [], isLoading: depLoading} = useDepartments();
