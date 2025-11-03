@@ -87,7 +87,7 @@ export default function EmployeeAddPage() {
         last_name: z.string().min(1, "Last name is required"),
         sex: z.string().min(1, "Gender is required"),
         dob: z.string().min(1, "Date of Birth is required"),
-        email: z.email("Invalid email").optional(),
+        email: z.email.min(2,"Invalid email"),
         marital_status: z.string().optional(),
         citizenship: z.array(z.string()).optional(),
         address: z.string().optional(),
@@ -123,7 +123,7 @@ export default function EmployeeAddPage() {
         position_id: z.any().optional(),
         official_position: z.string().optional(),
         work_name: z.string().optional(),
-        corporate_email: z.email("Invalid email").optional(),
+        corporate_email: z.email("Invalid email").or(z.literal("")).optional(),
         shifts: z
             .array(
                 z.object({
@@ -209,24 +209,15 @@ export default function EmployeeAddPage() {
             phone: [{code: "+373", phone: "", operator: ""}],
             primary_contact: "",
             primary_contact_phone: "",
-            children: [{name: "", genderChild: "", dob: ""}],
+            children: [],
             office_id: "",
             department_id: "",
             position_id: "",
             official_position: "",
             work_name: "",
             corporate_email: "",
-            shifts: [
-                {
-                    start_time: "",
-                    end_time: "",
-                    work_days: [],
-                },
-            ],
-            files: [{
-                file_type: "",
-                file: "",
-            },],
+            shifts: [],
+            files: [],
         },
     });
 
