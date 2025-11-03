@@ -123,7 +123,7 @@ export default function EmployeeAddPage() {
         position_id: z.any().optional(),
         official_position: z.string().optional(),
         work_name: z.string().optional(),
-        corporate_email: z.email("Invalid email").or(z.literal("")).optional(),
+        corporate_email: z.email("Invalid email").optional(),
         shifts: z
             .array(
                 z.object({
@@ -282,7 +282,6 @@ export default function EmployeeAddPage() {
             formData.append("date_of_placement", data.date_of_placement);
             formData.append("email", data.email);
             formData.append("sex", data.sex);
-            // const fullPhone = `${data.phone.code}${data.phone.phone}${data.phone.operator}`;
             formData.append("phone", JSON.stringify(data.phone));
             formData.append("primary_contact_phone", data.primary_contact_phone || "");
             formData.append("primary_contact", data.primary_contact || "");
