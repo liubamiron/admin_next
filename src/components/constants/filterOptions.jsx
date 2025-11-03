@@ -23,7 +23,7 @@ export const languagesOptions = [
 
 export const citizenshipOptions = [
     { value: "Moldova", label: "MDA" },
-    { value: "Română", label: "RO" },
+    { value: "România", label: "RO" },
     { value: "Россия", label: "RU" },
     { value: "USA", label: "USA" },
     { value: "UK", label: "UK" },
