@@ -1,6 +1,6 @@
 "use client";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {QueryClient, QueryClientProvider, useQueryClient} from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ThemeModeScript, ThemeProvider } from "flowbite-react";
 import { DashboardNavbar } from "@/components/dashboard/navbar";
@@ -49,17 +49,19 @@ function LayoutContent({ children, isLogin }) {
 function ProtectedLayout({ children }) {
     const expired = useSessionTimer(7);
     const router = useRouter();
+    const queryClient = useQueryClient();
+
 
     useEffect(() => {
         if (expired) {
-            alert("Your session has expired. Please log in again.");
             localStorage.removeItem("loginTime");
             localStorage.removeItem("user");
             // Remove token cookie
-            Cookies.remove("token"); // <-- important!
+            Cookies.remove("token");
+            queryClient.clear();
             router.push("/login");
         }
-    }, [expired, router]);
+    }, [expired, router, queryClient]);
 
     return <>{children}</>;
 }
