@@ -205,7 +205,7 @@ export default function EmployeeAddPage() {
             languages: [],
             transport_type: "",
             driver_license: "",
-            phone: [{code: "+373", tel: "", operator: ""}],
+            phone: [{code: "+373", phone: "", operator: ""}],
             primary_contact: "",
             primary_contact_phone: "",
             children: [{name: "", genderChild: "", dob: ""}],
@@ -267,7 +267,7 @@ export default function EmployeeAddPage() {
         remove: removePhone,
     } = useFieldArray({
         control,
-        name: "phones",
+        name: "phone",
     });
 
 
@@ -295,7 +295,7 @@ export default function EmployeeAddPage() {
             formData.append("email", data.email);
             formData.append("sex", data.sex);
             const fullPhone = `${data.phone.code}${data.phone.phone}`;
-            formData.append("phone", JSON.stringify(fullPhone || []));
+            formData.append("phone", JSON.stringify(fullPhone));
             formData.append("primary_contact_phone", data.primary_contact_phone || "");
             formData.append("primary_contact", data.primary_contact || "");
             formData.append("children", JSON.stringify(data.children || []));
