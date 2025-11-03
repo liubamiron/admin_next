@@ -14,25 +14,25 @@ export const maritalOptions = [
 ];
 
 export const languagesOptions = [
-    { value: "ro", label: "Romanian" },
-    { value: "en", label: "English" },
-    { value: "ru", label: "Russian" },
-    { value: "av", label: "Arabic" },
-    { value: "ab", label: "Abkhazian" },
+    { value: "romanian", label: "Romanian" },
+    { value: "english", label: "English" },
+    { value: "russian", label: "Russian" },
+    { value: "arabic", label: "Arabic" },
+    { value: "abkhazian", label: "Abkhazian" },
 ];
 
 export const citizenshipOptions = [
-    { value: "md", label: "MDA" },
-    { value: "ro", label: "RO" },
-    { value: "ru", label: "RU" },
-    { value: "us", label: "USA" },
-    { value: "uk", label: "UK" },
-    { value: "fr", label: "France" },
+    { value: "Moldova", label: "MDA" },
+    { value: "Română", label: "RO" },
+    { value: "Россия", label: "RU" },
+    { value: "USA", label: "USA" },
+    { value: "UK", label: "UK" },
+    { value: "France", label: "France" },
 ];
 
 export const workTimeOptions = [
-    {value: "full-time", label: "Full-time"},
-    {value: "part-time", label: "Part-time"},
+    {value: "full time", label: "Full-time"},
+    {value: "part time", label: "Part-time"},
     {value: "contractor", label: "Contractor"}
 ]
 export const maritalStatusOption = [
@@ -51,12 +51,6 @@ export const SHIFT_DAY_OPTIONS = [
     {value: "Fri", label: "Fri"},
     {value: "Sat", label: "Sat"},
     {value: "Sun", label: "Sun"},
-];
-
-export const typeOptions = [
-    { value: "full", label: "Full" },
-    { value: "full time", label: "Full Time" },
-    { value: "part time", label: "Part Time" },
 ];
 
 export const genderOptions = [
@@ -106,8 +100,8 @@ export const transportTypeOptions = [
 ];
 
 export const driverLicenseOptions =[
-    { value: "category_A", label: "Category A" },
-    { value: "category_B", label: "Category B" },
-    { value: "category_C", label: "Category C" },
-    { value: "category_D", label: "Category D" },
+    { value: "category A", label: "Category A" },
+    { value: "category B", label: "Category B" },
+    { value: "category C", label: "Category C" },
+    { value: "category D", label: "Category D" },
 ]
