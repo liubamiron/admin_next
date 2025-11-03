@@ -177,6 +177,7 @@ export default function EmployeeAddPage() {
     const {data: officesData = [], isLoading: offLoading} = useOffices();
     const [image, setImage] = useState("");
     const [status, setStatus] = useState(null);
+    const [type, setType] = useState(null);
     const {data: templates, isLoading, isError, error} = useTemplates();
     const router = useRouter();
 
@@ -525,6 +526,8 @@ export default function EmployeeAddPage() {
                             <Select
                                 id="type"
                                 options={workTimeOptions}
+                                value={type}
+                                onChange={setType}
                                 placeholder="Select type..."
                                 styles={reactSelectHeightFix}
                             />
