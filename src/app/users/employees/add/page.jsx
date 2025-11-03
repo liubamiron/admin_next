@@ -760,6 +760,12 @@ export default function EmployeeAddPage() {
                                                         id={`phone.${index}.operator`}
                                                         placeholder="Select an option"
                                                         options={operatorOptions}
+                                                        value={
+                                                            operatorOptions.find(
+                                                                opt => opt.value === watch(`phone.${index}.operator`)
+                                                            ) || null
+                                                        }
+                                                        onChange={(selected) => setValue(`phone.${index}.operator`, selected?.value || "")}
                                                         className="height-[42px] dark:bg-gray-700 dark:text-white dark:border-gray-600"
                                                         styles={reactSelectHeightFix}
                                                     />
