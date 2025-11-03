@@ -519,18 +519,28 @@ export default function EmployeeAddPage() {
                                 styles={reactSelectHeightFix}
                             />
                         </div>
-                        <div>
-                            <div className="mb-2 block">
-                                <Label htmlFor="type">Type</Label>
-                            </div>
-                            <Select
-                                id="type"
-                                options={workTimeOptions}
-                                value={type}
-                                onChange={setType}
-                                placeholder="Select type..."
-                                styles={reactSelectHeightFix}
+
+                        <div className="flex flex-col space-y-2">
+                            <Label htmlFor="type">Type</Label>
+                            <Controller
+                                name="type"
+                                control={control}
+                                render={({field}) => (
+                                    <Select
+                                        {...field}
+                                        options={workTimeOptions}
+                                        value={workTimeOptions.find(opt => opt.value === field.value) || null}
+                                        onChange={(selected) => field.onChange(selected?.value)}
+                                        placeholder="Select work time ..."
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
+                                        styles={reactSelectHeightFix}
+                                    />
+                                )}
                             />
+                            {errors.type && (
+                                <p className="text-red-500 text-sm">{errors.type.message}</p>
+                            )}
                         </div>
 
 
