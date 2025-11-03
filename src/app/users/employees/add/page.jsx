@@ -107,15 +107,20 @@ export default function EmployeeAddPage() {
             .nonempty("At least one phone number is required"),
         primary_contact: z.string().optional(),
         primary_contact_phone: z.string().optional(),
-        children: z
-            .array(
-                z.object({
-                    name: z.string().min(1, "Child name is required"),
-                    gender: z.string().min(1, "Child gender is required"),
-                    dob: z.string().min(1, "Child DOB is required"),
-                })
-            )
-            .optional(),
+        children: z.array(
+            z.object({
+                name: z.string().optional(),
+                gender: z.string().optional(),
+                dob: z.string().optional(),
+            })
+        ).optional()
+            .refine(
+                (arr) => !arr || arr.every(child => {
+                    const filledFields = [child.name, child.gender, child.dob].filter(Boolean);
+                    return filledFields.length === 0 || filledFields.length === 3;
+                }),
+                { message: "All child fields must be filled if a child is added" }
+            ),
 
         // company info
         office_id: z.any().optional(),
@@ -123,24 +128,46 @@ export default function EmployeeAddPage() {
         position_id: z.any().optional(),
         official_position: z.string().optional(),
         work_name: z.string().optional(),
-        corporate_email: z.email("Invalid email").optional(),
+        corporate_email: z.string().email("Invalid email").optional().or(z.literal("")),
         shifts: z
             .array(
                 z.object({
-                    start_time: z.string().min(1, "Start time is required"),
-                    end_time: z.string().min(1, "End time is required"),
-                    work_days: z
-                        .array(z.string().min(1))
-                        .nonempty("At least one work day is required"),
+                    start_time: z.string().optional(),
+                    end_time: z.string().optional(),
+                    work_days: z.array(z.string().min(1)).optional(),
                 })
+            )
+            .optional()
+            .refine(
+                (arr) =>
+                    !arr ||
+                    arr.every((shift) => {
+                        const filledFields = [
+                            shift.start_time,
+                            shift.end_time,
+                            shift.work_days?.length ? shift.work_days : undefined,
+                        ].filter(Boolean);
+                        return filledFields.length === 0 || filledFields.length === 3;
+                    }),
+                { message: "All shift fields must be filled if a shift is added" }
             )
             .default([]),
         files: z
             .array(
                 z.object({
-                    file_type: z.string().min(1, "File type is required"),
+                    file_type: z.string().optional(),
                     file: z.any().optional(),
                 })
+            )
+            .optional()
+            .refine(
+                (arr) =>
+                    !arr ||
+                    arr.every((file) => {
+                        const filledFields = [file.file_type, file.file].filter(Boolean);
+                        return filledFields.length === 0 || filledFields.length === 2;
+                    }),
+                { message: "All file fields must be filled if a file is added" }
             )
             .default([]),
     });
@@ -209,16 +236,25 @@ export default function EmployeeAddPage() {
             phone: [{code: "+373", phone: "", operator: ""}],
             primary_contact: "",
             primary_contact_phone: "",
-            children: [],
-            // children: [{name: "", genderChild: "", dob: ""}],
+            children: [{name: "", genderChild: "", dob: ""}],
+            // children: [""],
             office_id: "",
             department_id: "",
             position_id: "",
             official_position: "",
             work_name: "",
             corporate_email: "",
-            shifts: [],
-            files: [],
+            shifts: [
+                {
+                    start_time: "",
+                    end_time: "",
+                    work_days: [],
+                },
+            ],
+            files: [{
+                file_type: "",
+                file: "",
+            },],
         },
     });
 
@@ -263,11 +299,11 @@ export default function EmployeeAddPage() {
         name: "phone",
     });
 
-    useEffect(() => {
-        if (childFields.length === 0) {
-            appendChild({ name: "", gender: "", dob: "" });
-        }
-    }, [childFields.length, appendChild]);
+    // useEffect(() => {
+    //     if (childFields.length === 0) {
+    //         appendChild({ name: "", gender: "", dob: "" });
+    //     }
+    // }, [childFields.length, appendChild]);
 
     const handleFileChange = (event) => {
         const file = event.target.files?.[0];
@@ -889,6 +925,7 @@ export default function EmployeeAddPage() {
                                         <Label htmlFor="email">Personal Email</Label>
                                         <TextInput id="email" type="email" {...register("email")}
                                                    placeholder="john@example.com"/>
+                                        {errors.email && <span className="text-red-500">{errors.email.message}</span>}
                                     </div>
 
                                     <div className="flex flex-col space-y-2">
