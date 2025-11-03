@@ -96,7 +96,7 @@ export default function EmployeeAddPage() {
         languages: z.array(z.string()).optional(),
         transport_type: z.string().optional(),
         driver_license: z.string().optional(),
-        phones: z
+        phone: z
             .array(
                 z.object({
                     code: z.string().min(1),
@@ -821,14 +821,14 @@ export default function EmployeeAddPage() {
 
                                         {/* Phone Number + Code */}
                                         <div className="flex flex-col space-y-2">
-                                            <Label htmlFor={`phones.${index}.phone`} className="dark:text-white">
+                                            <Label htmlFor={`phone.${index}.phone`} className="dark:text-white">
                                                 Phone Number
                                             </Label>
 
                                             <div className="relative w-full border border-gray-300 rounded-lg">
                                                 {/* Country Code */}
                                                 <Controller
-                                                    name={`phones.${index}.code`}
+                                                    name={`phone.${index}.code`}
                                                     control={control}
                                                     render={({ field }) => (
                                                         <Select
@@ -846,7 +846,7 @@ export default function EmployeeAddPage() {
 
                                                 {/* Phone Input */}
                                                 <TextInput
-                                                    id={`phones.${index}.phone`}
+                                                    id={`phone.${index}.phone`}
                                                     {...register(`phone.${index}.phone`)}
                                                     placeholder="123 456 789"
                                                     className="pl-[115px] h-[42px] dark:bg-gray-700 dark:text-white border-none"
@@ -856,11 +856,11 @@ export default function EmployeeAddPage() {
 
                                         {/* Operator */}
                                         <div className="flex flex-col space-y-2">
-                                            <Label htmlFor={`phones.${index}.operator`} className="dark:text-white">
+                                            <Label htmlFor={`phone.${index}.operator`} className="dark:text-white">
                                                 Operator
                                             </Label>
                                             <Controller
-                                                name={`phones.${index}.operator`}
+                                                name={`phone.${index}.operator`}
                                                 control={control}
                                                 render={({ field }) => (
                                                     <Select
