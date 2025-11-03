@@ -87,7 +87,7 @@ export default function EmployeeAddPage() {
         last_name: z.string().min(1, "Last name is required"),
         sex: z.string().min(1, "Gender is required"),
         dob: z.string().min(1, "Date of Birth is required"),
-        email: z.email.min(2,"Invalid email"),
+        email: z.email("Invalid email"),
         marital_status: z.string().optional(),
         citizenship: z.array(z.string()).optional(),
         address: z.string().optional(),
