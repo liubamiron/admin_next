@@ -7,9 +7,9 @@ import {
     Label,
     TabItem, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow,
     Tabs,
-    TextInput, Tooltip
+    TextInput, Toast, ToastToggle, Tooltip
 } from "flowbite-react";
-import {HiHome, HiMinus, HiPhone} from "react-icons/hi";
+import {HiCheck, HiHome, HiMinus, HiPhone} from "react-icons/hi";
 import {GoDownload} from "react-icons/go";
 import {useEffect, useState} from "react";
 import {usePathname, useRouter} from "next/navigation";
@@ -33,6 +33,7 @@ import {z} from "zod";
 import {useFieldArray, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useCreateUserShift} from "@/hooks/users/useCreateUserShift";
+import {BsExclamation} from "react-icons/bs";
 
 const Select = dynamic(() => import("react-select"), {ssr: false});
 
@@ -177,7 +178,6 @@ export default function EmployeeAddPage() {
     const {data: officesData = [], isLoading: offLoading} = useOffices();
     const [image, setImage] = useState("");
     const [status, setStatus] = useState(null);
-    const [type, setType] = useState(null);
     const {data: templates, isLoading, isError, error} = useTemplates();
     const router = useRouter();
 
@@ -402,6 +402,26 @@ export default function EmployeeAddPage() {
             </Breadcrumb>
 
             <h2 className="text-xl font-semibold mb-4">Add Employee</h2>
+
+            {successMsg && (
+                <Toast>
+                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500">
+                        <HiCheck className="h-5 w-5" />
+                    </div>
+                    <div className="ml-3 text-sm font-normal">{successMsg}</div>
+                    <ToastToggle onDismiss={() => setSuccessMsg("")} />
+                </Toast>
+            )}
+
+            {errorMsg && (
+                <Toast>
+                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500">
+                        <BsExclamation className="h-5 w-5" />
+                    </div>
+                    <div className="ml-3 text-sm font-normal">{errorMsg}</div>
+                    <ToastToggle onDismiss={() => setErrorMsg("")} />
+                </Toast>
+            )}
 
             {/* Two-column layout */}
             <form
