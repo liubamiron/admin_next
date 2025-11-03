@@ -115,7 +115,7 @@ export default function EmployeeAddPage() {
                     dob: z.string().min(1, "Child DOB is required"),
                 })
             )
-            .default([]),
+            .optional(),
 
         // company info
         office_id: z.any().optional(),
@@ -210,6 +210,7 @@ export default function EmployeeAddPage() {
             primary_contact: "",
             primary_contact_phone: "",
             children: [],
+            // children: [{name: "", genderChild: "", dob: ""}],
             office_id: "",
             department_id: "",
             position_id: "",
@@ -262,6 +263,12 @@ export default function EmployeeAddPage() {
         name: "phone",
     });
 
+    useEffect(() => {
+        if (childFields.length === 0) {
+            appendChild({ name: "", gender: "", dob: "" });
+        }
+    }, [childFields.length, appendChild]);
+
     const handleFileChange = (event) => {
         const file = event.target.files?.[0];
         if (file) {
@@ -282,6 +289,7 @@ export default function EmployeeAddPage() {
             formData.append("date_of_placement", data.date_of_placement);
             formData.append("email", data.email);
             formData.append("sex", data.sex);
+            // const fullPhone = `${data.phone.code}${data.phone.phone}${data.phone.operator}`;
             formData.append("phone", JSON.stringify(data.phone));
             formData.append("primary_contact_phone", data.primary_contact_phone || "");
             formData.append("primary_contact", data.primary_contact || "");
