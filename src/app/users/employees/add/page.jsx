@@ -95,7 +95,7 @@ export default function EmployeeAddPage() {
         education: z.string().optional(),
         languages: z.array(z.string()).optional(),
         transport_type: z.string().optional(),
-        driver_license: z.string().optional(),
+        driver_license: z.array(z.string()).optional(),
         phone: z
             .array(
                 z.object({
@@ -232,7 +232,7 @@ export default function EmployeeAddPage() {
             education: "",
             languages: [],
             transport_type: "",
-            driver_license: "",
+            driver_license: [],
             phone: [{code: "+373", phone: "", operator: ""}],
             primary_contact: "",
             primary_contact_phone: "",
@@ -1012,11 +1012,13 @@ export default function EmployeeAddPage() {
                                             render={({field}) => (
                                                 <Select
                                                     {...field}
+                                                    isMulti
                                                     options={driverLicenseOptions}
-                                                    value={driverLicenseOptions.find(opt => opt.value === field.value) || null}
-                                                    onChange={(selected) => field.onChange(selected?.value)}
+                                                    value={driverLicenseOptions.filter(opt => field.value?.includes(opt.value))}
+                                                    // value={driverLicenseOptions.find(opt => opt.value === field.value) || null}
+                                                    onChange={(selected) => field.onChange(selected ? selected.map(opt => opt.value) : [])}
                                                     placeholder="Select driver license..."
-                                                    className="react-select-container"
+                                                    className="basic-multi-select"
                                                     classNamePrefix="react-select"
                                                     styles={reactSelectHeightFix}
                                                 />
