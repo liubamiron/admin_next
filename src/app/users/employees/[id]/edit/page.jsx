@@ -87,7 +87,7 @@ export default function EmployeeEditPage() {
         formData.append('email', data.email);
         formData.append('sex', data.sex);
         formData.append('dob', data.dob);
-        formData.append('date_of_dismissal', data.date_of_placement);
+        formData.append('date_of_placement', data.date_of_placement);
         formData.append("phone", JSON.stringify(data.phone));
 
 
