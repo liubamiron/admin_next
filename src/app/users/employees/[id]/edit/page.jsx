@@ -158,7 +158,7 @@ export default function EmployeeEditPage() {
                             <Label value="Profile Image" />
                             <div >
                                 {/* Thumbnail preview */}
-                                <div className="w-full h-auto rounded-lg border border-gray-300 overflow-hidden flex items-center justify-center bg-gray-50">
+                                <div className="w-[60%] m-auto h-auto rounded-lg border border-gray-300 overflow-hidden flex items-center justify-center bg-gray-50">
                                     {image ? (
                                         typeof image === "string" ? (
                                             <img
