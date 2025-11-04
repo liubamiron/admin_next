@@ -311,11 +311,7 @@ export default function EmployeeEditPage() {
         formData.append('sex', data.sex);
         formData.append('dob', data.dob);
         formData.append('date_of_dismissal', data.date_of_placement);
-        data.phone.forEach((p, i) => {
-            formData.append(`phone[${i}][code]`, p.code);
-            formData.append(`phone[${i}][phone]`, p.phone);
-            formData.append(`phone[${i}][operator]`, p.operator || '');
-        });
+        formData.append("phone", JSON.stringify(data.phone));
 
 
         editEmployee({ id, formData }, {
