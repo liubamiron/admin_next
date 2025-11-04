@@ -7,7 +7,7 @@ export function useEditEmployee() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({ id, formData }) => {
+        mutationFn: async ({ id, data }) => {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
@@ -17,7 +17,7 @@ export function useEditEmployee() {
                     Authorization: `Bearer ${token}`,
                     // Accept: 'application/json',
                 },
-                body: formData,
+                body: data,
                 credentials: 'include',
             });
 
