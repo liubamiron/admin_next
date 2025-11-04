@@ -15,7 +15,7 @@ export function useEditEmployee() {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    // Accept: 'application/json',
+                    Accept: 'application/json',
                 },
                 body: formData,
                 credentials: 'include',
