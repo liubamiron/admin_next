@@ -110,7 +110,7 @@ export default function DepartmentsPage() {
     const allDepartments = allData?.data || [];
 
     return (
-        <div className="space-y-4 p-6">
+        <div className="p-0 space-y-6 md:p-4">
             {/* Breadcrumb */}
             <Breadcrumb className="flex items-center gap-2">
                 <BreadcrumbItem href="/" icon={HiHome}>Home</BreadcrumbItem>
@@ -154,8 +154,8 @@ export default function DepartmentsPage() {
                 </div>
 
                 {/* Table */}
-                <div className="rounded-lg p-6 mb-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800 md:w-[60%] w-full">
-                    <div className="overflow-x-auto">
+                {/*<div className="rounded-lg p-6 mb-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800 md:w-[60%] w-full">*/}
+                    <div className="overflow-x-auto w-full shadow-sm">
                         <Table>
                             <TableHead>
                                 <TableRow>
@@ -190,7 +190,7 @@ export default function DepartmentsPage() {
                             </TableBody>
                         </Table>
                     </div>
-                </div>
+                {/*</div>*/}
             </div>
 
             {/* Add Modal */}

@@ -90,7 +90,7 @@ export default function PublicHolidaysPage() {
     };
 
     return (
-        <div className="space-y-4 p-6">
+        <div className="p-0 space-y-6 md:p-4">
             <Breadcrumb className="flex items-center gap-2">
                 <BreadcrumbItem href="/" icon={HiHome}>Home</BreadcrumbItem>
                 {crumbs.map((c, i) => (
@@ -136,8 +136,7 @@ export default function PublicHolidaysPage() {
                 </div>
 
                 {/* Right main content */}
-                <div className="rounded-lg p-6 mb-6 shadow-sm bg-[#F9FAFB] dark:bg-gray-800 md:w-[69%] w-full">
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto md:w-[69%] w-full">
                         <Table>
                             <TableHead>
                                 <TableRow>
@@ -162,7 +161,6 @@ export default function PublicHolidaysPage() {
                             </TableBody>
                         </Table>
                     </div>
-                </div>
             </div>
 
             {/* Add Holiday Modal */}

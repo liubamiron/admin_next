@@ -238,7 +238,6 @@ export default function EmployeeAddPage() {
             primary_contact: "",
             primary_contact_phone: "",
             children: [{name: "", genderChild: "", dob: ""}],
-            // children: [""],
             office_id: "",
             department_id: "",
             position_id: "",
@@ -299,12 +298,6 @@ export default function EmployeeAddPage() {
         control,
         name: "phone",
     });
-
-    // useEffect(() => {
-    //     if (childFields.length === 0) {
-    //         appendChild({ name: "", gender: "", dob: "" });
-    //     }
-    // }, [childFields.length, appendChild]);
 
     const handleFileChange = (event) => {
         const file = event.target.files?.[0];
@@ -390,7 +383,7 @@ export default function EmployeeAddPage() {
 
 
     return (
-        <div className="p-0 space-y-6 md:p-6">
+        <div className="p-0 space-y-6 md:p-4">
             {/* Breadcrumb */}
             <Breadcrumb className="flex items-center gap-2">
                 <BreadcrumbItem href="/" icon={HiHome}>Home</BreadcrumbItem>

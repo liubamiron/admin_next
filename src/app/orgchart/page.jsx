@@ -12,6 +12,8 @@ export default function TestPage() {
     const { data: officesData = [], isLoading: loadingOffices } = useOffices();
     const { data: departmentsData = [], isLoading: loadingDepartments } = useDepartments();
 
+    console.log(officesData, departmentsData)
+
     // Prepare chart data with departments included
     useEffect(() => {
         if (!officesData?.data || !departmentsData?.data) return;
@@ -27,6 +29,7 @@ export default function TestPage() {
                     parentId: 0,
                     name: office.name,
                     type: "office",
+                    userCount: office.userCount ?? 0,
                     departments: officeDepartments,
                 };
 
@@ -35,6 +38,7 @@ export default function TestPage() {
                     parentId: office.id,
                     name: dept.name,
                     type: "department",
+                    userCount: dept.userCount ?? 0,
                     manager: dept.manager, // include full manager info
                 }));
 

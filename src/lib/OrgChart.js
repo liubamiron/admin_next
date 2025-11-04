@@ -41,7 +41,7 @@ export const OrgChartComponent = ({ data, onNodeClick }) => {
               <div class="p-4 flex flex-col items-center space-y-2">
                 ${iconHTML}
                 <span class="font-semibold text-gray-800 text-sm leading-tight">${dept.name}</span>
-                <span class="text-gray-400 text-xs">Employees: ${dept.userCount || 0}</span>
+                <span class="text-gray-400 text-xs">Employees:  ${dept.userCount != null ? dept.userCount : "—"}</span>
               </div>
             </div>
           `;

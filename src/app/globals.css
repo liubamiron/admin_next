@@ -62,3 +62,22 @@ html.dark body {
     border-radius: 0 8px 8px 0 !important;
     /*border-radius: 0px!important;*/
 }
+
+@keyframes loading-bar {
+    0% {
+        transform: translateX(-100%);
+        width: 100%;
+    }
+    50% {
+        transform: translateX(0%);
+        width: 100%;
+    }
+    100% {
+        transform: translateX(100%);
+        width: 100%;
+    }
+}
+
+.animate-loading-bar {
+    animation: loading-bar 1s ease-in-out infinite;
+}

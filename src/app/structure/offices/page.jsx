@@ -101,7 +101,7 @@ export default function OfficePage() {
     };
 
     return (
-        <div className="space-y-4 p-6">
+        <div className="p-0 space-y-6 md:p-4">
             {/* Breadcrumb */}
             <Breadcrumb className="flex items-center gap-2">
                 <BreadcrumbItem href="/" icon={HiHome}>
@@ -158,8 +158,7 @@ export default function OfficePage() {
                 </div>
 
                 {/* Table */}
-                <div className="rounded-lg p-6 mb-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800 md:w-[69%] w-full">
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto md:w-[69%] w-full">
                         <Table>
                             <TableHead>
                                 <TableRow>
@@ -193,7 +192,6 @@ export default function OfficePage() {
                             </TableBody>
                         </Table>
                     </div>
-                </div>
             </div>
 
             {/* ➕ Add Modal */}

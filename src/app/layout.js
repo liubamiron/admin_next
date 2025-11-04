@@ -13,6 +13,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import {useEffect} from "react";
 import {useSessionTimer} from "@/hooks/useSessionTimer";
 import Cookies from "js-cookie";
+import GlobalLoading from "@/components/GlobalLoading";
 
 
 const queryClient = new QueryClient();
@@ -82,6 +83,7 @@ export default function RootLayout({ children }) {
         <QueryClientProvider client={queryClient}>
             <ThemeProvider theme={customTheme} >
                 <SidebarProvider>
+                    <GlobalLoading />
                     {isLogin ? (
                         <LayoutContent isLogin>{children}</LayoutContent>
                     ) : (

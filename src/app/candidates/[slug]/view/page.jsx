@@ -20,7 +20,7 @@ export default function CandidateViewPage() {
     };
 
     return (
-        <div className="space-y-4 p-6">
+        <div className="p-0 space-y-6 md:p-4">
             {/* Breadcrumb */}
             <Breadcrumb>
                 <BreadcrumbItem href="/" icon={HiHome}>Home</BreadcrumbItem>
