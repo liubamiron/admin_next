@@ -56,16 +56,21 @@ export default function EmployeeEditPage() {
     // Populate form when employee data is loaded
     useEffect(() => {
         if (employee) {
+            const formatDate = (isoString) => {
+                if (!isoString) return '';
+                return isoString.split('T')[0]; // YYYY-MM-DD
+            };
+
             reset({
                 first_name: employee.first_name || '',
                 last_name: employee.last_name || '',
                 sex: employee.sex || '',
-                dob: employee.dob || '',
-                date_of_placement: employee.date_of_placement || '',
+                dob: formatDate(employee.dob),
+                date_of_placement: formatDate(employee.date_of_placement),
                 email: employee.email || '',
                 phone: employee.phone?.length
                     ? employee.phone
-                    : [{code: '+373', phone: '', operator: ''}],
+                    : [{ code: '+373', phone: '', operator: '' }],
             });
         }
     }, [employee, reset]);
