@@ -16,7 +16,6 @@ export function useEditCandidate() {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    Accept: 'application/json',
                 },
                 body: formData,
                 credentials: 'include',
