@@ -196,7 +196,13 @@ export default function CandidatesPage() {
 
             {/* Search & Filter button */}
             <div className="flex justify-between items-center w-full mb-4">
-                <Button onClick={() => setFilterOpen(true)} outline className="bg-gray-50 hover:bg-gray-100 hover:border-gray-300 border-gray-300 text-gray-500 flex items-center justify-center">
+                <Button
+                    onClick={() => setFilterOpen(true)}
+                    outline
+                    aria-label="Open filter"
+                    className="bg-gray-50 hover:bg-gray-100 hover:border-gray-300 border-gray-300
+                    text-gray-500 flex items-center justify-center"
+                >
                     <FaFilter className="h-5 w-5 text-gray-500" />
                 </Button>
                 <TextInput

@@ -242,6 +242,7 @@ export default function EmployeesPage() {
                     <Button
                         onClick={() => setFilterOpen(true)}
                         outline
+                        aria-label="Open filter"
                         className="bg-gray-50 hover:bg-gray-100 hover:border-gray-300 border-gray-300 text-gray-500 flex items-center justify-center"
                     >
                         <FaFilter className="h-5 w-5 text-gray-500" />
