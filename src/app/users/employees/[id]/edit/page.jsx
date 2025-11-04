@@ -302,11 +302,38 @@ export default function EmployeeEditPage() {
         setSuccessMsg('');
         setErrorMsg('');
 
-        editEmployee({ id, data }, {
+        const formData = new FormData();
+
+        // Required fields
+        formData.append('first_name', data.first_name);
+        formData.append('last_name', data.last_name);
+        formData.append('email', data.email);
+        formData.append('sex', data.sex);
+        formData.append('dob', data.dob);
+        formData.append('date_of_dismissal', data.date_of_placement);
+        data.phone.forEach((p, i) => {
+            formData.append(`phone[${i}][code]`, p.code);
+            formData.append(`phone[${i}][phone]`, p.phone);
+            formData.append(`phone[${i}][operator]`, p.operator || '');
+        });
+
+
+        editEmployee({ id, formData }, {
             onSuccess: () => setSuccessMsg('Employee updated successfully!'),
             onError: (err) => setErrorMsg(err.message || 'Failed to update employee.'),
         });
     };
+
+
+    // const onSubmit = (data) => {
+    //     setSuccessMsg('');
+    //     setErrorMsg('');
+    //
+    //     editEmployee({ id, data }, {
+    //         onSuccess: () => setSuccessMsg('Employee updated successfully!'),
+    //         onError: (err) => setErrorMsg(err.message || 'Failed to update employee.'),
+    //     });
+    // };
 
     if (isLoading) return <div>Loading...</div>;
     if (isError || !employee) return <div>Error loading employee.</div>;
