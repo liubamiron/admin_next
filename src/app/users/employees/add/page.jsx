@@ -319,7 +319,6 @@ export default function EmployeeAddPage() {
             formData.append("date_of_placement", data.date_of_placement);
             formData.append("email", data.email);
             formData.append("sex", data.sex);
-            // const fullPhone = `${data.phone.code}${data.phone.phone}${data.phone.operator}`;
             formData.append("phone", JSON.stringify(data.phone));
             formData.append("primary_contact_phone", data.primary_contact_phone || "");
             formData.append("primary_contact", data.primary_contact || "");
@@ -420,7 +419,6 @@ export default function EmployeeAddPage() {
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
-                    console.log("Raw submit triggered");
                     handleSubmit(onSubmit)(e);
                 }}
             >

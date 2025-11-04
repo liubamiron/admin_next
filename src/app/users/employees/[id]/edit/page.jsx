@@ -1,14 +1,14 @@
 
 'use client';
 
-import {useParams, useRouter} from 'next/navigation';
+import {useParams, usePathname, useRouter} from 'next/navigation';
 import {useEffect, useState} from 'react';
 import {useForm, useFieldArray} from 'react-hook-form';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {Label, TextInput, Button, Toast, ToastToggle} from 'flowbite-react';
+import {Label, TextInput, Button, Toast, ToastToggle, BreadcrumbItem, Breadcrumb, FileInput} from 'flowbite-react';
 import Select from 'react-select';
-import {HiCheck} from 'react-icons/hi';
+import {HiCheck, HiHome} from 'react-icons/hi';
 import {BsExclamation} from 'react-icons/bs';
 import {useIdEmployee} from '@/hooks/users/useIdEmployee';
 import {useEditEmployee} from '@/hooks/users/useEditEmployee';
@@ -37,6 +37,7 @@ const employeeSchema = z.object({
 export default function EmployeeEditPage() {
     const {id} = useParams();
     const router = useRouter();
+    const [image, setImage] = useState("");
     const {data: employee, isLoading, isError} = useIdEmployee(id);
     const {mutate: editEmployee, isLoading: saving} = useEditEmployee();
 
@@ -53,6 +54,14 @@ export default function EmployeeEditPage() {
         name: 'phone',
     });
 
+    const pathname = usePathname();
+    const segments = pathname.split("/").filter(Boolean);
+
+    const crumbs = segments.map((seg, idx) => {
+        const href = "/" + segments.slice(0, idx + 1).join("/");
+        return {name: seg[0].toUpperCase() + seg.slice(1), href};
+    });
+
     // Populate form when employee data is loaded
     useEffect(() => {
         if (employee) {
@@ -67,7 +76,9 @@ export default function EmployeeEditPage() {
                 sex: employee.sex || '',
                 dob: formatDate(employee.dob),
                 date_of_placement: formatDate(employee.date_of_placement),
+                date_of_dismissal: formatDate(employee.date_of_dismissal),
                 email: employee.email || '',
+                image: (employee.image || ""),
                 phone: employee.phone?.length
                     ? employee.phone
                     : [{ code: '+373', phone: '', operator: '' }],
@@ -87,9 +98,10 @@ export default function EmployeeEditPage() {
         formData.append('email', data.email);
         formData.append('sex', data.sex);
         formData.append('dob', data.dob);
-        formData.append('date_of_placement', data.date_of_placement);
+        formData.append('date_of_placement', data.date_of_placement || '');
+        formData.append('date_of_dismissal', data.date_of_dismissal);
         formData.append("phone", JSON.stringify(data.phone));
-
+        formData.append("image", image);
 
         editEmployee({id, formData}, {
             onSuccess: () => {
@@ -105,11 +117,18 @@ export default function EmployeeEditPage() {
     if (isError || !employee) return <div>Error loading employee.</div>;
 
     return (
-        <div className="p-4 space-y-6 relative">
+        <div className="p-0 space-y-6 md:p-4">
+
+            <Breadcrumb>
+                <BreadcrumbItem href="/" icon={HiHome}>Home</BreadcrumbItem>
+                <BreadcrumbItem href="/users/employees">Employees</BreadcrumbItem>
+                <BreadcrumbItem>Edit</BreadcrumbItem>
+            </Breadcrumb>
+
             <h2 className="text-2xl font-semibold">Edit Employee</h2>
 
             {/* Toasts */}
-            <div className="fixed top-4 right-4 z-50 space-y-2">
+
                 {successMsg && (
                     <Toast>
                         <div
@@ -131,10 +150,66 @@ export default function EmployeeEditPage() {
                         <ToastToggle onDismiss={() => setErrorMsg('')}/>
                     </Toast>
                 )}
-            </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6">
+                    <div className="space-y-4 bg-white p-4 rounded-lg shadow dark:bg-gray-800 flex flex-col justify-between h-full">
+                        <div className="w-full">
+                            <Label value="Profile Image" />
+                            <div >
+                                {/* Thumbnail preview */}
+                                <div className="w-full h-auto rounded-lg border border-gray-300 overflow-hidden flex items-center justify-center bg-gray-50">
+                                    {image ? (
+                                        typeof image === "string" ? (
+                                            <img
+                                                src={`${process.env.NEXT_PUBLIC_IMG}/${image}`}
+                                                alt="Employee"
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <img
+                                                src={URL.createObjectURL(image)}
+                                                alt="Employee"
+                                                className="w-full h-full object-cover"
+                                            />
+                                        )
+                                    ) : employee.image ? (
+                                        <img
+                                            src={`${process.env.NEXT_PUBLIC_IMG}/${employee.image}`}
+                                            alt="Employee"
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <span className="text-xs text-gray-400 text-center">No Image</span>
+                                    )}
+                                </div>
+
+                                {/* Upload button / drag & drop */}
+                                <div className="flex flex-col gap-2 mt-4">
+                                    <label
+                                        htmlFor="dropzone-file"
+                                        className="px-3 py-2 border border-gray-300 rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100 text-sm text-gray-700"
+                                    >
+                                        {image || employee.image ? "Change Image" : "Upload Image"}
+                                    </label>
+                                    <span className="text-xs text-gray-500">
+        PNG, JPG (max 5MB)
+      </span>
+                                    <FileInput
+                                        id="dropzone-file"
+                                        className="hidden"
+                                        accept="image/*"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (file) setImage(file);
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                <div >
                     <div>
                         <Label>First Name</Label>
                         <TextInput {...register('first_name')} />
@@ -172,12 +247,23 @@ export default function EmployeeEditPage() {
                     </div>
 
                     <div>
+
+                        <div>
+                            <Label>Date of Dismissal</Label>
+                            <TextInput type="date" {...register('date_of_dismissal')} />
+                            {errors.date_of_dismissal && <p className="text-red-500 text-xs">{errors.date_of_dismissal.message}</p>}
+                        </div>
+                    </div>
+
+                    <div>
                         <Label>Email</Label>
                         <TextInput type="email" {...register('email')} />
                         {errors.email && <p className="text-red-500 text-xs">{errors.email.message}</p>}
                     </div>
 
-                    <div className="flex flex-col gap-2 mt-2 w-full">
+                    <div>
+                        <Label>Phone Number</Label>
+                    <div className="flex flex-col gap-2 w-full">
                         {/* Master row */}
                         <div className="flex gap-2 w-full items-center">
                             <Select
@@ -194,9 +280,11 @@ export default function EmployeeEditPage() {
                                 styles={{ ...reactSelectHeightFix, container: (base) => ({ ...base, width: 150 }) }}
                             />
                             <Button
+                                outline
                                 type="button"
                                 color="blue"
-                                size="xs"
+                                size="md"
+                                className={"text-lg"}
                                 onClick={() => append({ code: '+373', phone: '', operator: '' })}
                             >
                                 +
@@ -220,19 +308,21 @@ export default function EmployeeEditPage() {
                                     styles={{ ...reactSelectHeightFix, container: (base) => ({ ...base, width: 150 }) }}
                                 />
                                 <Button
+                                    outline
                                     type="button"
-                                    color="failure"
-                                    size="xs"
+                                    color="red"
+                                    size="md"
                                     onClick={() => remove(idx + 1)}
                                 >
-                                    <RiDeleteBin4Fill />
+                                    —
                                 </Button>
                             </div>
                         ))}
                     </div>
+                    </div>
 
 
-
+                </div>
                 </div>
 
                 <div className="flex justify-end gap-2">
