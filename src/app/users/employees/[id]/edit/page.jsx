@@ -92,7 +92,10 @@ export default function EmployeeEditPage() {
 
 
         editEmployee({id, formData}, {
-            onSuccess: () => setSuccessMsg('Employee updated successfully!'),
+            onSuccess: () => {
+                setSuccessMsg('Employee updated successfully!');
+                router.push('/users/employees');
+            },
             onError: (err) => setErrorMsg(err.message || 'Failed to update employee.'),
         });
     };
