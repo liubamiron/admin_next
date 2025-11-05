@@ -1,4 +1,3 @@
-
 'use client';
 
 import {useParams, usePathname, useRouter} from 'next/navigation';
@@ -6,14 +5,30 @@ import {useEffect, useState} from 'react';
 import {useForm, useFieldArray} from 'react-hook-form';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {Label, TextInput, Button, Toast, ToastToggle, BreadcrumbItem, Breadcrumb, FileInput} from 'flowbite-react';
+import {
+    Label,
+    TextInput,
+    Button,
+    Toast,
+    ToastToggle,
+    BreadcrumbItem,
+    Breadcrumb,
+    FileInput,
+    Tabs, TabItem
+} from 'flowbite-react';
 import Select from 'react-select';
 import {HiCheck, HiHome} from 'react-icons/hi';
 import {BsExclamation} from 'react-icons/bs';
 import {useIdEmployee} from '@/hooks/users/useIdEmployee';
 import {useEditEmployee} from '@/hooks/users/useEditEmployee';
 import {RiDeleteBin4Fill} from 'react-icons/ri';
-import {countryOptions, genderOptions, operatorOptions} from '@/components/constants/filterOptions';
+import {
+    citizenshipOptions,
+    countryOptions,
+    genderOptions,
+    maritalOptions,
+    operatorOptions
+} from '@/components/constants/filterOptions';
 import {reactSelectHeightFix} from '@/components/ui/reactSelectHeightFix';
 
 const employeeSchema = z.object({
@@ -34,6 +49,9 @@ const employeeSchema = z.object({
         )
         .nonempty('At least one phone number is required'),
     image: z.any().optional(),
+    citizenship: z.array(z.string()).optional(),
+    telegram: z.string().optional(),
+    marital_status: z.string().optional(),
 });
 
 export default function EmployeeEditPage() {
@@ -83,7 +101,10 @@ export default function EmployeeEditPage() {
                 image: (employee.image || ""),
                 phone: employee.phone?.length
                     ? employee.phone
-                    : [{ code: '+373', phone: '', operator: '' }],
+                    : [{code: '+373', phone: '', operator: ''}],
+                citizenship: employee.citizenship || '',
+                telegram: employee.telegram || '',
+                marital_status: employee.marital_status || '',
             });
         }
     }, [employee, reset]);
@@ -103,6 +124,9 @@ export default function EmployeeEditPage() {
         formData.append('date_of_placement', data.date_of_placement || '');
         formData.append('date_of_dismissal', data.date_of_dismissal);
         formData.append("phone", JSON.stringify(data.phone));
+        formData.append("telegram", data.telegram || '');
+        formData.append("citizenship", JSON.stringify(data.citizenship || []));
+        formData.append("marital_status", data.marital_status || '');
         formData.append("image", image);
 
         editEmployee({id, formData}, {
@@ -131,36 +155,38 @@ export default function EmployeeEditPage() {
 
             {/* Toasts */}
 
-                {successMsg && (
-                    <Toast>
-                        <div
-                            className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 text-green-500">
-                            <HiCheck className="h-5 w-5"/>
-                        </div>
-                        <div className="ml-3 text-sm font-normal">{successMsg}</div>
-                        <ToastToggle onDismiss={() => setSuccessMsg('')}/>
-                    </Toast>
-                )}
+            {successMsg && (
+                <Toast>
+                    <div
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 text-green-500">
+                        <HiCheck className="h-5 w-5"/>
+                    </div>
+                    <div className="ml-3 text-sm font-normal">{successMsg}</div>
+                    <ToastToggle onDismiss={() => setSuccessMsg('')}/>
+                </Toast>
+            )}
 
-                {errorMsg && (
-                    <Toast>
-                        <div
-                            className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-red-100 text-red-500">
-                            <BsExclamation className="h-5 w-5"/>
-                        </div>
-                        <div className="ml-3 text-sm font-normal">{errorMsg}</div>
-                        <ToastToggle onDismiss={() => setErrorMsg('')}/>
-                    </Toast>
-                )}
+            {errorMsg && (
+                <Toast>
+                    <div
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-red-100 text-red-500">
+                        <BsExclamation className="h-5 w-5"/>
+                    </div>
+                    <div className="ml-3 text-sm font-normal">{errorMsg}</div>
+                    <ToastToggle onDismiss={() => setErrorMsg('')}/>
+                </Toast>
+            )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6">
-                    <div className="space-y-4 bg-white p-4 rounded-lg shadow dark:bg-gray-800 flex flex-col justify-between h-full">
+                    <div
+                        className="space-y-4 bg-white p-4 rounded-lg shadow dark:bg-gray-800 flex flex-col justify-between h-full">
                         <div className="w-full">
-                            <Label value="Profile Image" />
-                            <div >
+                            <Label value="Profile Image"/>
+                            <div>
                                 {/* Thumbnail preview */}
-                                <div className="w-[60%] m-auto h-auto rounded-lg border border-gray-300 overflow-hidden flex items-center justify-center bg-gray-50">
+                                <div
+                                    className="w-[60%] m-auto h-auto rounded-lg border border-gray-300 overflow-hidden flex items-center justify-center bg-gray-50">
                                     {image ? (
                                         typeof image === "string" ? (
                                             <img
@@ -210,121 +236,202 @@ export default function EmployeeEditPage() {
                             </div>
                         </div>
 
-                    </div>
-                <div >
-                    <div>
-                        <Label>First Name</Label>
-                        <TextInput {...register('first_name')} />
-                        {errors.first_name && <p className="text-red-500 text-xs">{errors.first_name.message}</p>}
-                    </div>
-
-                    <div>
-                        <Label>Last Name</Label>
-                        <TextInput {...register('last_name')} />
-                        {errors.last_name && <p className="text-red-500 text-xs">{errors.last_name.message}</p>}
-                    </div>
-
-                    <div>
-                        <Label>Gender</Label>
-                        <Select
-                            options={genderOptions}
-                            value={genderOptions.find(opt => opt.value === watch('sex'))}
-                            onChange={(val) => setValue('sex', val?.value)}
-                            styles={reactSelectHeightFix}
-                        />
-                        {errors.sex && <p className="text-red-500 text-xs">{errors.sex.message}</p>}
-                    </div>
-
-                    <div>
-                        <Label>Date of Birth</Label>
-                        <TextInput type="date" {...register('dob')} />
-                        {errors.dob && <p className="text-red-500 text-xs">{errors.dob.message}</p>}
-                    </div>
-
-                    <div>
-                        <Label>Date of Placement</Label>
-                        <TextInput type="date" {...register('date_of_placement')} />
-                        {errors.date_of_placement &&
-                            <p className="text-red-500 text-xs">{errors.date_of_placement.message}</p>}
-                    </div>
-
-                    <div>
+                        <div>
+                            <Label>Date of Placement</Label>
+                            <TextInput type="date" {...register('date_of_placement')} />
+                            {errors.date_of_placement &&
+                                <p className="text-red-500 text-xs">{errors.date_of_placement.message}</p>}
+                        </div>
 
                         <div>
                             <Label>Date of Dismissal</Label>
                             <TextInput type="date" {...register('date_of_dismissal')} />
-                            {errors.date_of_dismissal && <p className="text-red-500 text-xs">{errors.date_of_dismissal.message}</p>}
-                        </div>
-                    </div>
-
-                    <div>
-                        <Label>Email</Label>
-                        <TextInput type="email" {...register('email')} />
-                        {errors.email && <p className="text-red-500 text-xs">{errors.email.message}</p>}
-                    </div>
-
-                    <div>
-                        <Label>Phone Number</Label>
-                    <div className="flex flex-col gap-2 w-full">
-                        {/* Master row */}
-                        <div className="flex gap-2 w-full items-center">
-                            <Select
-                                value={countryOptions.find(opt => opt.value === watch("phone.0.code"))}
-                                onChange={val => setValue("phone.0.code", val.value)}
-                                options={countryOptions}
-                                styles={{ ...reactSelectHeightFix, container: (base) => ({ ...base, width: 120 }) }}
-                            />
-                            <TextInput {...register("phone.0.phone")} placeholder="Phone" className="flex-1" />
-                            <Select
-                                value={operatorOptions.find(opt => opt.value === watch("phone.0.operator"))}
-                                onChange={val => setValue("phone.0.operator", val.value)}
-                                options={operatorOptions}
-                                styles={{ ...reactSelectHeightFix, container: (base) => ({ ...base, width: 150 }) }}
-                            />
-                            <Button
-                                outline
-                                type="button"
-                                color="blue"
-                                size="md"
-                                className={"text-lg"}
-                                onClick={() => append({ code: '+373', phone: '', operator: '' })}
-                            >
-                                +
-                            </Button>
+                            {errors.date_of_dismissal &&
+                                <p className="text-red-500 text-xs">{errors.date_of_dismissal.message}</p>}
                         </div>
 
-                        {/* Dynamically added child rows */}
-                        {phoneFields.slice(1).map((field, idx) => (
-                            <div key={field.id} className="flex gap-2 w-full items-center">
-                                <Select
-                                    value={countryOptions.find(opt => opt.value === watch(`phone.${idx + 1}.code`))}
-                                    onChange={val => setValue(`phone.${idx + 1}.code`, val.value)}
-                                    options={countryOptions}
-                                    styles={{ ...reactSelectHeightFix, container: (base) => ({ ...base, width: 120 }) }}
-                                />
-                                <TextInput {...register(`phone.${idx + 1}.phone`)} placeholder="Phone" className="flex-1" />
-                                <Select
-                                    value={operatorOptions.find(opt => opt.value === watch(`phone.${idx + 1}.operator`))}
-                                    onChange={val => setValue(`phone.${idx + 1}.operator`, val.value)}
-                                    options={operatorOptions}
-                                    styles={{ ...reactSelectHeightFix, container: (base) => ({ ...base, width: 150 }) }}
-                                />
-                                <Button
-                                    outline
-                                    type="button"
-                                    color="red"
-                                    size="md"
-                                    onClick={() => remove(idx + 1)}
-                                >
-                                    —
-                                </Button>
-                            </div>
-                        ))}
                     </div>
+                    <div
+                        className="space-y-4 bg-white p-4 rounded-lg shadow dark:bg-gray-800 flex flex-col justify-between h-full">
+                        <Tabs aria-label="Tabs with underline" variant="underline">
+                            <TabItem title="General">
+                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 px-5 mb-6">
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                        <div>
+                                            <Label>First Name</Label>
+                                            <TextInput {...register('first_name')} />
+                                            {errors.first_name &&
+                                                <p className="text-red-500 text-xs">{errors.first_name.message}</p>}
+                                        </div>
+
+                                        <div>
+                                            <Label>Last Name</Label>
+                                            <TextInput {...register('last_name')} />
+                                            {errors.last_name &&
+                                                <p className="text-red-500 text-xs">{errors.last_name.message}</p>}
+                                        </div>
+
+                                        <div>
+                                            <Label>Date of Birth</Label>
+                                            <TextInput type="date" {...register('dob')} />
+                                            {errors.dob && <p className="text-red-500 text-xs">{errors.dob.message}</p>}
+                                        </div>
+
+                                        <div>
+                                            <Label>Gender</Label>
+                                            <Select
+                                                options={genderOptions}
+                                                value={genderOptions.find(opt => opt.value === watch('sex'))}
+                                                onChange={(val) => setValue('sex', val?.value)}
+                                                styles={reactSelectHeightFix}
+                                            />
+                                            {errors.sex && <p className="text-red-500 text-xs">{errors.sex.message}</p>}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 px-5 mb-6">
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                        <div className="flex flex-col space-y-2">
+                                            <Label>Marital Status</Label>
+                                            <Select
+                                                options={maritalOptions}
+                                                value={maritalOptions.find(opt => opt.value === watch('marital_status'))}
+                                                onChange={val => setValue('marital_status', val?.value || '')}
+                                                placeholder="Select status..."
+                                                styles={reactSelectHeightFix}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col space-y-2">
+                                            <Label>Citizenship</Label>
+                                            <Select
+                                                options={citizenshipOptions}
+                                                value={citizenshipOptions.find(opt => opt.value === watch('citizenship'))}
+                                                onChange={val => setValue('citizenship', val?.value || '')}
+                                                placeholder="Select citizenship..."
+                                                isMulti
+                                                styles={reactSelectHeightFix}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 px-5 mb-6">
+                                    <Label>Phone Number</Label>
+
+                                    {/* First phone row */}
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                        {/* Left: code + phone */}
+                                        <div className="flex gap-4 w-full">
+                                            <Select
+                                                value={countryOptions.find(opt => opt.value === watch("phone.0.code"))}
+                                                onChange={val => setValue("phone.0.code", val.value)}
+                                                options={countryOptions}
+                                                styles={reactSelectHeightFix}
+                                                className="w-[30%]"
+                                            />
+                                            <TextInput
+                                                {...register("phone.0.phone")}
+                                                placeholder="Phone"
+                                                className="w-[70%]"
+                                            />
+                                        </div>
+
+                                        {/* Right: operator + button */}
+                                        <div className="flex gap-4 w-full">
+                                            <Select
+                                                value={operatorOptions.find(opt => opt.value === watch("phone.0.operator"))}
+                                                onChange={val => setValue("phone.0.operator", val.value)}
+                                                options={operatorOptions}
+                                                styles={reactSelectHeightFix}
+                                                className="w-[90%]"
+                                            />
+                                            <Button
+                                                outline
+                                                type="button"
+                                                color="blue"
+                                                className="w-[10%]"
+                                                onClick={() => append({code: '+373', phone: '', operator: ''})}
+                                            >
+                                                +
+                                            </Button>
+                                        </div>
+                                    </div>
+
+                                    {/* Additional phone rows */}
+                                    {phoneFields.slice(1).map((field, idx) => (
+                                        <div key={field.id} className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+                                            {/* Left: code + phone */}
+                                            <div className="flex gap-4 w-full">
+                                                <Select
+                                                    value={countryOptions.find(opt => opt.value === watch(`phone.${idx + 1}.code`))}
+                                                    onChange={val => setValue(`phone.${idx + 1}.code`, val.value)}
+                                                    options={countryOptions}
+                                                    styles={reactSelectHeightFix}
+                                                    className="w-[30%]"
+                                                />
+                                                <TextInput
+                                                    {...register(`phone.${idx + 1}.phone`)}
+                                                    placeholder="Phone"
+                                                    className="w-[70%]"
+                                                />
+                                            </div>
+
+                                            {/* Right: operator + remove button */}
+                                            <div className="flex gap-4 w-full">
+                                                <Select
+                                                    value={operatorOptions.find(opt => opt.value === watch(`phone.${idx + 1}.operator`))}
+                                                    onChange={val => setValue(`phone.${idx + 1}.operator`, val.value)}
+                                                    options={operatorOptions}
+                                                    styles={reactSelectHeightFix}
+                                                    className="w-[90%]"
+                                                />
+                                                <Button
+                                                    outline
+                                                    type="button"
+                                                    color="red"
+                                                    className="w-[10%]"
+                                                    onClick={() => remove(idx + 1)}
+                                                >
+                                                    —
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 px-5 mb-6">
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                        <div>
+                                            <Label>Email</Label>
+                                            <TextInput type="email" {...register('email')} />
+                                            {errors.email &&
+                                                <p className="text-red-500 text-xs">{errors.email.message}</p>}
+                                        </div>
+                                        <div>
+                                            <Label>Telegram</Label>
+                                            <TextInput type="text" {...register('telegram')} />
+                                            {errors.telegram &&
+                                                <p className="text-red-500 text-xs">{errors.telegram.message}</p>}
+                                        </div>
+                                    </div>
+                                </div>
+                            </TabItem>
+                            <TabItem title="Company">
+                                General
+                            </TabItem>
+                            <TabItem title="Files">
+                                General
+                            </TabItem>
+                            <TabItem title="Documents">
+                                General
+                            </TabItem>
+                            <TabItem title="Notes">
+                                General
+                            </TabItem>
+                            <TabItem title="Day Off">
+                                General
+                            </TabItem>
+                        </Tabs>
                     </div>
-
-
-                </div>
                 </div>
 
                 <div className="flex justify-end gap-2">
