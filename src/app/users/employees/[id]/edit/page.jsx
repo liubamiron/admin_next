@@ -20,7 +20,8 @@ const employeeSchema = z.object({
     first_name: z.string().min(1, 'First name is required'),
     last_name: z.string().min(1, 'Last name is required'),
     email: z.string().email('Valid email is required').min(1),
-    date_of_placement: z.string().min(1, 'Date of placement is required'),
+    date_of_placement: z.string().optional(),
+    date_of_dismissal: z.string().min(1, 'Date is required'),
     sex: z.string().min(1, 'Gender is required'),
     dob: z.string().min(1, 'Date of Birth is required'),
     phone: z
