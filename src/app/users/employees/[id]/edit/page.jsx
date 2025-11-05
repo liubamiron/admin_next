@@ -179,9 +179,8 @@ export default function EmployeeEditPage() {
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6">
-                    <div
-                        className="space-y-4 bg-white p-4 rounded-lg shadow dark:bg-gray-800 flex flex-col justify-between h-full">
-                        <div className="w-full">
+                    <div className="space-y-4 bg-white p-2 md:p-4 rounded-lg shadow dark:bg-gray-800 flex flex-col justify-between h-full">
+                        <div>
                             <Label value="Profile Image"/>
                             <div>
                                 {/* Thumbnail preview */}
@@ -234,28 +233,30 @@ export default function EmployeeEditPage() {
                                     />
                                 </div>
                             </div>
+
+                            <div className={'mt-12'}>
+                                <Label>Date of Placement</Label>
+                                <TextInput type="date" {...register('date_of_placement')} />
+                                {errors.date_of_placement &&
+                                    <p className="text-red-500 text-xs">{errors.date_of_placement.message}</p>}
+                            </div>
+
+                            <div className={'mt-4'}>
+                                <Label>Date of Dismissal</Label>
+                                <TextInput type="date" {...register('date_of_dismissal')} />
+                                {errors.date_of_dismissal &&
+                                    <p className="text-red-500 text-xs">{errors.date_of_dismissal.message}</p>}
+                            </div>
                         </div>
 
-                        <div>
-                            <Label>Date of Placement</Label>
-                            <TextInput type="date" {...register('date_of_placement')} />
-                            {errors.date_of_placement &&
-                                <p className="text-red-500 text-xs">{errors.date_of_placement.message}</p>}
-                        </div>
 
-                        <div>
-                            <Label>Date of Dismissal</Label>
-                            <TextInput type="date" {...register('date_of_dismissal')} />
-                            {errors.date_of_dismissal &&
-                                <p className="text-red-500 text-xs">{errors.date_of_dismissal.message}</p>}
-                        </div>
 
                     </div>
                     <div
-                        className="space-y-4 bg-white p-4 rounded-lg shadow dark:bg-gray-800 flex flex-col justify-between h-full">
+                        className="space-y-4 bg-white p-2 md:p-4 rounded-lg shadow dark:bg-gray-800 flex flex-col justify-between h-full">
                         <Tabs aria-label="Tabs with underline" variant="underline">
                             <TabItem title="General">
-                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 px-5 mb-6">
+                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 p-2 md:p-4 mb-6">
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                         <div>
                                             <Label>First Name</Label>
@@ -290,7 +291,7 @@ export default function EmployeeEditPage() {
                                     </div>
                                 </div>
 
-                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 px-5 mb-6">
+                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 p-2 md:p-4 mb-6">
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                         <div className="flex flex-col space-y-2">
                                             <Label>Marital Status</Label>
@@ -315,7 +316,7 @@ export default function EmployeeEditPage() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 px-5 mb-6">
+                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 p-2 md:p-4 mb-6">
                                     <Label>Phone Number</Label>
 
                                     {/* First phone row */}
@@ -398,7 +399,7 @@ export default function EmployeeEditPage() {
                                         </div>
                                     ))}
                                 </div>
-                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 px-5 mb-6">
+                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 p-2 md:p-4 mb-6">
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                         <div>
                                             <Label>Email</Label>
