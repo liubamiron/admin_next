@@ -1,6 +1,6 @@
 'use client';
 
-import {useParams, usePathname, useRouter} from 'next/navigation';
+import {useParams, useRouter} from 'next/navigation';
 import {useEffect, useState} from 'react';
 import {useForm, useFieldArray} from 'react-hook-form';
 import {z} from 'zod';
@@ -21,7 +21,6 @@ import {HiCheck, HiHome} from 'react-icons/hi';
 import {BsExclamation} from 'react-icons/bs';
 import {useIdEmployee} from '@/hooks/users/useIdEmployee';
 import {useEditEmployee} from '@/hooks/users/useEditEmployee';
-import {RiDeleteBin4Fill} from 'react-icons/ri';
 import {
     citizenshipOptions,
     countryOptions,
@@ -72,14 +71,6 @@ export default function EmployeeEditPage() {
     const {fields: phoneFields, append, remove} = useFieldArray({
         control,
         name: 'phone',
-    });
-
-    const pathname = usePathname();
-    const segments = pathname.split("/").filter(Boolean);
-
-    const crumbs = segments.map((seg, idx) => {
-        const href = "/" + segments.slice(0, idx + 1).join("/");
-        return {name: seg[0].toUpperCase() + seg.slice(1), href};
     });
 
     // Populate form when employee data is loaded
@@ -322,18 +313,39 @@ export default function EmployeeEditPage() {
                                     {/* First phone row */}
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                         {/* Left: code + phone */}
-                                        <div className="flex gap-4 w-full">
+                                        <div className="flex gap-1 w-full border rounded-[8px]">
                                             <Select
                                                 value={countryOptions.find(opt => opt.value === watch("phone.0.code"))}
                                                 onChange={val => setValue("phone.0.code", val.value)}
                                                 options={countryOptions}
-                                                styles={reactSelectHeightFix}
-                                                className="w-[30%]"
+                                                className="w-[25%]"
+                                                styles={{
+                                                    control: (provided) => ({
+                                                        ...provided,
+                                                        border: 'none',
+                                                        boxShadow: 'none',
+                                                        backgroundColor: 'transparent',
+                                                    }),
+                                                    indicatorsContainer: (provided) => ({
+                                                        ...provided,
+                                                        display: 'yes', // remove dropdown arrow
+                                                    }),
+                                                    valueContainer: (provided) => ({
+                                                        ...provided,
+                                                        padding: '0 0 0 6px',
+                                                    }),
+                                                    singleValue: (provided) => ({
+                                                        ...provided,
+                                                        color: 'inherit', // match text color
+                                                    }),
+                                                    reactSelectHeightFix
+                                                }}
                                             />
                                             <TextInput
                                                 {...register("phone.0.phone")}
                                                 placeholder="Phone"
-                                                className="w-[70%]"
+                                                className=" w-[75%] dark:bg-gray-700 dark:text-white border-none focus:none countryselect"
+
                                             />
                                         </div>
 
@@ -350,7 +362,7 @@ export default function EmployeeEditPage() {
                                                 outline
                                                 type="button"
                                                 color="blue"
-                                                className="w-[10%]"
+                                                className="w-[40px] h-[40px]"
                                                 onClick={() => append({code: '+373', phone: '', operator: ''})}
                                             >
                                                 +
@@ -390,7 +402,7 @@ export default function EmployeeEditPage() {
                                                     outline
                                                     type="button"
                                                     color="red"
-                                                    className="w-[10%]"
+                                                    className="w-[40px] h-[40px]"
                                                     onClick={() => remove(idx + 1)}
                                                 >
                                                     —
