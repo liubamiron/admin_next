@@ -33,6 +33,7 @@ const employeeSchema = z.object({
             })
         )
         .nonempty('At least one phone number is required'),
+    image: z.any().optional(),
 });
 
 export default function EmployeeEditPage() {
