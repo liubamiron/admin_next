@@ -127,7 +127,7 @@ export default function EmployeeEditPage() {
         formData.append("telegram", data.telegram || '');
         formData.append("citizenship", JSON.stringify(data.citizenship || []));
         formData.append("marital_status", data.marital_status || '');
-        formData.append("image", image);
+        formData.append("image", image || employee.image || '');
 
         editEmployee({id, formData}, {
             onSuccess: () => {
