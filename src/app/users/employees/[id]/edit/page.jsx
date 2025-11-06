@@ -47,6 +47,14 @@ const employeeSchema = z.object({
             })
         )
         .nonempty('At least one phone number is required'),
+    primary_contacts: z
+        .array(
+            z.object({
+                name: z.string().optional(),
+                number: z.string().optional(),
+            })
+        )
+        .optional(),
     image: z.any().optional(),
     citizenship: z.array(z.string()).optional(),
     telegram: z.string().optional(),
@@ -65,12 +73,21 @@ export default function EmployeeEditPage() {
 
     const {register, handleSubmit, control, setValue, reset, watch, formState: {errors}} = useForm({
         resolver: zodResolver(employeeSchema),
-        defaultValues: {phone: [{code: '+373', phone: '', operator: ''}]},
+        defaultValues: {
+            phone: [{code: '+373', phone: '', operator: ''}],
+            primary_contacts: [{name: '', number: ''}],
+        },
     });
 
     const {fields: phoneFields, append, remove} = useFieldArray({
         control,
         name: 'phone',
+    });
+
+
+    const { fields: contactFields, append:appendContact, remove:removeContact } = useFieldArray({
+        control,
+        name: "primary_contacts",
     });
 
     // Populate form when employee data is loaded
@@ -411,6 +428,52 @@ export default function EmployeeEditPage() {
                                         </div>
                                     ))}
                                 </div>
+
+                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 p-2 md:p-4 mb-6">
+                                    <Label>Primary Contact</Label>
+
+                                    {contactFields.map((field, idx) => (
+                                        <div key={field.id} className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+                                            <div className="flex w-full gap-4">
+                                                <TextInput
+                                                    {...register(`primary_contacts.${idx}.name`)}
+                                                    placeholder="Contact Name"
+                                                    className="w-[70%]"
+                                                />
+                                                <TextInput
+                                                    {...register(`primary_contacts.${idx}.number`)}
+                                                    placeholder="123 456 789"
+                                                    className="w-[30%]"
+                                                />
+                                            </div>
+                                            <div className="flex gap-4 w-full items-center">
+                                                {idx === 0 ? (
+                                                    <Button
+                                                        outline
+                                                        type="button"
+                                                        color="blue"
+                                                        className="w-[40px] h-[40px]"
+                                                        onClick={() => appendContact({ name: "", number: "" })}
+                                                    >
+                                                        +
+                                                    </Button>
+                                                ) : (
+                                                    <Button
+                                                        outline
+                                                        type="button"
+                                                        color="red"
+                                                        className="w-[40px] h-[40px]"
+                                                        onClick={() => removeContact(idx)}
+                                                    >
+                                                        —
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+
+                                </div>
+
                                 <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 p-2 md:p-4 mb-6">
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                         <div>
