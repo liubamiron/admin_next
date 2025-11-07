@@ -38,7 +38,7 @@ export default function CandidateEditPage() {
     const [offices, setOffices] = useState(null);
     const [positions, setPositions] = useState(null);
     const [gender, setGender] = useState(null);
-    const [dob, setDob] = useState("");
+    const [dob, setDob] = useState(null);
     const [phones, setPhones] = useState([{ phone: "", operator: "", countryCode: "+373" }]);
     const [mounted, setMounted] = useState(false);
     const [successMsg, setSuccessMsg] = useState("");
@@ -405,15 +405,22 @@ export default function CandidateEditPage() {
                                 <div className={"mt-[5px]"}>
                                     <Label>Date of Birth</Label>
                                     <Datepicker
-                                        value={dob}
+                                        value={dob instanceof Date ? dob : dob ? new Date(dob) : null}
+                                        maxDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
                                         onChange={(date) => {
-                                            if (date instanceof Date && !isNaN(date)) {
-                                                setDob(date); // ✅ keep as Date
+                                            // Normalize both string and Date
+                                            let parsedDate =
+                                                typeof date === "string" ? new Date(date) :
+                                                    date instanceof Date ? date : null;
+
+                                            if (parsedDate && !isNaN(parsedDate.getTime())) {
+                                                setDob(parsedDate);
                                             } else {
                                                 setDob(null);
                                             }
                                         }}
                                     />
+
                                 </div>
 
                                 <div className="flex flex-col space-y-2">

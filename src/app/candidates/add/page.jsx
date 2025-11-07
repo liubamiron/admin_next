@@ -303,9 +303,12 @@ export default function CandidateAddPage() {
 
                                 <div>
                                     <Label>Date of Birth</Label>
-                                    <Datepicker onChange={(date) => {
+                                    <Datepicker
+                                        maxDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
+                                        onChange={(date) => {
                                         if (date) setValue("dob", date.toISOString().split("T")[0]);
-                                    }} />
+                                    }}
+                                    />
                                     {errors.dob && <p className="text-red-500 text-sm">{errors.dob.message}</p>}
                                 </div>
 

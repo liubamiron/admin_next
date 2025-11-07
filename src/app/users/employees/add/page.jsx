@@ -668,6 +668,7 @@ export default function EmployeeAddPage() {
                                                                 console.warn("Invalid date selected:", date);
                                                             }
                                                         }}
+                                                        maxDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
                                                     />
                                                     {errors.dob && (
                                                         <p className="text-red-500 text-sm">{errors.dob.message}</p>
@@ -912,6 +913,7 @@ export default function EmployeeAddPage() {
                                                     <TextInput
                                                         id={`children_dob-${index}`}
                                                         type="date"
+                                                        max={new Date().toISOString().split('T')[0]} // disables future dates
                                                         {...register(`children.${index}.dob`)}
                                                     />
                                                     {/* Buttons */}
