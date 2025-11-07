@@ -321,7 +321,12 @@ export default function EmployeeEditPage() {
 
                                         <div>
                                             <Label>Date of Birth</Label>
-                                            <TextInput type="date" {...register('dob')} />
+                                            <TextInput
+                                                type="date" {...register('dob')}
+                                                max={new Date(new Date().setFullYear(new Date().getFullYear() - 18))
+                                                    .toISOString()
+                                                    .split('T')[0]} // only allows dates 18+ years ago
+                                            />
                                             {errors.dob && <p className="text-red-500 text-xs">{errors.dob.message}</p>}
                                         </div>
 
@@ -506,6 +511,7 @@ export default function EmployeeEditPage() {
                                                 <TextInput
                                                     type="date"
                                                     {...register(`children.${idx}.dob`)}
+                                                    max={new Date().toISOString().split('T')[0]} // disables future dates
                                                     placeholder="Date of Birth"
                                                 />
                                                 {errors.children?.[idx]?.dob && (
