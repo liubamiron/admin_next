@@ -81,9 +81,9 @@ export const employeeFilesOptions = [
 ]
 
 export const educationOptions =[
-    { value: "secondary", label: "Secondary" },
-    { value: "higher_complete", label: "Higher Complete" },
-    { value: "higher_incomplete", label: "Higher Incomplete" },
+    { value: "Secondary", label: "Secondary" },
+    { value: "Higher Complete", label: "Higher Complete" },
+    { value: "Higher Incomplete", label: "Higher Incomplete" },
 ]
 
 export const transportTypeOptions = [
