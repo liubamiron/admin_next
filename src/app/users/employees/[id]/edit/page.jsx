@@ -60,9 +60,9 @@ const employeeSchema = z.object({
     children: z
         .array(
             z.object({
-                name: z.string().min(1, 'Child name is required'),
-                dob: z.string().min(1, 'Date of birth is required'),
-                gender: z.string().min(1, 'Gender is required'),
+                name: z.string().optional(),
+                dob: z.string().optional(),
+                gender: z.string().optional(),
             })
         )
         .optional(),
