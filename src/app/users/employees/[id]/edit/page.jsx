@@ -70,10 +70,11 @@ const employeeSchema = z.object({
     citizenship: z.array(z.string()).optional(),
     telegram: z.string().optional(),
     marital_status: z.string().optional(),
-    languages: z.string().optional(),
+    languages: z.array(z.string()).optional(),
     education: z.string().optional(),
     transport_type: z.string().optional(),
-    driver_license: z.string().optional(),
+    driver_license: z.array(z.string()).optional(),
+
 });
 
 export default function EmployeeEditPage() {
@@ -131,10 +132,10 @@ export default function EmployeeEditPage() {
                 phone: employee.phone?.length
                     ? employee.phone
                     : [{code: '+373', phone: '', operator: ''}],
-                citizenship: employee.citizenship || '',
+                citizenship: employee.citizenship || [],
                 telegram: employee.telegram || '',
                 marital_status: employee.marital_status || '',
-                languages: employee.languages || '',
+                languages: employee.languages || [],
                 education: employee.education || '',
                 children: employee.children?.length
                     ? employee.children.map(c => ({
@@ -146,7 +147,7 @@ export default function EmployeeEditPage() {
                primary_contact: employee.primary_contact || '',
                primary_contact_phone: employee.primary_contact_phone || '',
                 transport_type: employee.transport_type || '',
-                driver_license: employee.driver_license || '',
+                driver_license: employee.driver_license || [],
             });
         }
     }, [employee, reset]);
@@ -169,10 +170,10 @@ export default function EmployeeEditPage() {
         formData.append("telegram", data.telegram || '');
         formData.append("citizenship", JSON.stringify(data.citizenship || []));
         formData.append("marital_status", data.marital_status || '');
-        formData.append("languages", data.languages || '');
+        formData.append("languages", JSON.stringify(data.languages || []));
         formData.append("education", data.education || '');
         formData.append("transport_type", data.transport_type || '');
-        formData.append("driver_license", data.driver_license || '');
+        formData.append("driver_license", JSON.stringify(data.driver_license || []));
         formData.append("image", image || employee.image || '');
 
         editEmployee({id, formData}, {
@@ -579,10 +580,10 @@ export default function EmployeeEditPage() {
                                             <Label>Languages</Label>
                                             <Select
                                                 options={languagesOptions}
-                                                value={languagesOptions.find(opt => opt.value === watch('languages'))}
-                                                onChange={val => setValue('languages', val?.value || '')}
-                                                placeholder="Select languages..."
+                                                value={languagesOptions.filter(opt => watch('languages')?.includes(opt.value))}
+                                                onChange={val => setValue('languages', val.map(v => v.value))}
                                                 isMulti
+                                                placeholder="Select languages..."
                                                 styles={reactSelectHeightFix}
                                             />
                                         </div>
@@ -604,10 +605,10 @@ export default function EmployeeEditPage() {
                                             <Label>Driver License</Label>
                                             <Select
                                                 options={driverLicenseOptions}
-                                                value={driverLicenseOptions.find(opt => opt.value === watch('driver_license'))}
-                                                onChange={val => setValue('driver_license', val?.value || '')}
-                                                placeholder="Select driver license..."
+                                                value={driverLicenseOptions.filter(opt => watch('driver_license')?.includes(opt.value))}
+                                                onChange={val => setValue('driver_license', val.map(v => v.value))}
                                                 isMulti
+                                                placeholder="Select driver license..."
                                                 styles={reactSelectHeightFix}
                                             />
                                         </div>
