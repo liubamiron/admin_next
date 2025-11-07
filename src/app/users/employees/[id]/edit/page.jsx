@@ -434,19 +434,20 @@ export default function EmployeeEditPage() {
 
                                     {contactFields.map((field, idx) => (
                                         <div key={field.id} className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-                                            <div className="flex w-full gap-4">
+<div>
+
                                                 <TextInput
                                                     {...register(`primary_contacts.${idx}.name`)}
                                                     placeholder="Contact Name"
-                                                    className="w-[70%]"
+
                                                 />
+</div>
+                                            <div className="flex flex-row gap-4 w-full">
                                                 <TextInput
                                                     {...register(`primary_contacts.${idx}.number`)}
                                                     placeholder="123 456 789"
-                                                    className="w-[30%]"
+                                                    className="w-[90%]"
                                                 />
-                                            </div>
-                                            <div className="flex gap-4 w-full items-center">
                                                 {idx === 0 ? (
                                                     <Button
                                                         outline
@@ -468,7 +469,8 @@ export default function EmployeeEditPage() {
                                                         —
                                                     </Button>
                                                 )}
-                                            </div>
+
+                                        </div>
                                         </div>
                                     ))}
 
