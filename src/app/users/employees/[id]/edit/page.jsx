@@ -23,10 +23,10 @@ import {useIdEmployee} from '@/hooks/users/useIdEmployee';
 import {useEditEmployee} from '@/hooks/users/useEditEmployee';
 import {
     citizenshipOptions,
-    countryOptions,
-    genderOptions,
+    countryOptions, driverLicenseOptions, educationOptions,
+    genderOptions, languagesOptions,
     maritalOptions,
-    operatorOptions
+    operatorOptions, transportTypeOptions
 } from '@/components/constants/filterOptions';
 import {reactSelectHeightFix} from '@/components/ui/reactSelectHeightFix';
 
@@ -47,11 +47,22 @@ const employeeSchema = z.object({
             })
         )
         .nonempty('At least one phone number is required'),
-    primary_contacts: z
+    primary_contact: z.string().optional(),
+    primary_contact_phone: z.string().optional(),
+    // primary_contacts: z
+    //     .array(
+    //         z.object({
+    //             name: z.string().optional(),
+    //             number: z.string().optional(),
+    //         })
+    //     )
+    //     .optional(),
+    children: z
         .array(
             z.object({
-                name: z.string().optional(),
-                number: z.string().optional(),
+                name: z.string().min(1, 'Child name is required'),
+                dob: z.string().min(1, 'Date of birth is required'),
+                gender: z.string().min(1, 'Gender is required'),
             })
         )
         .optional(),
@@ -59,6 +70,10 @@ const employeeSchema = z.object({
     citizenship: z.array(z.string()).optional(),
     telegram: z.string().optional(),
     marital_status: z.string().optional(),
+    languages: z.string().optional(),
+    education: z.string().optional(),
+    transport_type: z.string().optional(),
+    driver_license: z.string().optional(),
 });
 
 export default function EmployeeEditPage() {
@@ -75,7 +90,9 @@ export default function EmployeeEditPage() {
         resolver: zodResolver(employeeSchema),
         defaultValues: {
             phone: [{code: '+373', phone: '', operator: ''}],
-            primary_contacts: [{name: '', number: ''}],
+            primary_contact: '',
+            primary_contact_phone: '',
+            children: [{ name: '', dob: '', gender: '' }],
         },
     });
 
@@ -84,10 +101,14 @@ export default function EmployeeEditPage() {
         name: 'phone',
     });
 
+    // const { fields: contactFields, append:appendContact, remove:removeContact } = useFieldArray({
+    //     control,
+    //     name: "primary_contacts",
+    // });
 
-    const { fields: contactFields, append:appendContact, remove:removeContact } = useFieldArray({
+    const { fields: childrenFields, append: appendChild, remove: removeChild } = useFieldArray({
         control,
-        name: "primary_contacts",
+        name: "children",
     });
 
     // Populate form when employee data is loaded
@@ -113,6 +134,19 @@ export default function EmployeeEditPage() {
                 citizenship: employee.citizenship || '',
                 telegram: employee.telegram || '',
                 marital_status: employee.marital_status || '',
+                languages: employee.languages || '',
+                education: employee.education || '',
+                children: employee.children?.length
+                    ? employee.children.map(c => ({
+                        name: c.name || '',
+                        dob: c.dob ? c.dob.split('T')[0] : '',
+                        gender: c.gender || '',
+                    }))
+                    : [{ name: '', dob: '', gender: '' }], // <-- default row
+               primary_contact: employee.primary_contact || '',
+               primary_contact_phone: employee.primary_contact_phone || '',
+                transport_type: employee.transport_type || '',
+                driver_license: employee.driver_license || '',
             });
         }
     }, [employee, reset]);
@@ -135,6 +169,10 @@ export default function EmployeeEditPage() {
         formData.append("telegram", data.telegram || '');
         formData.append("citizenship", JSON.stringify(data.citizenship || []));
         formData.append("marital_status", data.marital_status || '');
+        formData.append("languages", data.languages || '');
+        formData.append("education", data.education || '');
+        formData.append("transport_type", data.transport_type || '');
+        formData.append("driver_license", data.driver_license || '');
         formData.append("image", image || employee.image || '');
 
         editEmployee({id, formData}, {
@@ -431,22 +469,56 @@ export default function EmployeeEditPage() {
 
                                 <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 p-2 md:p-4 mb-6">
                                     <Label>Primary Contact</Label>
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+                                        <div>
+                                            <TextInput
+                                                {...register("primary_contact")}
+                                                placeholder="Contact Name"
+                                            />
+                                        </div>
+                                        <div>
+                                            <TextInput
+                                                {...register("primary_contact_phone")}
+                                                placeholder="123 456 789"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
 
-                                    {contactFields.map((field, idx) => (
-                                        <div key={field.id} className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-<div>
 
+                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 p-2 md:p-4 mb-6">
+                                    <Label>Children</Label>
+
+                                    {childrenFields.map((field, idx) => (
+                                        <div key={field.id} className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                                            <div>
                                                 <TextInput
-                                                    {...register(`primary_contacts.${idx}.name`)}
-                                                    placeholder="Contact Name"
-
+                                                    {...register(`children.${idx}.name`)}
+                                                    placeholder="Child Name"
                                                 />
-</div>
-                                            <div className="flex flex-row gap-4 w-full">
+                                                {errors.children?.[idx]?.name && (
+                                                    <p className="text-red-500 text-xs">{errors.children[idx].name.message}</p>
+                                                )}
+                                            </div>
+
+                                            <div>
                                                 <TextInput
-                                                    {...register(`primary_contacts.${idx}.number`)}
-                                                    placeholder="123 456 789"
-                                                    className="w-[90%]"
+                                                    type="date"
+                                                    {...register(`children.${idx}.dob`)}
+                                                    placeholder="Date of Birth"
+                                                />
+                                                {errors.children?.[idx]?.dob && (
+                                                    <p className="text-red-500 text-xs">{errors.children[idx].dob.message}</p>
+                                                )}
+                                            </div>
+
+                                            <div className="flex gap-2 w-full">
+                                                <Select
+                                                    options={genderOptions}
+                                                    value={genderOptions.find(opt => opt.value === watch(`children.${idx}.gender`))}
+                                                    onChange={(val) => setValue(`children.${idx}.gender`, val?.value)}
+                                                    styles={reactSelectHeightFix}
+                                                    className={'w-[90%]'}
                                                 />
                                                 {idx === 0 ? (
                                                     <Button
@@ -454,7 +526,7 @@ export default function EmployeeEditPage() {
                                                         type="button"
                                                         color="blue"
                                                         className="w-[40px] h-[40px]"
-                                                        onClick={() => appendContact({ name: "", number: "" })}
+                                                        onClick={() => appendChild({ name: "", dob: "", gender: "" })}
                                                     >
                                                         +
                                                     </Button>
@@ -464,17 +536,16 @@ export default function EmployeeEditPage() {
                                                         type="button"
                                                         color="red"
                                                         className="w-[40px] h-[40px]"
-                                                        onClick={() => removeContact(idx)}
+                                                        onClick={() => removeChild(idx)}
                                                     >
                                                         —
                                                     </Button>
                                                 )}
-
-                                        </div>
+                                            </div>
                                         </div>
                                     ))}
-
                                 </div>
+
 
                                 <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 p-2 md:p-4 mb-6">
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -489,6 +560,56 @@ export default function EmployeeEditPage() {
                                             <TextInput type="text" {...register('telegram')} />
                                             {errors.telegram &&
                                                 <p className="text-red-500 text-xs">{errors.telegram.message}</p>}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 p-2 md:p-4 mb-6">
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                        <div className="flex flex-col space-y-2">
+                                            <Label>Education</Label>
+                                            <Select
+                                                options={educationOptions}
+                                                value={educationOptions.find(opt => opt.value === watch('education'))}
+                                                onChange={val => setValue('education', val?.value || '')}
+                                                placeholder="Select status..."
+                                                styles={reactSelectHeightFix}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col space-y-2">
+                                            <Label>Languages</Label>
+                                            <Select
+                                                options={languagesOptions}
+                                                value={languagesOptions.find(opt => opt.value === watch('languages'))}
+                                                onChange={val => setValue('languages', val?.value || '')}
+                                                placeholder="Select languages..."
+                                                isMulti
+                                                styles={reactSelectHeightFix}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 p-2 md:p-4 mb-6">
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                        <div className="flex flex-col space-y-2">
+                                            <Label>Transport Type</Label>
+                                            <Select
+                                                options={transportTypeOptions}
+                                                value={transportTypeOptions.find(opt => opt.value === watch('transport_type'))}
+                                                onChange={val => setValue('transport_type', val?.value || '')}
+                                                placeholder="Select transport type..."
+                                                styles={reactSelectHeightFix}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col space-y-2">
+                                            <Label>Driver License</Label>
+                                            <Select
+                                                options={driverLicenseOptions}
+                                                value={driverLicenseOptions.find(opt => opt.value === watch('driver_license'))}
+                                                onChange={val => setValue('driver_license', val?.value || '')}
+                                                placeholder="Select driver license..."
+                                                isMulti
+                                                styles={reactSelectHeightFix}
+                                            />
                                         </div>
                                     </div>
                                 </div>
