@@ -354,8 +354,8 @@ export default function EmployeeEditPage() {
                                             <Label>Citizenship</Label>
                                             <Select
                                                 options={citizenshipOptions}
-                                                value={citizenshipOptions.find(opt => opt.value === watch('citizenship'))}
-                                                onChange={val => setValue('citizenship', val?.value || '')}
+                                                value={citizenshipOptions.filter(opt => watch('citizenship')?.includes(opt.value))}
+                                                onChange={val => setValue('citizenship', val.map(v => v.value))}
                                                 placeholder="Select citizenship..."
                                                 isMulti
                                                 styles={reactSelectHeightFix}
