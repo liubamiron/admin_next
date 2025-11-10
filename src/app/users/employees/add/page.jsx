@@ -771,8 +771,8 @@ export default function EmployeeAddPage() {
                                         {/* Left: code + phone */}
                                         <div className="flex gap-1 w-full border rounded-[8px]">
                                             <Select
-                                                value={countryOptions.find(opt => opt.value === watch(`phone.${index}.code`)) || countryOptions[0]}
-                                                onChange={(val) => setValue(`phone.${index}.code`, val.value)}
+                                                value={countryOptions.find(opt => opt.value === watch("phone.0.code")) || countryOptions[0]}
+                                                onChange={(val) => setValue("phone.0.code", val.value)}
                                                 options={countryOptions}
                                                 className="w-[25%]"
                                                 styles={{
@@ -799,7 +799,7 @@ export default function EmployeeAddPage() {
                                                 isDark={isDark}
                                             />
                                             <TextInput
-                                                {...register(`phone.${idx + 1}.phone`)}
+                                                {...register("phone.0.phone")}
                                                 placeholder="Phone"
                                                 className=" w-[75%] dark:bg-gray-700 dark:text-white border-none focus:none countryselect"
 
