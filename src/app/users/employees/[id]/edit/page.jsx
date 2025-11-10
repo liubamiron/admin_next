@@ -29,6 +29,7 @@ import {
     operatorOptions, transportTypeOptions
 } from '@/components/constants/filterOptions';
 import {reactSelectHeightFix} from '@/components/ui/reactSelectHeightFix';
+import {useDarkMode} from "@/hooks/useDarkMode";
 
 const employeeSchema = z.object({
     first_name: z.string().min(1, 'First name is required'),
@@ -86,6 +87,7 @@ export default function EmployeeEditPage() {
 
     const [successMsg, setSuccessMsg] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
+    const isDark = useDarkMode();
 
     const {register, handleSubmit, control, setValue, reset, watch, formState: {errors}} = useForm({
         resolver: zodResolver(employeeSchema),
@@ -303,7 +305,7 @@ export default function EmployeeEditPage() {
                         className="space-y-4 bg-white p-2 md:p-4 rounded-lg shadow dark:bg-gray-800 flex flex-col justify-between h-full">
                         <Tabs aria-label="Tabs with underline" variant="underline">
                             <TabItem title="General">
-                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 p-2 md:p-4 mb-6">
+                                <div className="rounded-lg border py-4 p-2 md:p-4 mb-6 bg-[#F9FAFB] dark:bg-gray-800" >
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                         <div>
                                             <Label>First Name</Label>
@@ -337,13 +339,14 @@ export default function EmployeeEditPage() {
                                                 value={genderOptions.find(opt => opt.value === watch('sex'))}
                                                 onChange={(val) => setValue('sex', val?.value)}
                                                 styles={reactSelectHeightFix}
+                                                isDark={isDark}
                                             />
                                             {errors.sex && <p className="text-red-500 text-xs">{errors.sex.message}</p>}
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 p-2 md:p-4 mb-6">
+                                <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 p-2 md:p-4 mb-6">
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                         <div className="flex flex-col space-y-2">
                                             <Label>Marital Status</Label>
@@ -353,6 +356,7 @@ export default function EmployeeEditPage() {
                                                 onChange={val => setValue('marital_status', val?.value || '')}
                                                 placeholder="Select status..."
                                                 styles={reactSelectHeightFix}
+                                                isDark={isDark}
                                             />
                                         </div>
                                         <div className="flex flex-col space-y-2">
@@ -364,11 +368,12 @@ export default function EmployeeEditPage() {
                                                 placeholder="Select citizenship..."
                                                 isMulti
                                                 styles={reactSelectHeightFix}
+                                                isDark={isDark}
                                             />
                                         </div>
                                     </div>
                                 </div>
-                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 p-2 md:p-4 mb-6">
+                                <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 p-2 md:p-4 mb-6">
                                     <Label>Phone Number</Label>
 
                                     {/* First phone row */}
@@ -401,6 +406,7 @@ export default function EmployeeEditPage() {
                                                     }),
                                                     reactSelectHeightFix
                                                 }}
+                                                isDark={isDark}
                                             />
                                             <TextInput
                                                 {...register("phone.0.phone")}
@@ -418,6 +424,7 @@ export default function EmployeeEditPage() {
                                                 options={operatorOptions}
                                                 styles={reactSelectHeightFix}
                                                 className="w-[90%]"
+                                                isDark={isDark}
                                             />
                                             <Button
                                                 outline
@@ -442,6 +449,7 @@ export default function EmployeeEditPage() {
                                                     options={countryOptions}
                                                     styles={reactSelectHeightFix}
                                                     className="w-[30%]"
+                                                    isDark={isDark}
                                                 />
                                                 <TextInput
                                                     {...register(`phone.${idx + 1}.phone`)}
@@ -458,6 +466,7 @@ export default function EmployeeEditPage() {
                                                     options={operatorOptions}
                                                     styles={reactSelectHeightFix}
                                                     className="w-[90%]"
+                                                    isDark={isDark}
                                                 />
                                                 <Button
                                                     outline
@@ -473,7 +482,7 @@ export default function EmployeeEditPage() {
                                     ))}
                                 </div>
 
-                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 p-2 md:p-4 mb-6">
+                                <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 p-2 md:p-4 mb-6">
                                     <Label>Primary Contact</Label>
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
                                         <div>
@@ -492,7 +501,7 @@ export default function EmployeeEditPage() {
                                 </div>
 
 
-                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 p-2 md:p-4 mb-6">
+                                <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 p-2 md:p-4 mb-6">
                                     <Label>Children</Label>
 
                                     {childrenFields.map((field, idx) => (
@@ -526,6 +535,7 @@ export default function EmployeeEditPage() {
                                                     onChange={(val) => setValue(`children.${idx}.gender`, val?.value)}
                                                     styles={reactSelectHeightFix}
                                                     className={'w-[90%]'}
+                                                    isDark={isDark}
                                                 />
                                                 {idx === 0 ? (
                                                     <Button
@@ -554,7 +564,7 @@ export default function EmployeeEditPage() {
                                 </div>
 
 
-                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 p-2 md:p-4 mb-6">
+                                <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 p-2 md:p-4 mb-6">
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                         <div>
                                             <Label>Email</Label>
@@ -570,7 +580,7 @@ export default function EmployeeEditPage() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 p-2 md:p-4 mb-6">
+                                <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 p-2 md:p-4 mb-6">
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                         <div className="flex flex-col space-y-2">
                                             <Label>Education</Label>
@@ -580,6 +590,7 @@ export default function EmployeeEditPage() {
                                                 onChange={val => setValue('education', val?.value || '')}
                                                 placeholder="Select status..."
                                                 styles={reactSelectHeightFix}
+                                                isDark={isDark}
                                             />
                                         </div>
                                         <div className="flex flex-col space-y-2">
@@ -591,11 +602,13 @@ export default function EmployeeEditPage() {
                                                 isMulti
                                                 placeholder="Select languages..."
                                                 styles={reactSelectHeightFix}
+                                                className="bg-[#F9FAFB] dark:bg-gray-800"
+                                                isDark={isDark}
                                             />
                                         </div>
                                     </div>
                                 </div>
-                                <div className="rounded-lg border border-gray-200 bg-gray-50 py-4 p-2 md:p-4 mb-6">
+                                <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 p-2 md:p-4 mb-6">
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                         <div className="flex flex-col space-y-2">
                                             <Label>Transport Type</Label>
@@ -605,6 +618,7 @@ export default function EmployeeEditPage() {
                                                 onChange={val => setValue('transport_type', val?.value || '')}
                                                 placeholder="Select transport type..."
                                                 styles={reactSelectHeightFix}
+                                                isDark={isDark}
                                             />
                                         </div>
                                         <div className="flex flex-col space-y-2">
@@ -616,6 +630,7 @@ export default function EmployeeEditPage() {
                                                 isMulti
                                                 placeholder="Select driver license..."
                                                 styles={reactSelectHeightFix}
+                                                isDark={isDark}
                                             />
                                         </div>
                                     </div>

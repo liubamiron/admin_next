@@ -34,6 +34,7 @@ import {useFieldArray, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useCreateUserShift} from "@/hooks/users/useCreateUserShift";
 import {BsExclamation} from "react-icons/bs";
+import {useDarkMode} from "@/hooks/useDarkMode";
 
 const Select = dynamic(() => import("react-select"), {ssr: false});
 
@@ -69,6 +70,7 @@ export default function EmployeeAddPage() {
     const [mounted, setMounted] = useState(false);
     const [successMsg, setSuccessMsg] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
+    const isDark = useDarkMode();
 
     const pathname = usePathname();
     const segments = pathname.split("/").filter(Boolean);
@@ -120,7 +122,7 @@ export default function EmployeeAddPage() {
                     const filledFields = [child.name, child.gender, child.dob].filter(Boolean);
                     return filledFields.length === 0 || filledFields.length === 3;
                 }),
-                { message: "All child fields must be filled if a child is added" }
+                {message: "All child fields must be filled if a child is added"}
             ),
 
         // company info
@@ -150,7 +152,7 @@ export default function EmployeeAddPage() {
                         ].filter(Boolean);
                         return filledFields.length === 0 || filledFields.length === 3;
                     }),
-                { message: "All shift fields must be filled if a shift is added" }
+                {message: "All shift fields must be filled if a shift is added"}
             )
             .default([]),
         files: z
@@ -168,7 +170,7 @@ export default function EmployeeAddPage() {
                         const filledFields = [file.file_type, file.file].filter(Boolean);
                         return filledFields.length === 0 || filledFields.length === 2;
                     }),
-                { message: "All file fields must be filled if a file is added" }
+                {message: "All file fields must be filled if a file is added"}
             )
             .default([]),
     });
@@ -290,8 +292,14 @@ export default function EmployeeAddPage() {
         name: "files",
     });
 
+    const {fields: phoneFields, append, remove} = useFieldArray({
+        control,
+        name: 'phone',
+    });
+
+
     const {
-        fields: phoneFields,
+        fields: phoneFields2,
         append: appendPhone,
         remove: removePhone,
     } = useFieldArray({
@@ -397,21 +405,23 @@ export default function EmployeeAddPage() {
 
             {successMsg && (
                 <Toast>
-                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500">
-                        <HiCheck className="h-5 w-5" />
+                    <div
+                        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500">
+                        <HiCheck className="h-5 w-5"/>
                     </div>
                     <div className="ml-3 text-sm font-normal">{successMsg}</div>
-                    <ToastToggle onDismiss={() => setSuccessMsg("")} />
+                    <ToastToggle onDismiss={() => setSuccessMsg("")}/>
                 </Toast>
             )}
 
             {errorMsg && (
                 <Toast>
-                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500">
-                        <BsExclamation className="h-5 w-5" />
+                    <div
+                        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500">
+                        <BsExclamation className="h-5 w-5"/>
                     </div>
                     <div className="ml-3 text-sm font-normal">{errorMsg}</div>
-                    <ToastToggle onDismiss={() => setErrorMsg("")} />
+                    <ToastToggle onDismiss={() => setErrorMsg("")}/>
                 </Toast>
             )}
 
@@ -528,6 +538,7 @@ export default function EmployeeAddPage() {
                                 onChange={setStatus}
                                 placeholder="Select status..."
                                 styles={reactSelectHeightFix}
+                                isDark={isDark}
                             />
                         </div>
 
@@ -546,6 +557,7 @@ export default function EmployeeAddPage() {
                                         className="react-select-container"
                                         classNamePrefix="react-select"
                                         styles={reactSelectHeightFix}
+                                        isDark={isDark}
                                     />
                                 )}
                             />
@@ -692,6 +704,7 @@ export default function EmployeeAddPage() {
                                                         className="react-select-container"
                                                         classNamePrefix="react-select"
                                                         styles={reactSelectHeightFix}
+                                                        isDark={isDark}
                                                     />
                                                 )}
                                             />
@@ -716,6 +729,7 @@ export default function EmployeeAddPage() {
                                                         className="react-select-container"
                                                         classNamePrefix="react-select"
                                                         styles={reactSelectHeightFix}
+                                                        isDark={isDark}
                                                     />
                                                 )}
                                             />
@@ -739,6 +753,7 @@ export default function EmployeeAddPage() {
                                                         className="basic-multi-select"
                                                         classNamePrefix="select"
                                                         styles={reactSelectHeightFix}
+                                                        isDark={isDark}
                                                     />
                                                 )}
                                             />
@@ -757,100 +772,116 @@ export default function EmployeeAddPage() {
                                     </div>
                                 </div>
 
-                                <div className="rounded-lg p-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800">
-                                    {phoneFields?.map((item, index) => (
-                                        <div key={item.id} className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+                                <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 p-2 md:p-4 mb-6">
+                                    <Label>Phone Number</Label>
 
-                                            <div className="flex flex-col space-y-2">
-                                                <Label htmlFor={`phone.${index}.phone`} className="dark:text-white">
-                                                    Phone Number
-                                                </Label>
-                                                <div className="relative w-full border border-gray-300 rounded-lg">
-                                                    {/* Country Code Select */}
-                                                    <div className="absolute inset-y-0 left-0 flex items-center">
-                                                        <Select
-                                                            value={countryOptions.find(opt => opt.value === item.countryCode) || countryOptions[0]}
-                                                            onChange={(selected) => setValue(`phone.${index}.code`, selected.value)}
-                                                            options={countryOptions}
-                                                            classNamePrefix="react-select"
-                                                            isSearchable={false}
-                                                            className="text-[14px] width-[115px]"
-                                                            styles={{
-                                                                control: (provided) => ({
-                                                                    ...provided,
-                                                                    border: 'none',
-                                                                    boxShadow: 'none',
-                                                                    backgroundColor: 'transparent',
-                                                                }),
-                                                                indicatorsContainer: (provided) => ({
-                                                                    ...provided,
-                                                                    display: 'yes', // remove dropdown arrow
-                                                                }),
-                                                                valueContainer: (provided) => ({
-                                                                    ...provided,
-                                                                    padding: '0 0 0 6px',
-                                                                }),
-                                                                singleValue: (provided) => ({
-                                                                    ...provided,
-                                                                    color: 'inherit', // match text color
-                                                                }),
-                                                                reactSelectHeightFix
-                                                            }}
-                                                        />
-                                                    </div>
+                                    {/* First phone row */}
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                        {/* Left: code + phone */}
+                                        <div className="flex gap-1 w-full border rounded-[8px]">
+                                            <Select
+                                                value={countryOptions.find(opt => opt.value === watch("phone.0.code"))}
+                                                onChange={val => setValue("phone.0.code", val.value)}
+                                                options={countryOptions}
+                                                className="w-[25%]"
+                                                styles={{
+                                                    control: (provided) => ({
+                                                        ...provided,
+                                                        border: 'none',
+                                                        boxShadow: 'none',
+                                                        backgroundColor: 'transparent',
+                                                    }),
+                                                    indicatorsContainer: (provided) => ({
+                                                        ...provided,
+                                                        display: 'yes', // remove dropdown arrow
+                                                    }),
+                                                    valueContainer: (provided) => ({
+                                                        ...provided,
+                                                        padding: '0 0 0 6px',
+                                                    }),
+                                                    singleValue: (provided) => ({
+                                                        ...provided,
+                                                        color: 'inherit', // match text color
+                                                    }),
+                                                    reactSelectHeightFix
+                                                }}
+                                                isDark={isDark}
+                                            />
+                                            <TextInput
+                                                {...register("phone.0.phone")}
+                                                placeholder="Phone"
+                                                className=" w-[75%] dark:bg-gray-700 dark:text-white border-none focus:none countryselect"
 
-                                                    {/* Phone input */}
-                                                    <TextInput
-                                                        id={`phone.${index}.phone`}
-                                                        {...register(`phone.${index}.phone`)}
-                                                        placeholder="123 456 789"
-                                                        className="pl-[105px] h-[42px] dark:bg-gray-700 dark:text-white border-none focus:none countryselect"
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            <div className="grid grid-cols-1 md:grid-cols-[2fr_auto] gap-4 items-end">
-                                                {/* Operator */}
-                                                <div className="flex flex-col space-y-2">
-                                                    <Label htmlFor={`phone.${index}.operator`}
-                                                           className="dark:text-white">
-                                                        Operator
-                                                    </Label>
-                                                    <Select
-                                                        id={`phone.${index}.operator`}
-                                                        placeholder="Select an option"
-                                                        options={operatorOptions}
-                                                        value={
-                                                            operatorOptions.find(
-                                                                opt => opt.value === watch(`phone.${index}.operator`)
-                                                            ) || null
-                                                        }
-                                                        onChange={(selected) => setValue(`phone.${index}.operator`, selected?.value || "")}
-                                                        className="height-[42px] dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                                                        styles={reactSelectHeightFix}
-                                                    />
-                                                </div>
-
-                                                <div className="flex items-end gap-2 self-end">
-                                                    {index === phoneFields.length - 1 ? (<> {phoneFields.length > 1 && (
-                                                            <Button color="failure" onClick={() => removePhone(index)}
-                                                                    size="xs"
-                                                                    className="flex items-center justify-center h-[42px] w-[42px] rounded-lg border bg-red-700 hover:bg-red-800 text-white text-lg"> - {/*<RiDeleteBin6Fill color="darkred" size="xs" />*/} </Button>)}
-                                                            <Button onClick={appendPhone}
-                                                                    className="flex items-center justify-center h-[42px] w-[42px] rounded-lg border bg-blue-700 hover:bg-blue-800 text-white text-lg"> + </Button> </>) :
-                                                        (<Button color="failure"
-                                                                 onClick={() => removePhone(index)}
-                                                                 size="xs"
-                                                                 className="flex items-center justify-center h-[42px] text-white color-white">
-                                                            <HiMinus/>
-                                                        </Button>)
-                                                    }
-                                                </div>
-                                            </div>
+                                            />
                                         </div>
 
+                                        {/* Right: operator + button */}
+                                        <div className="flex gap-4 w-full">
+                                            <Select
+                                                value={operatorOptions.find(opt => opt.value === watch("phone.0.operator"))}
+                                                onChange={val => setValue("phone.0.operator", val.value)}
+                                                options={operatorOptions}
+                                                styles={reactSelectHeightFix}
+                                                className="w-[90%]"
+                                                isDark={isDark}
+                                            />
+                                            <Button
+                                                outline
+                                                type="button"
+                                                color="blue"
+                                                className="w-[40px] h-[40px]"
+                                                onClick={() => append({code: '+373', phone: '', operator: ''})}
+                                            >
+                                                +
+                                            </Button>
+                                        </div>
+                                    </div>
+
+                                    {/* Additional phone rows */}
+                                    {phoneFields.slice(1).map((field, idx) => (
+                                        <div key={field.id} className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+                                            {/* Left: code + phone */}
+                                            <div className="flex gap-4 w-full">
+                                                <Select
+                                                    value={countryOptions.find(opt => opt.value === watch(`phone.${idx + 1}.code`))}
+                                                    onChange={val => setValue(`phone.${idx + 1}.code`, val.value)}
+                                                    options={countryOptions}
+                                                    styles={reactSelectHeightFix}
+                                                    className="w-[30%]"
+                                                    isDark={isDark}
+                                                />
+                                                <TextInput
+                                                    {...register(`phone.${idx + 1}.phone`)}
+                                                    placeholder="Phone"
+                                                    className="w-[70%]"
+                                                />
+                                            </div>
+
+                                            {/* Right: operator + remove button */}
+                                            <div className="flex gap-4 w-full">
+                                                <Select
+                                                    value={operatorOptions.find(opt => opt.value === watch(`phone.${idx + 1}.operator`))}
+                                                    onChange={val => setValue(`phone.${idx + 1}.operator`, val.value)}
+                                                    options={operatorOptions}
+                                                    styles={reactSelectHeightFix}
+                                                    className="w-[90%]"
+                                                    isDark={isDark}
+                                                />
+                                                <Button
+                                                    outline
+                                                    type="button"
+                                                    color="red"
+                                                    className="w-[40px] h-[40px]"
+                                                    onClick={() => remove(idx + 1)}
+                                                >
+                                                    —
+                                                </Button>
+                                            </div>
+                                        </div>
                                     ))}
                                 </div>
+
+
                                 <div className="mb-2">Primary Contact</div>
                                 <div className="rounded-lg p-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
@@ -904,6 +935,7 @@ export default function EmployeeAddPage() {
                                                     className="react-select-container"
                                                     classNamePrefix="react-select"
                                                     styles={reactSelectHeightFix}
+                                                    isDark={isDark}
                                                 />
                                             </div>
 
@@ -975,6 +1007,7 @@ export default function EmployeeAddPage() {
                                                     className="react-select-container"
                                                     classNamePrefix="react-select"
                                                     styles={reactSelectHeightFix}
+                                                    isDark={isDark}
                                                 />
                                             )}
                                         />
@@ -999,6 +1032,7 @@ export default function EmployeeAddPage() {
                                                     className="basic-multi-select"
                                                     classNamePrefix="react-select"
                                                     styles={reactSelectHeightFix}
+                                                    isDark={isDark}
                                                 />
                                             )}
                                         />
@@ -1022,6 +1056,7 @@ export default function EmployeeAddPage() {
                                                     className="react-select-container"
                                                     classNamePrefix="react-select"
                                                     styles={reactSelectHeightFix}
+                                                    isDark={isDark}
                                                 />
                                             )}
                                         />
@@ -1047,6 +1082,7 @@ export default function EmployeeAddPage() {
                                                     className="basic-multi-select"
                                                     classNamePrefix="react-select"
                                                     styles={reactSelectHeightFix}
+                                                    isDark={isDark}
                                                 />
                                             )}
                                         />
@@ -1073,6 +1109,7 @@ export default function EmployeeAddPage() {
                                                 isLoading={offLoading}
                                                 placeholder="Select office..."
                                                 styles={reactSelectHeightFix}
+                                                isDark={isDark}
                                             />
                                         </div>
                                         <div className="flex flex-col space-y-2">
@@ -1083,6 +1120,7 @@ export default function EmployeeAddPage() {
                                                 isLoading={depLoading}
                                                 placeholder="Select department..."
                                                 styles={reactSelectHeightFix}
+                                                isDark={isDark}
                                             />
 
                                         </div>
@@ -1094,6 +1132,7 @@ export default function EmployeeAddPage() {
                                                 isLoading={posLoading}
                                                 placeholder="Select position..."
                                                 styles={reactSelectHeightFix}
+                                                isDark={isDark}
                                             />
                                         </div>
 
@@ -1159,8 +1198,9 @@ export default function EmployeeAddPage() {
                                                             className="basic-multi-select"
                                                             classNamePrefix="select"
                                                             placeholder="Select Workdays"
-                                                            value={SHIFT_DAY_OPTIONS.filter(opt => field.value?.includes(opt.value))} // show selected
-                                                            onChange={(val) => field.onChange(val ? val.map(v => v.value) : [])} // convert to array of strings
+                                                            value={SHIFT_DAY_OPTIONS.filter(opt => field.value?.includes(opt.value))}
+                                                            onChange={(val) => field.onChange(val ? val.map(v => v.value) : [])}
+                                                            isDark={isDark}
                                                         />
                                                     )}
                                                 />
@@ -1218,6 +1258,7 @@ export default function EmployeeAddPage() {
                                                             value={employeeFilesOptions.find((opt) => opt.value === field.value) || null}
                                                             onChange={(selected) => field.onChange(selected?.value)}
                                                             placeholder="Select file type..."
+                                                            isDark={isDark}
                                                         />
                                                     )}
                                                 />
