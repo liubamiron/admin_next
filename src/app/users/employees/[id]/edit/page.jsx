@@ -2,7 +2,7 @@
 
 import {useParams, useRouter} from 'next/navigation';
 import {useEffect, useState} from 'react';
-import {useForm, useFieldArray} from 'react-hook-form';
+import {useForm, useFieldArray, Controller} from 'react-hook-form';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {
@@ -23,7 +23,7 @@ import {useIdEmployee} from '@/hooks/users/useIdEmployee';
 import {useEditEmployee} from '@/hooks/users/useEditEmployee';
 import {
     citizenshipOptions,
-    countryOptions, driverLicenseOptions, educationOptions,
+    countryOptions, driverLicenseOptions, educationOptions, employeeFilesOptions,
     genderOptions, languagesOptions,
     maritalOptions,
     operatorOptions, SHIFT_DAY_OPTIONS, transportTypeOptions
@@ -76,6 +76,50 @@ const employeeSchema = z.object({
     official_position: z.string().optional(),
     work_name: z.string().optional(),
     corporate_email: z.string().optional(),
+
+    generated_documents: z.array(z.string()).optional(),
+
+    shift: z
+        .array(
+            z.object({
+                start_time: z.string().optional(),
+                end_time: z.string().optional(),
+                work_days: z.array(z.string().min(1)).optional(),
+            })
+        )
+        .optional()
+        .refine(
+            (arr) =>
+                !arr ||
+                arr.every((shift) => {
+                    const filledFields = [
+                        shift.start_time,
+                        shift.end_time,
+                        shift.work_days?.length ? shift.work_days : undefined,
+                    ].filter(Boolean);
+                    return filledFields.length === 0 || filledFields.length === 3;
+                }),
+            {message: "All shift fields must be filled if a shift is added"}
+        )
+        .default([]),
+    document: z
+        .array(
+            z.object({
+                file_type: z.string().optional(),
+                file: z.any().optional(),
+            })
+        )
+        .optional()
+        .refine(
+            (arr) =>
+                !arr ||
+                arr.every((file) => {
+                    const filledFields = [file.file_type, file.file].filter(Boolean);
+                    return filledFields.length === 0 || filledFields.length === 2;
+                }),
+            {message: "All file fields must be filled if a file is added"}
+        )
+        .default([]),
 
 });
 
@@ -140,6 +184,26 @@ export default function EmployeeEditPage() {
         name: "shift",
     });
 
+    const { fields: fileFields, append: appendFile, remove: removeFile } = useFieldArray({
+        control,
+        name: "document",
+    });
+
+    const { fields: generatedDocumentFields, append: appendGeneratedDocument, remove: removeGeneratedDocument } = useFieldArray({
+        control,
+        name: "generated_documents",
+    });
+
+    const { fields: notesFields, append: appendNote, remove: removeNote } = useFieldArray({
+        control,
+        name: "received_notes",
+    });
+
+    const { fields: day_off, append: appendDayOff, remove: removeDayOff } = useFieldArray({
+        control,
+        name: "day_off",
+    });
+
     // Populate form when employee data is loaded
     useEffect(() => {
         if (employee) {
@@ -185,9 +249,42 @@ export default function EmployeeEditPage() {
                 shift: employee.shift?.length
                     ? employee.shift
                     : [{ start_time: '', end_time: '', work_days: [] }],
+                document: employee.document?.length
+                    ? employee.document.map(d => ({
+                        id: d.id,
+                        type: d.type,
+                        file: d.file,
+                        created_at: d.created_at,
+                        updated_at: d.updated_at,
+                    }))
+                    : [{ id: '', type: '', file: '', created_at: '', updated_at: '' }],
+                generated_documents: employee.generated_documents?.length
+                    ? employee.generated_documents.map(d => ({
+                        id: d.id,
+                        template_id: d.template_id,
+                        manager_id: d.manager_id,
+                        employer_id: d.employer_id,
+                        variables: d.variables,
+                        file_path: d.file_path,
+                        created_at: d.created_at,
+                        updated_at: d.updated_at,
+                    }))
+                    : [{ id: '', template_id: '', manager_id: '', employer_id: '', variables: {}, file_path: null }],
+
+                received_notes: employee.received_notes?.length
+                    ? employee.received_notes.map(n => ({
+                        id: n.id,
+                        user_id: n.user_id,
+                        commenter_id: n.commenter_id,
+                        comment: n.comment,
+                        created_at: n.created_at,
+                        updated_at: n.updated_at,
+                    }))
+                    : [{ id: '', user_id: '', commenter_id: '', comment: '', created_at: '', updated_at: '' }],
             });
         }
     }, [employee, reset]);
+
 
     const onSubmit = (data) => {
         setSuccessMsg('');
@@ -830,16 +927,223 @@ export default function EmployeeEditPage() {
                                 </div>
 
 
+                            </TabItem>
 
-                            </TabItem>
                             <TabItem title="Files">
-                                General
+                                <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-6 px-4 space-y-6">
+
+                                    {/* Table Header */}
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 font-medium text-gray-700 dark:text-gray-300 border-b pb-2">
+                                        <span>File Type</span>
+                                        <span>File Name</span>
+                                        <span>Preview</span>
+                                        <span className="text-center">Actions</span>
+                                    </div>
+                                    {/* Existing Files */}
+                                    {employee.document?.length ? (
+                                        employee.document.map((doc, index) => {
+                                            const replacedFile = watch(`existingFiles.${index}.file`);
+
+                                            // Determine preview URL
+                                            const previewUrl = replacedFile
+                                                ? URL.createObjectURL(replacedFile) // temporary preview for newly selected file
+                                                : `${process.env.NEXT_PUBLIC_IMG}/${doc.file}`; // existing file from backend
+
+                                            return (
+                                                <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center border-b border-gray-200 dark:border-gray-700 py-3">
+                                                    {/* File Type */}
+                                                    <Controller
+                                                        name={`existingFiles.${index}.file_type`}
+                                                        control={control}
+                                                        defaultValue={doc.type}
+                                                        render={({ field }) => (
+                                                            <Select
+                                                                options={employeeFilesOptions}
+                                                                value={employeeFilesOptions.find(opt => opt.value === field.value) || null}
+                                                                onChange={selected => field.onChange(selected?.value)}
+                                                                placeholder="Select file type..."
+                                                                isDark={isDark}
+                                                            />
+                                                        )}
+                                                    />
+
+                                                    {/* File Input */}
+                                                    <Controller
+                                                        name={`existingFiles.${index}.file`}
+                                                        control={control}
+                                                        render={({ field }) => (
+                                                            <FileInput
+                                                                id={`replace-file-${index}`}
+                                                                onChange={e => field.onChange(e.target.files?.[0] || null)}
+                                                            />
+                                                        )}
+                                                    />
+
+                                                    {/* File Preview */}
+                                                    <a
+                                                        href={previewUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-600 hover:underline truncate"
+                                                    >
+                                                        {replacedFile?.name || doc.file.split('/').pop()}
+                                                    </a>
+
+                                                    {/* Actions */}
+                                                    <div className="flex justify-center gap-2">
+                                                        {index === employee.document.length - 1 && (
+                                                            <Button
+                                                                size="xs"
+                                                                onClick={() => appendFile({ file_type: '', file: null })}
+                                                                className="h-[36px] w-[36px] rounded-lg border bg-blue-700 hover:bg-blue-800 text-white text-lg"
+                                                            >
+                                                                +
+                                                            </Button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })
+                                    ) : (
+                                        <p className="text-gray-500 text-sm">No uploaded documents yet.</p>
+                                    )}
+
+                                    {/* New Files */}
+                                    {fileFields.length > 0 &&
+                                        fileFields.map((file, index) => {
+                                            const newFile = watch(`document.${index}.file`);
+                                            const previewUrl = newFile instanceof File
+                                                ? URL.createObjectURL(newFile)
+                                                : newFile // fallback: assume string URL (already from backend)
+
+
+                                            return (
+                                                <div key={file.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center border-b border-gray-200 dark:border-gray-700 py-3">
+                                                    {/* File Type */}
+                                                    <Controller
+                                                        name={`document.${index}.file_type`}
+                                                        control={control}
+                                                        render={({ field }) => (
+                                                            <Select
+                                                                options={employeeFilesOptions}
+                                                                value={employeeFilesOptions.find(opt => opt.value === field.value) || null}
+                                                                onChange={selected => field.onChange(selected?.value)}
+                                                                placeholder="Select file type..."
+                                                                isDark={isDark}
+                                                            />
+                                                        )}
+                                                    />
+
+                                                    {/* File Input */}
+                                                    <Controller
+                                                        name={`document.${index}.file`}
+                                                        control={control}
+                                                        render={({ field }) => (
+                                                            <FileInput
+                                                                id={`file-${index}`}
+                                                                onChange={e => field.onChange(e.target.files?.[0] || null)}
+                                                            />
+                                                        )}
+                                                    />
+
+                                                    {/* File Preview */}
+                                                    {previewUrl ? (
+                                                        <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline truncate">
+                                                            {newFile.name}
+                                                        </a>
+                                                    ) : (
+                                                        <span className="truncate text-gray-400 italic">No file yet</span>
+                                                    )}
+
+                                                    {/* Actions */}
+                                                    <div className="flex justify-center gap-2">
+                                                        <Button
+                                                            color="failure"
+                                                            size="xs"
+                                                            onClick={() => removeFile(index)}
+                                                            className="h-[36px] w-[36px] rounded-lg border bg-red-700 hover:bg-red-800 text-white text-lg"
+                                                        >
+                                                            −
+                                                        </Button>
+
+                                                        {index === fileFields.length - 1 && (
+                                                            <Button
+                                                                size="xs"
+                                                                onClick={() => appendFile({ file_type: '', file: null })}
+                                                                className="h-[36px] w-[36px] rounded-lg border bg-blue-700 hover:bg-blue-800 text-white text-lg"
+                                                            >
+                                                                +
+                                                            </Button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+
+
+                                </div>
                             </TabItem>
+
+
                             <TabItem title="Documents">
-                                General
+                                <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 px-4 mb-6">
+                                    <Label>Generated Documents</Label>
+                                    {employee.generated_documents?.length ? (
+                                        <ul className="mt-4 space-y-3">
+                                            {employee.generated_documents.map((doc) => (
+                                                <li key={doc.id} className="flex flex-col border-b pb-3">
+                                                    <div className="flex justify-between items-center">
+                                                        <span>Template ID: {doc.template_id}</span>
+                                                        {doc.file_path ? (
+                                                            <a
+                                                                href={`${process.env.NEXT_PUBLIC_IMG}/${doc.file_path}`}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="text-blue-600 hover:underline"
+                                                            >
+                                                                View File
+                                                            </a>
+                                                        ) : (
+                                                            <span className="text-gray-500 text-sm">No file generated</span>
+                                                        )}
+                                                    </div>
+                                                    <div className="text-sm text-gray-600 mt-1">
+                                                        Variables:{" "}
+                                                        {Object.entries(doc.variables || {}).map(([key, value]) => (
+                                                            <span key={key}>
+                  <strong>{key}</strong>: {String(value)}{" "}
+                </span>
+                                                        ))}
+                                                    </div>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p className="text-gray-500 mt-4 text-sm">No generated documents.</p>
+                                    )}
+                                </div>
                             </TabItem>
                             <TabItem title="Notes">
-                                General
+                                <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 px-4 mb-6">
+                                    <Label>Received Notes</Label>
+                                    {employee.received_notes?.length ? (
+                                        <ul className="mt-4 space-y-3">
+                                            {employee.received_notes.map((note) => (
+                                                <li key={note.id} className="border-b pb-3">
+                                                    <div
+                                                        className="text-gray-800 dark:text-gray-200 text-sm"
+                                                        dangerouslySetInnerHTML={{ __html: note.comment }}
+                                                    />
+                                                    <div className="text-xs text-gray-500 mt-1">
+                                                        From: User #{note.commenter_id}
+                                                    </div>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p className="text-gray-500 mt-4 text-sm">No notes received.</p>
+                                    )}
+                                </div>
                             </TabItem>
                             <TabItem title="Day Off">
                                 General
