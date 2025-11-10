@@ -317,6 +317,22 @@ export default function EmployeeEditPage() {
         formData.append("corporate_email", data.corporate_email || '');
         formData.append("shift", JSON.stringify(data.shift) || []);
 
+        const allFiles = [
+            ...(data.existingFiles || []).map(f => ({
+                file_type: f.file_type,
+                file: f.file, // could be File object or string
+            })),
+            ...(data.document || [])
+        ];
+
+        allFiles.forEach((f, i) => {
+            formData.append(`document[${i}][file_type]`, f.file_type || '');
+            if (f.file instanceof File) {
+                formData.append(`document[${i}][file]`, f.file);
+            } else if (typeof f.file === 'string') {
+                formData.append(`document[${i}][file]`, f.file); // backend path string
+            }
+        });
 
         editEmployee({id, formData}, {
             onSuccess: () => {
@@ -944,10 +960,14 @@ export default function EmployeeEditPage() {
                                         employee.document.map((doc, index) => {
                                             const replacedFile = watch(`existingFiles.${index}.file`);
 
-                                            // Determine preview URL
-                                            const previewUrl = replacedFile
-                                                ? URL.createObjectURL(replacedFile) // temporary preview for newly selected file
-                                                : `${process.env.NEXT_PUBLIC_IMG}/${doc.file}`; // existing file from backend
+
+                                            // const previewUrl = replacedFile
+                                            //     ? URL.createObjectURL(replacedFile)
+                                            //     : `${process.env.NEXT_PUBLIC_IMG}/${doc.file}`;
+
+                                            const previewUrl = replacedFile instanceof File
+                                                ? URL.createObjectURL(replacedFile)
+                                                : `${process.env.NEXT_PUBLIC_IMG}/${doc.file}`;
 
                                             return (
                                                 <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center border-b border-gray-200 dark:border-gray-700 py-3">
