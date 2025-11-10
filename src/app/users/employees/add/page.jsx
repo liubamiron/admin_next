@@ -298,15 +298,6 @@ export default function EmployeeAddPage() {
     });
 
 
-    const {
-        fields: phoneFields2,
-        append: appendPhone,
-        remove: removePhone,
-    } = useFieldArray({
-        control,
-        name: "phone",
-    });
-
     const handleFileChange = (event) => {
         const file = event.target.files?.[0];
         if (file) {
@@ -780,8 +771,8 @@ export default function EmployeeAddPage() {
                                         {/* Left: code + phone */}
                                         <div className="flex gap-1 w-full border rounded-[8px]">
                                             <Select
-                                                value={countryOptions.find(opt => opt.value === watch("phone.0.code"))}
-                                                onChange={val => setValue("phone.0.code", val.value)}
+                                                value={countryOptions.find(opt => opt.value === watch(`phone.${index}.code`)) || countryOptions[0]}
+                                                onChange={(val) => setValue(`phone.${index}.code`, val.value)}
                                                 options={countryOptions}
                                                 className="w-[25%]"
                                                 styles={{
@@ -808,7 +799,7 @@ export default function EmployeeAddPage() {
                                                 isDark={isDark}
                                             />
                                             <TextInput
-                                                {...register("phone.0.phone")}
+                                                {...register(`phone.${idx + 1}.phone`)}
                                                 placeholder="Phone"
                                                 className=" w-[75%] dark:bg-gray-700 dark:text-white border-none focus:none countryselect"
 
@@ -818,8 +809,9 @@ export default function EmployeeAddPage() {
                                         {/* Right: operator + button */}
                                         <div className="flex gap-4 w-full">
                                             <Select
-                                                value={operatorOptions.find(opt => opt.value === watch("phone.0.operator"))}
-                                                onChange={val => setValue("phone.0.operator", val.value)}
+                                                value={countryOptions.find(opt => opt.value === watch(`phone.${idx + 1}.operator`))}
+                                                // value={operatorOptions.find(opt => opt.value === watch("phone.0.operator"))}
+                                                onChange={val => setValue(`phone.${idx + 1}.operator`, val.value)}
                                                 options={operatorOptions}
                                                 styles={reactSelectHeightFix}
                                                 className="w-[90%]"
