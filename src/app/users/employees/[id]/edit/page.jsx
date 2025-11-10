@@ -30,6 +30,9 @@ import {
 } from '@/components/constants/filterOptions';
 import {reactSelectHeightFix} from '@/components/ui/reactSelectHeightFix';
 import {useDarkMode} from "@/hooks/useDarkMode";
+import {useDepartments} from "@/hooks/departments/useDepartments";
+import {usePositions} from "@/hooks/positions/usePositions";
+import {useOffices} from "@/hooks/officies/useOffices";
 
 const employeeSchema = z.object({
     first_name: z.string().min(1, 'First name is required'),
@@ -50,14 +53,6 @@ const employeeSchema = z.object({
         .nonempty('At least one phone number is required'),
     primary_contact: z.string().optional(),
     primary_contact_phone: z.string().optional(),
-    // primary_contacts: z
-    //     .array(
-    //         z.object({
-    //             name: z.string().optional(),
-    //             number: z.string().optional(),
-    //         })
-    //     )
-    //     .optional(),
     children: z
         .array(
             z.object({
@@ -75,6 +70,12 @@ const employeeSchema = z.object({
     education: z.string().optional(),
     transport_type: z.string().optional(),
     driver_license: z.array(z.string()).optional(),
+    office: z.string().optional(),
+    department: z.string().optional(),
+    position: z.string().optional(),
+    official_position: z.string().optional(),
+    work_name: z.string().optional(),
+    work_email: z.string().optional(),
 
 });
 
@@ -84,7 +85,9 @@ export default function EmployeeEditPage() {
     const [image, setImage] = useState("");
     const {data: employee, isLoading, isError} = useIdEmployee(id);
     const {mutate: editEmployee, isLoading: saving} = useEditEmployee();
-
+    const {data: departmentsData = [], isLoading: depLoading} = useDepartments();
+    const {data: positionsData = [], isLoading: posLoading} = usePositions();
+    const {data: officesData = [], isLoading: offLoading} = useOffices();
     const [successMsg, setSuccessMsg] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
     const isDark = useDarkMode();
@@ -99,15 +102,32 @@ export default function EmployeeEditPage() {
         },
     });
 
+    const officeOptions = Array.isArray(officesData.data)
+        ? officesData.data.map((office) => ({
+            value: office.id,
+            label: office.name,
+        }))
+        : [];
+
+    const departmentOptions = Array.isArray(departmentsData.data)
+        ? departmentsData.data.map((dept) => ({
+            value: dept.id,
+            label: dept.name,
+        }))
+        : [];
+
+    const positionOptions = Array.isArray(positionsData.data)
+        ? positionsData.data.map((pos) => ({
+            value: pos.id,
+            label: pos.name,
+        }))
+        : [];
+
+
     const {fields: phoneFields, append, remove} = useFieldArray({
         control,
         name: 'phone',
     });
-
-    // const { fields: contactFields, append:appendContact, remove:removeContact } = useFieldArray({
-    //     control,
-    //     name: "primary_contacts",
-    // });
 
     const { fields: childrenFields, append: appendChild, remove: removeChild } = useFieldArray({
         control,
@@ -145,11 +165,17 @@ export default function EmployeeEditPage() {
                         dob: c.dob ? c.dob.split('T')[0] : '',
                         gender: c.gender || '',
                     }))
-                    : [{ name: '', dob: '', gender: '' }], // <-- default row
+                    : [{ name: '', dob: '', gender: '' }],
                primary_contact: employee.primary_contact || '',
                primary_contact_phone: employee.primary_contact_phone || '',
                 transport_type: employee.transport_type || '',
                 driver_license: employee.driver_license || [],
+                office: employee.office || '',
+                department: employee.department || '',
+                position: employee.position || '',
+                official_position: employee.official_position || '',
+                work_name: employee.work_name || '',
+                work_email: employee.work_email || '',
             });
         }
     }, [employee, reset]);
@@ -232,7 +258,6 @@ export default function EmployeeEditPage() {
                         <div>
                             <Label value="Profile Image"/>
                             <div>
-                                {/* Thumbnail preview */}
                                 <div
                                     className="w-[60%] m-auto h-auto rounded-lg border border-gray-300 overflow-hidden flex items-center justify-center bg-gray-50">
                                     {image ? (
@@ -637,7 +662,33 @@ export default function EmployeeEditPage() {
                                 </div>
                             </TabItem>
                             <TabItem title="Company">
-                                General
+                                <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 p-2 md:p-4 mb-6">
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                        <div className="flex flex-col space-y-2">
+                                            <Label>Office</Label>
+                                            <Select
+                                                options={officeOptions}
+                                                onChange={(val) => setValue("office", val?.value)}
+                                                isLoading={offLoading}
+                                                placeholder="Select office..."
+                                                styles={reactSelectHeightFix}
+                                                isDark={isDark}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col space-y-2">
+                                            <Label>Department</Label>
+                                            <Select
+                                                options={departmentOptions}
+                                                onChange={(val) => setValue("department", val?.value)}
+                                                isLoading={depLoading}
+                                                placeholder="Select department..."
+                                                styles={reactSelectHeightFix}
+                                                isDark={isDark}
+                                            />
+
+                                        </div>
+                                    </div>
+                                </div>
                             </TabItem>
                             <TabItem title="Files">
                                 General
