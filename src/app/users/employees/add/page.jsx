@@ -809,9 +809,8 @@ export default function EmployeeAddPage() {
                                         {/* Right: operator + button */}
                                         <div className="flex gap-4 w-full">
                                             <Select
-                                                value={countryOptions.find(opt => opt.value === watch(`phone.${idx + 1}.operator`))}
-                                                // value={operatorOptions.find(opt => opt.value === watch("phone.0.operator"))}
-                                                onChange={val => setValue(`phone.${idx + 1}.operator`, val.value)}
+                                                value={countryOptions.find(opt => opt.value === watch("phone.0.operator"))}
+                                                onChange={val => setValue("phone.0.operator", val.value)}
                                                 options={operatorOptions}
                                                 styles={reactSelectHeightFix}
                                                 className="w-[90%]"
