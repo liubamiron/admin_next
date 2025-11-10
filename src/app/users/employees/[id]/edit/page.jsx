@@ -26,7 +26,7 @@ import {
     countryOptions, driverLicenseOptions, educationOptions,
     genderOptions, languagesOptions,
     maritalOptions,
-    operatorOptions, transportTypeOptions
+    operatorOptions, SHIFT_DAY_OPTIONS, transportTypeOptions
 } from '@/components/constants/filterOptions';
 import {reactSelectHeightFix} from '@/components/ui/reactSelectHeightFix';
 import {useDarkMode} from "@/hooks/useDarkMode";
@@ -75,7 +75,7 @@ const employeeSchema = z.object({
     position: z.string().optional(),
     official_position: z.string().optional(),
     work_name: z.string().optional(),
-    work_email: z.string().optional(),
+    corporate_email: z.string().optional(),
 
 });
 
@@ -99,6 +99,7 @@ export default function EmployeeEditPage() {
             primary_contact: '',
             primary_contact_phone: '',
             children: [{ name: '', dob: '', gender: '' }],
+            shift: [{ start_time: '', end_time: '', work_days: [] }],
         },
     });
 
@@ -132,6 +133,11 @@ export default function EmployeeEditPage() {
     const { fields: childrenFields, append: appendChild, remove: removeChild } = useFieldArray({
         control,
         name: "children",
+    });
+
+    const { fields: shiftFields, append: appendShift, remove: removeShift } = useFieldArray({
+        control,
+        name: "shift",
     });
 
     // Populate form when employee data is loaded
@@ -170,12 +176,15 @@ export default function EmployeeEditPage() {
                primary_contact_phone: employee.primary_contact_phone || '',
                 transport_type: employee.transport_type || '',
                 driver_license: employee.driver_license || [],
-                office: employee.office || '',
-                department: employee.department || '',
-                position: employee.position || '',
+                office: employee.office_id || '',
+                department: employee.department_id || '',
+                position: employee.position_id || '',
                 official_position: employee.official_position || '',
                 work_name: employee.work_name || '',
-                work_email: employee.work_email || '',
+                corporate_email: employee.corporate_email || '',
+                shift: employee.shift?.length
+                    ? employee.shift
+                    : [{ start_time: '', end_time: '', work_days: [] }],
             });
         }
     }, [employee, reset]);
@@ -203,6 +212,14 @@ export default function EmployeeEditPage() {
         formData.append("transport_type", data.transport_type || '');
         formData.append("driver_license", JSON.stringify(data.driver_license || []));
         formData.append("image", image || employee.image || '');
+        formData.append("office", data.office || '');
+        formData.append("department", data.department || '');
+        formData.append("position", data.position || '');
+        formData.append("official_position", data.official_position || '');
+        formData.append("work_name", data.work_name || '');
+        formData.append("corporate_email", data.corporate_email || '');
+        formData.append("shift", JSON.stringify(data.shift) || []);
+
 
         editEmployee({id, formData}, {
             onSuccess: () => {
@@ -666,9 +683,12 @@ export default function EmployeeEditPage() {
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                         <div className="flex flex-col space-y-2">
                                             <Label>Office</Label>
+
+
                                             <Select
                                                 options={officeOptions}
-                                                onChange={(val) => setValue("office", val?.value)}
+                                                value={officeOptions.find(opt => opt.value === watch('office')) || null}
+                                                onChange={(val) => setValue("office", val?.value || '')}
                                                 isLoading={offLoading}
                                                 placeholder="Select office..."
                                                 styles={reactSelectHeightFix}
@@ -679,6 +699,7 @@ export default function EmployeeEditPage() {
                                             <Label>Department</Label>
                                             <Select
                                                 options={departmentOptions}
+                                                value={departmentOptions.find(opt => opt.value === watch('department')) || null}
                                                 onChange={(val) => setValue("department", val?.value)}
                                                 isLoading={depLoading}
                                                 placeholder="Select department..."
@@ -689,6 +710,127 @@ export default function EmployeeEditPage() {
                                         </div>
                                     </div>
                                 </div>
+                                <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 p-2 md:p-4 mb-6">
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                        <div className="flex flex-col space-y-2">
+                                            <Label>Positions</Label>
+                                            <Select
+                                                options={positionOptions}
+                                                value={positionOptions.find(opt => opt.value === watch('position')) || null}
+                                                onChange={(val) => setValue("position", val?.value)}
+                                                isLoading={offLoading}
+                                                placeholder="Select position..."
+                                                styles={reactSelectHeightFix}
+                                                isDark={isDark}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col space-y-2">
+                                            <Label>Official Position</Label>
+                                            <TextInput
+                                                {...register("official_position")}
+                                                placeholder="manager"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 p-2 md:p-4 mb-6">
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                        <div className="flex flex-col space-y-2">
+                                            <Label>Work Name</Label>
+                                            <TextInput
+                                                {...register("work_name")}
+                                                placeholder="manager"
+                                            />
+                                        </div>
+                                        <div className="flex flex-col space-y-2">
+                                            <Label>Work Email</Label>
+                                            <TextInput
+                                                {...register("corporate_email")}
+                                                placeholder="test_work@gmail.com"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 p-2 md:p-4 mb-6">
+                                    {shiftFields.map((field, index) => (
+                                        <div key={field.id} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+
+                                            {/* Start Time */}
+                                            <div className="flex flex-col space-y-2">
+                                                <Label>Start Time</Label>
+                                                <input
+                                                    type="time"
+                                                    className="w-full border rounded px-2 py-2"
+                                                    {...register(`shift.${index}.start_time`)}
+
+                                                />
+                                            </div>
+
+                                            {/* End Time */}
+                                            <div className="flex flex-col space-y-2">
+                                                <Label>End Time</Label>
+                                                <input
+                                                    type="time"
+                                                    className="w-full border rounded px-2 py-2"
+                                                    {...register(`shift.${index}.end_time`)}
+                                                />
+                                            </div>
+
+                                            {/* Work Days */}
+                                            <div className="flex flex-col  md:col-span-2 w-full">
+                                                <Label>Work Days</Label>
+                                                <Select
+                                                    options={SHIFT_DAY_OPTIONS}
+                                                    value={SHIFT_DAY_OPTIONS.filter(opt =>
+                                                        watch(`shift.${index}.work_days`)?.includes(opt.value)
+                                                    )}
+                                                    onChange={(val) =>
+                                                        setValue(
+                                                            `shift.${index}.work_days`,
+                                                            val ? val.map(v => v.value) : []
+                                                        )
+                                                    }
+                                                    isMulti
+                                                    placeholder="Select days..."
+                                                    styles={{
+                                                        ...reactSelectHeightFix,
+                                                        menu: (provided) => ({ ...provided, zIndex: 9999 }),
+                                                    }}
+                                                    isDark={isDark}
+                                                />
+                                            </div>
+
+                                            {/* Add / Remove Buttons */}
+                                            <div className="flex items-end gap-2 self-end">
+                                                <Button
+                                                    color="failure"
+                                                    onClick={() => removeShift(index)}
+                                                    size="xs"
+                                                    className="flex items-center justify-center h-[42px] w-[42px] rounded-lg border bg-red-700 hover:bg-red-800 text-white text-lg"
+                                                >
+                                                    −
+                                                </Button>
+
+                                                {index === shiftFields.length - 1 && (
+                                                    <Button
+                                                        color="blue"
+                                                        onClick={() =>
+                                                            appendShift({ start_time: "", end_time: "", work_days: [] })
+                                                        }
+                                                        size="xs"
+                                                        className="flex items-center justify-center h-[42px] w-[42px] rounded-lg border bg-blue-700 hover:bg-blue-800 text-white text-lg"
+                                                    >
+                                                        +
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+
+
                             </TabItem>
                             <TabItem title="Files">
                                 General
