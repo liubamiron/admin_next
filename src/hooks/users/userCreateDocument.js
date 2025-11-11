@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 
 const host = process.env.NEXT_PUBLIC_HOST || "https://hrm.webng.life/api";
 
-export function useCreateEmployeeDocument() {
+export function useCreateDocument() {
     const queryClient = useQueryClient();
 
     return useMutation({

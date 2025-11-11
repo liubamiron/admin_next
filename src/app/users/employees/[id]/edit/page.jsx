@@ -14,7 +14,7 @@ import {
     BreadcrumbItem,
     Breadcrumb,
     FileInput,
-    Tabs, TabItem
+    Tabs, TabItem, Modal, ModalHeader, ModalBody, ModalFooter
 } from 'flowbite-react';
 import Select from 'react-select';
 import {HiCheck, HiHome} from 'react-icons/hi';
@@ -35,6 +35,7 @@ import {usePositions} from "@/hooks/positions/usePositions";
 import {useOffices} from "@/hooks/officies/useOffices";
 import {GeneralTab} from "@/app/users/employees/[id]/edit/components/generalTab";
 import {CompanyTab} from "@/app/users/employees/[id]/edit/components/companyTab";
+import {useCreateDocument} from "@/hooks/users/userCreateDocument";
 
 const employeeSchema = z.object({
     first_name: z.string().min(1, 'First name is required'),
@@ -133,7 +134,24 @@ export default function EmployeeEditPage() {
     const {data: officesData = [], isLoading: offLoading} = useOffices();
     const [successMsg, setSuccessMsg] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
+    const [activeTab, setActiveTab] = useState("General");
+    const [unsavedFiles, setUnsavedFiles] = useState(false);
+    const [showUnsavedModal, setShowUnsavedModal] = useState(false);
+    const [nextTab, setNextTab] = useState(null);
+
+    const handleTabChange = (tab) => {
+        if (activeTab === "Files" && unsavedFiles) {
+            setNextTab(tab);
+            setShowUnsavedModal(true);
+        } else {
+            setActiveTab(tab);
+        }
+    };
+
     const isDark = useDarkMode();
+
+    const { mutateAsync: createDocument } = useCreateDocument();
+
 
     const {register, handleSubmit, control, setValue, reset, watch, formState: {errors}} = useForm({
         resolver: zodResolver(employeeSchema),
@@ -285,6 +303,17 @@ export default function EmployeeEditPage() {
     }, [employee, reset]);
 
 
+    const saveFiles = async () => {
+        const filesToSave = watch('document').filter(f => f.file instanceof File);
+        for (const f of filesToSave) {
+            const formData = new FormData();
+            formData.append('file', f.file);
+            formData.append('file_type', f.file_type);
+            formData.append('employee_id', id);
+            await createDocument(formData);
+        }
+    };
+
     const onSubmit = (data) => {
         setSuccessMsg('');
         setErrorMsg('');
@@ -353,6 +382,27 @@ export default function EmployeeEditPage() {
 
     return (
         <div className="p-0 space-y-6 md:p-4">
+
+            <Modal show={showUnsavedModal} onClose={() => setShowUnsavedModal(false)}>
+                <ModalHeader>Unsaved Changes</ModalHeader>
+                <ModalBody>
+                    You have unsaved files. Do you want to save before leaving?
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="gray" onClick={() => {
+                        setShowUnsavedModal(false);
+                        setUnsavedFiles(false); // discard changes
+                        if (nextTab) setActiveTab(nextTab);
+                    }}>Discard</Button>
+                    <Button color="blue" onClick={async () => {
+                        await saveFiles(); // function to save files
+                        setUnsavedFiles(false);
+                        setShowUnsavedModal(false);
+                        if (nextTab) setActiveTab(nextTab);
+                    }}>Save</Button>
+                </ModalFooter>
+            </Modal>
+
 
             <Breadcrumb>
                 <BreadcrumbItem href="/" icon={HiHome}>Home</BreadcrumbItem>
@@ -462,7 +512,7 @@ export default function EmployeeEditPage() {
                     </div>
                     <div
                         className="space-y-4 bg-white p-2 md:p-4 rounded-lg shadow dark:bg-gray-800 flex flex-col justify-between h-full">
-                        <Tabs aria-label="Tabs with underline" variant="underline">
+                        <Tabs aria-label="Tabs with underline" variant="underline"  onActiveTabChange={handleTabChange}>
 
                             <TabItem title="General">
                                 <GeneralTab
@@ -533,7 +583,11 @@ export default function EmployeeEditPage() {
                                                             <Select
                                                                 options={employeeFilesOptions}
                                                                 value={employeeFilesOptions.find(opt => opt.value === field.value) || null}
-                                                                onChange={selected => field.onChange(selected?.value)}
+                                                                // onChange={selected => field.onChange(selected?.value)}
+                                                                onChange={selected => {
+                                                                    field.onChange(selected?.value);
+                                                                    setUnsavedFiles(true);
+                                                                }}
                                                                 placeholder="Select file type..."
                                                                 isDark={isDark}
                                                             />
