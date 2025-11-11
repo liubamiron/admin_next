@@ -307,9 +307,9 @@ export default function EmployeeEditPage() {
         formData.append("transport_type", data.transport_type || '');
         formData.append("driver_license", JSON.stringify(data.driver_license || []));
         formData.append("image", image || employee.image || '');
-        formData.append("office", data.office || '');
-        formData.append("department", data.department || '');
-        formData.append("position", data.position || '');
+        formData.append("office_id", data.office || '');
+        formData.append("department_id", data.department || '');
+        formData.append("position_id", data.position || '');
         formData.append("official_position", data.official_position || '');
         formData.append("work_name", data.work_name || '');
         formData.append("corporate_email", data.corporate_email || '');
