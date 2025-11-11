@@ -70,14 +70,14 @@ const employeeSchema = z.object({
     education: z.string().optional(),
     transport_type: z.string().optional(),
     driver_license: z.array(z.string()).optional(),
-    office: z.string().optional(),
-    department: z.string().optional(),
-    position: z.string().optional(),
+    office: z.any().optional(),
+    department:  z.any().optional(),
+    position:  z.any().optional(),
     official_position: z.string().optional(),
     work_name: z.string().optional(),
     corporate_email: z.string().optional(),
 
-    generated_documents: z.array(z.string()).optional(),
+    generated_documents: z.string().optional(),
 
     shift: z
         .array(
