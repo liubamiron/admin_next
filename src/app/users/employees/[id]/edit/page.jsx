@@ -77,6 +77,31 @@ const employeeSchema = z.object({
     work_name: z.string().optional(),
     corporate_email: z.string().optional(),
 
+    generated_documents: z.array(z.string()).optional(),
+
+    shift: z
+        .array(
+            z.object({
+                start_time: z.string().optional(),
+                end_time: z.string().optional(),
+                work_days: z.array(z.string().min(1)).optional(),
+            })
+        )
+        .optional()
+        .refine(
+            (arr) =>
+                !arr ||
+                arr.every((shift) => {
+                    const filledFields = [
+                        shift.start_time,
+                        shift.end_time,
+                        shift.work_days?.length ? shift.work_days : undefined,
+                    ].filter(Boolean);
+                    return filledFields.length === 0 || filledFields.length === 3;
+                }),
+            {message: "All shift fields must be filled if a shift is added"}
+        )
+        .default([]),
 });
 
 export default function EmployeeEditPage() {
@@ -98,8 +123,8 @@ export default function EmployeeEditPage() {
             phone: [{code: '+373', phone: '', operator: ''}],
             primary_contact: '',
             primary_contact_phone: '',
-            children: [{name: '', dob: '', gender: ''}],
-            shift: [{start_time: '', end_time: '', work_days: []}],
+            children: [{ name: '', dob: '', gender: '' }],
+            shift: [{ start_time: '', end_time: '', work_days: [] }],
         },
     });
 
@@ -130,12 +155,12 @@ export default function EmployeeEditPage() {
         name: 'phone',
     });
 
-    const {fields: childrenFields, append: appendChild, remove: removeChild} = useFieldArray({
+    const { fields: childrenFields, append: appendChild, remove: removeChild } = useFieldArray({
         control,
         name: "children",
     });
 
-    const {fields: shiftFields, append: appendShift, remove: removeShift} = useFieldArray({
+    const { fields: shiftFields, append: appendShift, remove: removeShift } = useFieldArray({
         control,
         name: "shift",
     });
@@ -171,32 +196,29 @@ export default function EmployeeEditPage() {
                         dob: c.dob ? c.dob.split('T')[0] : '',
                         gender: c.gender || '',
                     }))
-                    : [{name: '', dob: '', gender: ''}],
-                primary_contact: employee.primary_contact || '',
-                primary_contact_phone: employee.primary_contact_phone || '',
+                    : [{ name: '', dob: '', gender: '' }],
+               primary_contact: employee.primary_contact || '',
+               primary_contact_phone: employee.primary_contact_phone || '',
                 transport_type: employee.transport_type || '',
                 driver_license: employee.driver_license || [],
-                // office: employee.office || '',
-                // department: employee.department || '',
-                // position: employee.position || '',
                 office: employee.office_id || '',
                 department: employee.department_id || '',
                 position: employee.position_id || '',
                 official_position: employee.official_position || '',
                 work_name: employee.work_name || '',
-                // work_email: employee.work_email || '',
                 corporate_email: employee.corporate_email || '',
                 shift: employee.shift?.length
                     ? employee.shift
-                    : [{start_time: '', end_time: '', work_days: []}],
+                    : [{ start_time: '', end_time: '', work_days: [] }]
             });
         }
     }, [employee, reset]);
 
+
     const onSubmit = (data) => {
         setSuccessMsg('');
         setErrorMsg('');
-
+        console.log('Submitting:', data);
         const formData = new FormData();
 
         // Required fields
@@ -230,14 +252,20 @@ export default function EmployeeEditPage() {
                 setSuccessMsg('Employee updated successfully!');
                 router.push('/users/employees');
             },
-            onError: (err) => setErrorMsg(err.message || 'Failed to update employee.'),
+            onError: (err) => {
+                setErrorMsg(err.message || 'Failed to update employee.')
+
+            },
         });
     };
 
+    const onError = (errors) => {
+        console.error("Validation errors:", errors);
+        setErrorMsg("Please correct the highlighted fields before saving.");
+    };
 
     if (isLoading) return <div>Loading...</div>;
     if (isError || !employee) return <div>Error loading employee.</div>;
-
 
     return (
         <div className="p-0 space-y-6 md:p-4">
@@ -274,10 +302,9 @@ export default function EmployeeEditPage() {
                 </Toast>
             )}
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6">
-                    <div
-                        className="space-y-4 bg-white p-2 md:p-4 rounded-lg shadow dark:bg-gray-800 flex flex-col justify-between h-full">
+                    <div className="space-y-4 bg-white p-2 md:p-4 rounded-lg shadow dark:bg-gray-800 flex flex-col justify-between h-full">
                         <div>
                             <Label value="Profile Image"/>
                             <div>
@@ -347,12 +374,13 @@ export default function EmployeeEditPage() {
                         </div>
 
 
+
                     </div>
                     <div
                         className="space-y-4 bg-white p-2 md:p-4 rounded-lg shadow dark:bg-gray-800 flex flex-col justify-between h-full">
                         <Tabs aria-label="Tabs with underline" variant="underline">
                             <TabItem title="General">
-                                <div className="rounded-lg border py-4 p-2 md:p-4 mb-6 bg-[#F9FAFB] dark:bg-gray-800">
+                                <div className="rounded-lg border py-4 p-2 md:p-4 mb-6 bg-[#F9FAFB] dark:bg-gray-800" >
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                         <div>
                                             <Label>First Name</Label>
@@ -590,7 +618,7 @@ export default function EmployeeEditPage() {
                                                         type="button"
                                                         color="blue"
                                                         className="w-[40px] h-[40px]"
-                                                        onClick={() => appendChild({name: "", dob: "", gender: ""})}
+                                                        onClick={() => appendChild({ name: "", dob: "", gender: "" })}
                                                     >
                                                         +
                                                     </Button>
@@ -692,7 +720,6 @@ export default function EmployeeEditPage() {
 
                                             <Select
                                                 options={officeOptions}
-                                                // onChange={(val) => setValue("office", val?.value)}
                                                 value={officeOptions.find(opt => opt.value === watch('office')) || null}
                                                 onChange={(val) => setValue("office", val?.value || '')}
                                                 isLoading={offLoading}
@@ -801,7 +828,7 @@ export default function EmployeeEditPage() {
                                                     placeholder="Select days..."
                                                     styles={{
                                                         ...reactSelectHeightFix,
-                                                        menu: (provided) => ({...provided, zIndex: 9999}),
+                                                        menu: (provided) => ({ ...provided, zIndex: 9999 }),
                                                     }}
                                                     isDark={isDark}
                                                 />
@@ -822,7 +849,7 @@ export default function EmployeeEditPage() {
                                                     <Button
                                                         color="blue"
                                                         onClick={() =>
-                                                            appendShift({start_time: "", end_time: "", work_days: []})
+                                                            appendShift({ start_time: "", end_time: "", work_days: [] })
                                                         }
                                                         size="xs"
                                                         className="flex items-center justify-center h-[42px] w-[42px] rounded-lg border bg-blue-700 hover:bg-blue-800 text-white text-lg"
@@ -837,25 +864,13 @@ export default function EmployeeEditPage() {
 
 
                             </TabItem>
-                            <TabItem title="Files">
-                                General
-                            </TabItem>
-                            <TabItem title="Documents">
-                                General
-                            </TabItem>
-                            <TabItem title="Notes">
-                                General
-                            </TabItem>
-                            <TabItem title="Day Off">
-                                General
-                            </TabItem>
                         </Tabs>
                     </div>
                 </div>
 
                 <div className="flex justify-end gap-2">
                     <Button color="gray" onClick={() => router.back()}>Cancel</Button>
-                    <Button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</Button>
+                    <Button type="submit" disabled={saving} >{saving ? 'Saving...' : 'Save Changes'}</Button>
                 </div>
             </form>
         </div>
