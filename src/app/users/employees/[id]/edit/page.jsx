@@ -76,9 +76,6 @@ const employeeSchema = z.object({
     official_position: z.string().optional(),
     work_name: z.string().optional(),
     corporate_email: z.string().optional(),
-
-    generated_documents: z.string().optional(),
-
     shift: z
         .array(
             z.object({
