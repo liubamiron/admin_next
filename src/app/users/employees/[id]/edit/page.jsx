@@ -313,7 +313,7 @@ export default function EmployeeEditPage() {
         formData.append("official_position", data.official_position || '');
         formData.append("work_name", data.work_name || '');
         formData.append("corporate_email", data.corporate_email || '');
-        formData.append("shift", JSON.stringify(data.shift) || []);
+        // formData.append("shift", JSON.stringify(data.shift) || []);
 
         const allFiles = [
             ...(data.existingFiles || []).map(f => ({
