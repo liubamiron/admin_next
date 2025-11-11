@@ -386,7 +386,7 @@ export default function EmployeeEditPage() {
                 formData.append('user_id', id); // required
                 formData.append('type', f.file_type || '');
                 formData.append('file', f.file); // required
-                await createDocument(formData);
+                await createDocument({formData, id});
             }
             const employeeFormData = new FormData();
             employeeFormData.append('first_name', data.first_name);

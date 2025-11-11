@@ -7,7 +7,7 @@ export function useCreateDocument() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (formDataDoc, id) => {
+        mutationFn: async ({formDataDoc, id}) => {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
@@ -28,8 +28,8 @@ export function useCreateDocument() {
 
             return data;
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["user-document"] });
+        onSuccess: (_, { id }) => {
+            queryClient.invalidateQueries({ queryKey: ["user-document", id] });
         },
     });
 }
