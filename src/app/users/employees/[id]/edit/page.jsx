@@ -255,18 +255,18 @@ export default function EmployeeEditPage() {
                         updated_at: d.updated_at,
                     }))
                     : [{ id: '', type: '', file: '', created_at: '', updated_at: '' }],
-                generated_documents: employee.generated_documents?.length
-                    ? employee.generated_documents.map(d => ({
-                        id: d.id,
-                        template_id: d.template_id,
-                        manager_id: d.manager_id,
-                        employer_id: d.employer_id,
-                        variables: d.variables,
-                        file_path: d.file_path,
-                        created_at: d.created_at,
-                        updated_at: d.updated_at,
-                    }))
-                    : [{ id: '', template_id: '', manager_id: '', employer_id: '', variables: {}, file_path: null }],
+                // generated_documents: employee.generated_documents?.length
+                //     ? employee.generated_documents.map(d => ({
+                //         id: d.id,
+                //         template_id: d.template_id,
+                //         manager_id: d.manager_id,
+                //         employer_id: d.employer_id,
+                //         variables: d.variables,
+                //         file_path: d.file_path,
+                //         created_at: d.created_at,
+                //         updated_at: d.updated_at,
+                //     }))
+                //     : [{ id: '', template_id: '', manager_id: '', employer_id: '', variables: {}, file_path: null }],
 
                 received_notes: employee.received_notes?.length
                     ? employee.received_notes.map(n => ({
@@ -1098,39 +1098,39 @@ export default function EmployeeEditPage() {
                             <TabItem title="Documents">
                                 <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 px-4 mb-6">
                                     <Label>Generated Documents</Label>
-                                    {employee.generated_documents?.length ? (
-                                        <ul className="mt-4 space-y-3">
-                                            {employee.generated_documents.map((doc) => (
-                                                <li key={doc.id} className="flex flex-col border-b pb-3">
-                                                    <div className="flex justify-between items-center">
-                                                        <span>Template ID: {doc.template_id}</span>
-                                                        {doc.file_path ? (
-                                                            <a
-                                                                href={`${process.env.NEXT_PUBLIC_IMG}/${doc.file_path}`}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="text-blue-600 hover:underline"
-                                                            >
-                                                                View File
-                                                            </a>
-                                                        ) : (
-                                                            <span className="text-gray-500 text-sm">No file generated</span>
-                                                        )}
-                                                    </div>
-                                                    <div className="text-sm text-gray-600 mt-1">
-                                                        Variables:{" "}
-                                                        {Object.entries(doc.variables || {}).map(([key, value]) => (
-                                                            <span key={key}>
-                  <strong>{key}</strong>: {String(value)}{" "}
-                </span>
-                                                        ))}
-                                                    </div>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    ) : (
-                                        <p className="text-gray-500 mt-4 text-sm">No generated documents.</p>
-                                    )}
+                {/*                    {employee.generated_documents?.length ? (*/}
+                {/*                        <ul className="mt-4 space-y-3">*/}
+                {/*                            {employee.generated_documents.map((doc) => (*/}
+                {/*                                <li key={doc.id} className="flex flex-col border-b pb-3">*/}
+                {/*                                    <div className="flex justify-between items-center">*/}
+                {/*                                        <span>Template ID: {doc.template_id}</span>*/}
+                {/*                                        {doc.file_path ? (*/}
+                {/*                                            <a*/}
+                {/*                                                href={`${process.env.NEXT_PUBLIC_IMG}/${doc.file_path}`}*/}
+                {/*                                                target="_blank"*/}
+                {/*                                                rel="noopener noreferrer"*/}
+                {/*                                                className="text-blue-600 hover:underline"*/}
+                {/*                                            >*/}
+                {/*                                                View File*/}
+                {/*                                            </a>*/}
+                {/*                                        ) : (*/}
+                {/*                                            <span className="text-gray-500 text-sm">No file generated</span>*/}
+                {/*                                        )}*/}
+                {/*                                    </div>*/}
+                {/*                                    <div className="text-sm text-gray-600 mt-1">*/}
+                {/*                                        Variables:{" "}*/}
+                {/*                                        {Object.entries(doc.variables || {}).map(([key, value]) => (*/}
+                {/*                                            <span key={key}>*/}
+                {/*  <strong>{key}</strong>: {String(value)}{" "}*/}
+                {/*</span>*/}
+                {/*                                        ))}*/}
+                {/*                                    </div>*/}
+                {/*                                </li>*/}
+                {/*                            ))}*/}
+                {/*                        </ul>*/}
+                {/*                    ) : (*/}
+                {/*                        <p className="text-gray-500 mt-4 text-sm">No generated documents.</p>*/}
+                {/*                    )}*/}
                                 </div>
                             </TabItem>
                             <TabItem title="Notes">
