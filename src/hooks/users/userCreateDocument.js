@@ -7,11 +7,11 @@ export function useCreateDocument() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (formDataDoc) => {
+        mutationFn: async (formDataDoc, id) => {
             const token = Cookies.get("token");
             if (!token) throw new Error("No authentication token found");
 
-            const res = await fetch(`${host}/user-document`, {
+            const res = await fetch(`${host}/user-document/${id}`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
