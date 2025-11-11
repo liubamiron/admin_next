@@ -491,6 +491,7 @@ export default function EmployeeEditPage() {
                             <TabItem title="Company">
                                 <CompanyTab
                                     register={register}
+                                    control={control}
                                     setValue={setValue}
                                     watch={watch}
                                     shiftFields={shiftFields}
