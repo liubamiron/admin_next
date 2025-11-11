@@ -1,6 +1,6 @@
 // pages/edit/components/CompanyTab.jsx
 import React from 'react';
-import { Label, TextInput, Select, Button } from '@ui/ui';
+import {Button, Label, Select, TextInput} from "flowbite-react";
 
 export const CompanyTab = ({
                                register,

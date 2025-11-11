@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, Label, TextInput } from '@/components/ui'; // adjust import paths
 import Select from 'react-select';
+import {Button, Label, TextInput} from "flowbite-react";
 
 
 
