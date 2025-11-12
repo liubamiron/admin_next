@@ -159,6 +159,8 @@ export default function EmployeeEditPage() {
             phone: [{code: '+373', phone: '', operator: ''}],
             primary_contact: '',
             primary_contact_phone: '',
+            document: [],
+            existingFiles: [],
             children: [{ name: '', dob: '', gender: '' }],
             shift: [{ start_time: '', end_time: '', work_days: [] }],
         },
@@ -275,6 +277,13 @@ export default function EmployeeEditPage() {
                         updated_at: d.updated_at,
                     }))
                     : [{ id: '', type: '', file: '', created_at: '', updated_at: '' }],
+                existingFiles: employee.document?.length
+                    ? employee.document.map(d => ({
+                        id: d.id,
+                        file_type: d.type || '',
+                        file: d.file || '',
+                    }))
+                    : [],
                 // generated_documents: employee.generated_documents?.length
                 //     ? employee.generated_documents.map(d => ({
                 //         id: d.id,
@@ -352,12 +361,15 @@ export default function EmployeeEditPage() {
             employeeFormData.append("work_name", data.work_name || '');
             employeeFormData.append("corporate_email", data.corporate_email || '');
 
-            const existingFiles = data.existingFiles || [];
-            existingFiles.forEach((f, i) => {
-                employeeFormData.append(`document[${i}][file_type]`, f.file_type || '');
-                if (typeof f.file === 'string') {
-                    employeeFormData.append(`document[${i}][file]`, f.file);
+            const allDocs = data.document || [];
+
+            allDocs.forEach((doc, i) => {
+                if (doc.file instanceof File) {
+                    employeeFormData.append(`document[${i}][file]`, doc.file);
+                } else if (typeof doc.file === 'string') {
+                    employeeFormData.append(`document[${i}][file]`, doc.file);
                 }
+                employeeFormData.append(`document[${i}][file_type]`, doc.file_type || '');
             });
 
             editEmployee({ id, formData: employeeFormData }, {
