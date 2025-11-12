@@ -365,6 +365,9 @@ export default function EmployeeEditPage() {
                 ...(data.existingFiles || []),
                 ...(data.document || [])
             ];
+
+            console.log('All documents before sending:', allDocs);
+
             allDocs.forEach((doc, i) => {
                 if (doc.file instanceof File) {
                     employeeFormData.append(`document[${i}][file]`, doc.file);
