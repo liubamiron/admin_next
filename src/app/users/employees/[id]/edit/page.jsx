@@ -35,7 +35,7 @@ import {usePositions} from "@/hooks/positions/usePositions";
 import {useOffices} from "@/hooks/officies/useOffices";
 import {GeneralTab} from "@/app/users/employees/[id]/edit/components/generalTab";
 import {CompanyTab} from "@/app/users/employees/[id]/edit/components/companyTab";
-import {useCreateDocument} from "@/hooks/users/userCreateDocument";
+import {useEditDocument} from "@/hooks/users/useEditDocument";
 
 const employeeSchema = z.object({
     first_name: z.string().min(1, 'First name is required'),
@@ -150,7 +150,7 @@ export default function EmployeeEditPage() {
 
     const isDark = useDarkMode();
 
-    const { mutateAsync: createDocument } = useCreateDocument();
+    const { mutateAsync: editDocument } = useEditDocument();
 
 
     const {register, handleSubmit, control, setValue, reset, watch, formState: {errors}} = useForm({
@@ -310,7 +310,7 @@ export default function EmployeeEditPage() {
             formData.append('file', f.file);
             formData.append('file_type', f.file_type);
             formData.append('employee_id', id);
-            await createDocument(formData);
+            await editDocument({formData, id});
         }
     };
 
@@ -383,10 +383,10 @@ export default function EmployeeEditPage() {
 
             for (const f of newFiles) {
                 const formData = new FormData();
-                formData.append('user_id', id); // required
+                formData.append('user_id', id);
                 formData.append('type', f.file_type || '');
-                formData.append('file', f.file); // required
-                await createDocument({formData, id});
+                formData.append('file', f.file);
+                await editDocument({formData, id});
             }
             const employeeFormData = new FormData();
             employeeFormData.append('first_name', data.first_name);
@@ -416,7 +416,7 @@ export default function EmployeeEditPage() {
             existingFiles.forEach((f, i) => {
                 employeeFormData.append(`document[${i}][file_type]`, f.file_type || '');
                 if (typeof f.file === 'string') {
-                    employeeFormData.append(`document[${i}][file]`, f.file); // backend path
+                    employeeFormData.append(`document[${i}][file]`, f.file);
                 }
             });
 
