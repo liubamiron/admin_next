@@ -329,29 +329,32 @@ export default function EmployeeEditPage() {
         setErrorMsg('');
 
         try {
-            // 1️⃣ Upload replaced files (edit existing)
+            // 1️⃣ Upload replaced (existing) files
             const replacedFiles = (data.existingFiles || []).filter(f => f.file instanceof File);
-            for (const f of replacedFiles) {
+            const replacedPromises = replacedFiles.map(async (f) => {
                 const formDataDoc = new FormData();
                 formDataDoc.append('user_id', id);
                 formDataDoc.append('file', f.file);
                 formDataDoc.append('file_type', f.file_type);
                 console.log('Editing file:', f.file.name, '→', f.id);
-                await editDocument({ formDataDoc, id: f.id });
-            }
+                return editDocument({ formDataDoc, id: f.id });
+            });
 
-            // 2️⃣ Upload new files (create new)
+            // 2️⃣ Upload new files
             const newFiles = (data.document || []).filter(f => f.file instanceof File);
-            for (const f of newFiles) {
+            const newFilePromises = newFiles.map(async (f) => {
                 const formDataDoc = new FormData();
                 formDataDoc.append('user_id', id);
                 formDataDoc.append('file', f.file);
                 formDataDoc.append('file_type', f.file_type);
                 console.log('Creating new file:', f.file.name);
-                await createDocument(formDataDoc);
-            }
+                return createDocument(formDataDoc);
+            });
 
-            // 3️⃣ Build FormData for employee update
+            // Wait for all document uploads (edit + create)
+            await Promise.all([...replacedPromises, ...newFilePromises]);
+
+            // 3️⃣ Prepare employee form data
             const employeeFormData = new FormData();
             employeeFormData.append('first_name', data.first_name);
             employeeFormData.append('last_name', data.last_name);
@@ -376,7 +379,7 @@ export default function EmployeeEditPage() {
             employeeFormData.append('corporate_email', data.corporate_email || '');
             employeeFormData.append('image', image instanceof File ? image : (employee.image || ''));
 
-            // 4️⃣ Send employee data update
+            // 4️⃣ Then update employee
             await new Promise((resolve, reject) => {
                 editEmployee(
                     { id, formData: employeeFormData },
@@ -387,8 +390,10 @@ export default function EmployeeEditPage() {
                 );
             });
 
-            setSuccessMsg('Employee updated successfully!');
-            router.push('/users/employees');
+            // 5️⃣ Show success, don’t redirect yet
+            setSuccessMsg('Employee and documents updated successfully!');
+            // Optional: refresh data instead of redirect
+            // await queryClient.invalidateQueries(['employee', id]);
 
         } catch (error) {
             console.error(error);
