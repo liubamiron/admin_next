@@ -309,7 +309,7 @@ export default function EmployeeEditPage() {
             const formDataDoc = new FormData();
             formDataDoc.append('file', f.file);
             formDataDoc.append('file_type', f.file_type);
-            formDataDoc.append('employee_id', id);
+            formDataDoc.append('user_id', id);
             await editDocument({formDataDoc, id});
         }
     };
