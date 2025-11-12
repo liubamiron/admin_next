@@ -322,7 +322,7 @@ export default function EmployeeEditPage() {
             const newFiles = (data.document || []).filter(f => f.file instanceof File);
 
             for (const f of newFiles) {
-                const formDataDoc = new formDataDoc();
+                const formDataDoc = new FormData();
                 formDataDoc.append('user_id', id);
                 formDataDoc.append('type', f.file_type || '');
                 formDataDoc.append('file', f.file);
