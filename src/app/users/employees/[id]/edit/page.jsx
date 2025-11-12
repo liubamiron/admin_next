@@ -306,11 +306,11 @@ export default function EmployeeEditPage() {
     const saveFiles = async () => {
         const filesToSave = watch('document').filter(f => f.file instanceof File);
         for (const f of filesToSave) {
-            const formData = new FormData();
-            formData.append('file', f.file);
-            formData.append('file_type', f.file_type);
-            formData.append('employee_id', id);
-            await editDocument({formData, id});
+            const formDataDoc = new FormData();
+            formDataDoc.append('file', f.file);
+            formDataDoc.append('file_type', f.file_type);
+            formDataDoc.append('employee_id', id);
+            await editDocument({formDataDoc, id});
         }
     };
 
