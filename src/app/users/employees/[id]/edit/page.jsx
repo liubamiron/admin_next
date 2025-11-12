@@ -323,20 +323,98 @@ export default function EmployeeEditPage() {
         }
     };
 
+    // const onSubmit = async (data) => {
+    //     setSuccessMsg('');
+    //     setErrorMsg('');
+    //
+    //     try {
+    //         const newFiles = (data.document || []).filter(f => f.file instanceof File);
+    //
+    //         for (const f of newFiles) {
+    //             const formDataDoc = new FormData();
+    //             formDataDoc.append('user_id', id);
+    //             formDataDoc.append('type', f.file_type || '');
+    //             formDataDoc.append('file', f.file);
+    //             await editDocument({formDataDoc, id});
+    //         }
+    //         const employeeFormData = new FormData();
+    //         employeeFormData.append('first_name', data.first_name);
+    //         employeeFormData.append('last_name', data.last_name);
+    //         employeeFormData.append('email', data.email);
+    //         employeeFormData.append('sex', data.sex);
+    //         employeeFormData.append('dob', data.dob);
+    //         employeeFormData.append('date_of_placement', data.date_of_placement || '');
+    //         employeeFormData.append('date_of_dismissal', data.date_of_dismissal);
+    //         employeeFormData.append("phone", JSON.stringify(data.phone));
+    //         employeeFormData.append("telegram", data.telegram || '');
+    //         employeeFormData.append("citizenship", JSON.stringify(data.citizenship || []));
+    //         employeeFormData.append("marital_status", data.marital_status || '');
+    //         employeeFormData.append("languages", JSON.stringify(data.languages || []));
+    //         employeeFormData.append("education", data.education || '');
+    //         employeeFormData.append("transport_type", data.transport_type || '');
+    //         employeeFormData.append("driver_license", JSON.stringify(data.driver_license || []));
+    //         employeeFormData.append("image", image || employee.image || '');
+    //         employeeFormData.append("office_id", data.office || '');
+    //         employeeFormData.append("department_id", data.department || '');
+    //         employeeFormData.append("position_id", data.position || '');
+    //         employeeFormData.append("official_position", data.official_position || '');
+    //         employeeFormData.append("work_name", data.work_name || '');
+    //         employeeFormData.append("corporate_email", data.corporate_email || '');
+    //
+    //         const allDocs = [
+    //             ...(data.existingFiles || []),
+    //             ...(data.document || [])
+    //         ];
+    //
+    //         console.log('All documents before sending:', allDocs);
+    //
+    //         allDocs.forEach((doc, i) => {
+    //             if (doc.file instanceof File) {
+    //                 employeeFormData.append(`document[${i}][file]`, doc.file);
+    //             } else if (typeof doc.file === 'string') {
+    //                 employeeFormData.append(`document[${i}][file]`, doc.file);
+    //             }
+    //             employeeFormData.append(`document[${i}][file_type]`, doc.file_type || '');
+    //         });
+    //
+    //         editEmployee({ id, formData: employeeFormData }, {
+    //             onSuccess: () => {
+    //                 setSuccessMsg('Employee updated successfully!');
+    //                 router.push('/users/employees');
+    //             },
+    //             onError: (err) => setErrorMsg(err.message || 'Failed to update employee.'),
+    //         });
+    //
+    //     } catch (error) {
+    //         console.error(error);
+    //         setErrorMsg('Error saving employee data or documents.');
+    //     }
+    // };
+
+
     const onSubmit = async (data) => {
         setSuccessMsg('');
         setErrorMsg('');
 
         try {
+            // 1️⃣ Upload new document files first
             const newFiles = (data.document || []).filter(f => f.file instanceof File);
-
             for (const f of newFiles) {
                 const formDataDoc = new FormData();
                 formDataDoc.append('user_id', id);
                 formDataDoc.append('type', f.file_type || '');
                 formDataDoc.append('file', f.file);
-                await editDocument({formDataDoc, id});
+
+                console.log('Uploading new file:', {
+                    user_id: id,
+                    type: f.file_type,
+                    file: f.file.name
+                });
+
+                await editDocument({ formDataDoc, id }); // ensure completion
             }
+
+            // 2️⃣ Build FormData for employee edit
             const employeeFormData = new FormData();
             employeeFormData.append('first_name', data.first_name);
             employeeFormData.append('last_name', data.last_name);
@@ -344,23 +422,27 @@ export default function EmployeeEditPage() {
             employeeFormData.append('sex', data.sex);
             employeeFormData.append('dob', data.dob);
             employeeFormData.append('date_of_placement', data.date_of_placement || '');
-            employeeFormData.append('date_of_dismissal', data.date_of_dismissal);
-            employeeFormData.append("phone", JSON.stringify(data.phone));
-            employeeFormData.append("telegram", data.telegram || '');
-            employeeFormData.append("citizenship", JSON.stringify(data.citizenship || []));
-            employeeFormData.append("marital_status", data.marital_status || '');
-            employeeFormData.append("languages", JSON.stringify(data.languages || []));
-            employeeFormData.append("education", data.education || '');
-            employeeFormData.append("transport_type", data.transport_type || '');
-            employeeFormData.append("driver_license", JSON.stringify(data.driver_license || []));
-            employeeFormData.append("image", image || employee.image || '');
-            employeeFormData.append("office_id", data.office || '');
-            employeeFormData.append("department_id", data.department || '');
-            employeeFormData.append("position_id", data.position || '');
-            employeeFormData.append("official_position", data.official_position || '');
-            employeeFormData.append("work_name", data.work_name || '');
-            employeeFormData.append("corporate_email", data.corporate_email || '');
+            employeeFormData.append('date_of_dismissal', data.date_of_dismissal || '');
+            employeeFormData.append('phone', JSON.stringify(data.phone));
+            employeeFormData.append('telegram', data.telegram || '');
+            employeeFormData.append('citizenship', JSON.stringify(data.citizenship || []));
+            employeeFormData.append('marital_status', data.marital_status || '');
+            employeeFormData.append('languages', JSON.stringify(data.languages || []));
+            employeeFormData.append('education', data.education || '');
+            employeeFormData.append('transport_type', data.transport_type || '');
+            employeeFormData.append('driver_license', JSON.stringify(data.driver_license || []));
+            employeeFormData.append(
+                'image',
+                image instanceof File ? image : (employee.image || '')
+            );
+            employeeFormData.append('office_id', data.office || '');
+            employeeFormData.append('department_id', data.department || '');
+            employeeFormData.append('position_id', data.position || '');
+            employeeFormData.append('official_position', data.official_position || '');
+            employeeFormData.append('work_name', data.work_name || '');
+            employeeFormData.append('corporate_email', data.corporate_email || '');
 
+            // 3️⃣ Add all docs (existing + new) metadata
             const allDocs = [
                 ...(data.existingFiles || []),
                 ...(data.document || [])
@@ -369,28 +451,32 @@ export default function EmployeeEditPage() {
             console.log('All documents before sending:', allDocs);
 
             allDocs.forEach((doc, i) => {
-                if (doc.file instanceof File) {
+                if (doc.file instanceof File)
                     employeeFormData.append(`document[${i}][file]`, doc.file);
-                } else if (typeof doc.file === 'string') {
+                else if (typeof doc.file === 'string')
                     employeeFormData.append(`document[${i}][file]`, doc.file);
-                }
+
                 employeeFormData.append(`document[${i}][file_type]`, doc.file_type || '');
             });
 
-            editEmployee({ id, formData: employeeFormData }, {
-                onSuccess: () => {
-                    setSuccessMsg('Employee updated successfully!');
-                    router.push('/users/employees');
-                },
-                onError: (err) => setErrorMsg(err.message || 'Failed to update employee.'),
+            // 4️⃣ Await employee update — don’t navigate early
+            await new Promise((resolve, reject) => {
+                editEmployee(
+                    { id, formData: employeeFormData },
+                    {
+                        onSuccess: () => resolve(),
+                        onError: (err) => reject(err),
+                    }
+                );
             });
 
+            setSuccessMsg('Employee updated successfully!');
+            router.push('/users/employees');
         } catch (error) {
             console.error(error);
             setErrorMsg('Error saving employee data or documents.');
         }
     };
-
 
     const onError = (errors) => {
         console.error("Validation errors:", errors);
