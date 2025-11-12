@@ -361,8 +361,10 @@ export default function EmployeeEditPage() {
             employeeFormData.append("work_name", data.work_name || '');
             employeeFormData.append("corporate_email", data.corporate_email || '');
 
-            const allDocs = data.document || [];
-
+            const allDocs = [
+                ...(data.existingFiles || []),
+                ...(data.document || [])
+            ];
             allDocs.forEach((doc, i) => {
                 if (doc.file instanceof File) {
                     employeeFormData.append(`document[${i}][file]`, doc.file);
