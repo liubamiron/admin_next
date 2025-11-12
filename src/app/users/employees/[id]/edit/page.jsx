@@ -314,66 +314,6 @@ export default function EmployeeEditPage() {
         }
     };
 
-    // const onSubmit = (data) => {
-    //     setSuccessMsg('');
-    //     setErrorMsg('');
-    //     console.log(data, 'submit data');
-    //
-    //     const formData = new FormData();
-    //
-    //     // Required fields
-    //     formData.append('first_name', data.first_name);
-    //     formData.append('last_name', data.last_name);
-    //     formData.append('email', data.email);
-    //     formData.append('sex', data.sex);
-    //     formData.append('dob', data.dob);
-    //     formData.append('date_of_placement', data.date_of_placement || '');
-    //     formData.append('date_of_dismissal', data.date_of_dismissal);
-    //     formData.append("phone", JSON.stringify(data.phone));
-    //     formData.append("telegram", data.telegram || '');
-    //     formData.append("citizenship", JSON.stringify(data.citizenship || []));
-    //     formData.append("marital_status", data.marital_status || '');
-    //     formData.append("languages", JSON.stringify(data.languages || []));
-    //     formData.append("education", data.education || '');
-    //     formData.append("transport_type", data.transport_type || '');
-    //     formData.append("driver_license", JSON.stringify(data.driver_license || []));
-    //     formData.append("image", image || employee.image || '');
-    //     formData.append("office_id", data.office || '');
-    //     formData.append("department_id", data.department || '');
-    //     formData.append("position_id", data.position || '');
-    //     formData.append("official_position", data.official_position || '');
-    //     formData.append("work_name", data.work_name || '');
-    //     formData.append("corporate_email", data.corporate_email || '');
-    //     // formData.append("shift", JSON.stringify(data.shift) || []);
-    //
-    //     const allFiles = [
-    //         ...(data.existingFiles || []).map(f => ({
-    //             file_type: f.file_type,
-    //             file: f.file, // could be File object or string
-    //             user_id: id, // could be File object or string
-    //         })),
-    //         ...(data.document || [])
-    //     ];
-    //
-    //     allFiles.forEach((f, i) => {
-    //         formData.append(`document[${i}][file_type]`, f.file_type || '');
-    //         if (f.file instanceof File) {
-    //             formData.append(`document[${i}][file]`, f.file);
-    //         } else if (typeof f.file === 'string') {
-    //             formData.append(`document[${i}][file]`, f.file); // backend path string
-    //         }
-    //     });
-    //
-    //     editEmployee({id, formData}, {
-    //         onSuccess: () => {
-    //             setSuccessMsg('Employee updated successfully!');
-    //             router.push('/users/employees');
-    //         },
-    //         onError: (err) => setErrorMsg(err.message || 'Failed to update employee.'),
-    //     });
-    // };
-
-
     const onSubmit = async (data) => {
         setSuccessMsg('');
         setErrorMsg('');
@@ -382,11 +322,11 @@ export default function EmployeeEditPage() {
             const newFiles = (data.document || []).filter(f => f.file instanceof File);
 
             for (const f of newFiles) {
-                const formData = new FormData();
-                formData.append('user_id', id);
-                formData.append('type', f.file_type || '');
-                formData.append('file', f.file);
-                await editDocument({formData, id});
+                const formDataDoc = new formDataDoc();
+                formDataDoc.append('user_id', id);
+                formDataDoc.append('type', f.file_type || '');
+                formDataDoc.append('file', f.file);
+                await editDocument({formDataDoc, id});
             }
             const employeeFormData = new FormData();
             employeeFormData.append('first_name', data.first_name);
