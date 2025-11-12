@@ -36,6 +36,7 @@ import {useOffices} from "@/hooks/officies/useOffices";
 import {GeneralTab} from "@/app/users/employees/[id]/edit/components/generalTab";
 import {CompanyTab} from "@/app/users/employees/[id]/edit/components/companyTab";
 import {useEditDocument} from "@/hooks/users/useEditDocument";
+import {useCreateDocument} from "@/hooks/users/useCreateDocument";
 
 const employeeSchema = z.object({
     first_name: z.string().min(1, 'First name is required'),
@@ -151,6 +152,7 @@ export default function EmployeeEditPage() {
     const isDark = useDarkMode();
 
     const { mutateAsync: editDocument } = useEditDocument();
+    const { mutateAsync: createDocument } = useCreateDocument();
 
 
     const {register, handleSubmit, control, setValue, reset, watch, formState: {errors}} = useForm({
@@ -322,36 +324,34 @@ export default function EmployeeEditPage() {
             await editDocument({formDataDoc, id});
         }
     };
-
-
     const onSubmit = async (data) => {
         setSuccessMsg('');
         setErrorMsg('');
 
         try {
-            // 1️⃣ Upload replaced files
+            // 1️⃣ Upload replaced files (edit existing)
             const replacedFiles = (data.existingFiles || []).filter(f => f.file instanceof File);
             for (const f of replacedFiles) {
                 const formDataDoc = new FormData();
                 formDataDoc.append('user_id', id);
                 formDataDoc.append('file', f.file);
                 formDataDoc.append('file_type', f.file_type);
-                console.log('Updating replaced file:', f.file.name);
-                await editDocument({ formDataDoc, id: f.id }); // ensure PUT/PATCH to /api/user-document/{f.id}
+                console.log('Editing file:', f.file.name, '→', f.id);
+                await editDocument({ formDataDoc, id: f.id });
             }
 
-            // 2️⃣ Upload newly added files
+            // 2️⃣ Upload new files (create new)
             const newFiles = (data.document || []).filter(f => f.file instanceof File);
             for (const f of newFiles) {
                 const formDataDoc = new FormData();
                 formDataDoc.append('user_id', id);
                 formDataDoc.append('file', f.file);
                 formDataDoc.append('file_type', f.file_type);
-                console.log('Uploading new file:', f.file.name);
-                await editDocument({ formDataDoc, id }); // POST to /api/user-document
+                console.log('Creating new file:', f.file.name);
+                await createDocument(formDataDoc);
             }
 
-            // 3️⃣ Build FormData for employee edit
+            // 3️⃣ Build FormData for employee update
             const employeeFormData = new FormData();
             employeeFormData.append('first_name', data.first_name);
             employeeFormData.append('last_name', data.last_name);
@@ -376,7 +376,7 @@ export default function EmployeeEditPage() {
             employeeFormData.append('corporate_email', data.corporate_email || '');
             employeeFormData.append('image', image instanceof File ? image : (employee.image || ''));
 
-            // 4️⃣ Save employee details
+            // 4️⃣ Send employee data update
             await new Promise((resolve, reject) => {
                 editEmployee(
                     { id, formData: employeeFormData },
@@ -389,11 +389,13 @@ export default function EmployeeEditPage() {
 
             setSuccessMsg('Employee updated successfully!');
             router.push('/users/employees');
+
         } catch (error) {
             console.error(error);
             setErrorMsg('Error saving employee data or documents.');
         }
     };
+
 
 
     const onError = (errors) => {
