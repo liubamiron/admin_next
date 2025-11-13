@@ -275,16 +275,22 @@ export default function EmployeeEditPage() {
                 shift: employee.shift?.length
                     ? employee.shift
                     : [{ start_time: '', end_time: '', work_days: [] }],
-                document: employee.document?.length
-                    ? employee.document.map(d => ({
-                        id: d.id,
-                        user_id:id,
-                        type: d.type,
-                        file: d.file,
-                        created_at: d.created_at,
-                        updated_at: d.updated_at,
-                    }))
-                    : [{ id: '', type: '', file: '', created_at: '', updated_at: '' }],
+                document: employee.document?.map(d => ({
+                    id: d.id,
+                    type: d.type.toLowerCase() || '',
+                    // type: d.type || '',
+                    file: d.file || null, // file is string for existing files
+                })) || [],
+                // document: employee.document?.length
+                //     ? employee.document.map(d => ({
+                //         id: d.id,
+                //         user_id:id,
+                //         type: d.type,
+                //         file: d.file,
+                //         created_at: d.created_at,
+                //         updated_at: d.updated_at,
+                //     }))
+                //     : [{ id: '', type: '', file: '', created_at: '', updated_at: '' }],
                 existingFiles: employee.document?.length
                     ? employee.document.map(d => ({
                         id: d.id,
@@ -589,159 +595,173 @@ export default function EmployeeEditPage() {
                                     </div>
 
                                     {/* Existing Files */}
-                                    {existingFilesFields.length > 0 ? (
-                                        existingFilesFields.map((file, index) => {
-                                            const replacedFile = watch(`existingFiles.${index}.file`);
-                                            const previewUrl = replacedFile instanceof File
-                                                ? URL.createObjectURL(replacedFile)
-                                                : `${process.env.NEXT_PUBLIC_IMG}/${file.file}`;
+                                    {/*{existingFilesFields.length > 0 ? (*/}
+                                    {/*    existingFilesFields.map((file, index) => {*/}
+                                    {/*        const replacedFile = watch(`existingFiles.${index}.file`);*/}
+                                    {/*        const previewUrl = replacedFile instanceof File*/}
+                                    {/*            ? URL.createObjectURL(replacedFile)*/}
+                                    {/*            : `${process.env.NEXT_PUBLIC_IMG}/${file.file}`;*/}
 
-                                            return (
-                                                <div key={file.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center border-b border-gray-200 dark:border-gray-700 py-3">
-                                                    {/* File Type */}
-                                                    <Controller
-                                                        name={`existingFiles.${index}.type`}
-                                                        control={control}
-                                                        defaultValue={file.type}
-                                                        render={({ field }) => (
-                                                            <Select
-                                                                options={employeeFilesOptions}
-                                                                value={employeeFilesOptions.find(opt => opt.value === field.value) || null}
-                                                                onChange={selected => {
-                                                                    field.onChange(selected?.value);
-                                                                    setUnsavedFiles(true);
-                                                                }}
-                                                                placeholder="Select file type..."
-                                                                isDark={isDark}
-                                                            />
-                                                        )}
-                                                    />
+                                    {/*        return (*/}
+                                    {/*            <div key={file.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center border-b border-gray-200 dark:border-gray-700 py-3">*/}
+                                    {/*                /!* File Type *!/*/}
+                                    {/*                <Controller*/}
+                                    {/*                    name={`existingFiles.${index}.type`}*/}
+                                    {/*                    control={control}*/}
+                                    {/*                    defaultValue={file.type}*/}
+                                    {/*                    render={({ field }) => (*/}
+                                    {/*                        <Select*/}
+                                    {/*                            options={employeeFilesOptions}*/}
+                                    {/*                            value={employeeFilesOptions.find(opt => opt.value === field.value) || null}*/}
+                                    {/*                            onChange={selected => {*/}
+                                    {/*                                field.onChange(selected?.value);*/}
+                                    {/*                                setUnsavedFiles(true);*/}
+                                    {/*                            }}*/}
+                                    {/*                            placeholder="Select file type..."*/}
+                                    {/*                            isDark={isDark}*/}
+                                    {/*                        />*/}
+                                    {/*                    )}*/}
+                                    {/*                />*/}
 
-                                                    {/* File Input */}
-                                                    <Controller
-                                                        name={`existingFiles.${index}.file`}
-                                                        control={control}
-                                                        defaultValue={file.file}
-                                                        render={({ field }) => (
-                                                            <FileInput
-                                                                id={`replace-file-${index}`}
-                                                                onChange={e => field.onChange(e.target.files?.[0] || null)}
-                                                            />
-                                                        )}
-                                                    />
+                                    {/*                /!* File Input *!/*/}
+                                    {/*                <Controller*/}
+                                    {/*                    name={`existingFiles.${index}.file`}*/}
+                                    {/*                    control={control}*/}
+                                    {/*                    defaultValue={file.file}*/}
+                                    {/*                    render={({ field }) => (*/}
+                                    {/*                        <FileInput*/}
+                                    {/*                            id={`replace-file-${index}`}*/}
+                                    {/*                            onChange={e => field.onChange(e.target.files?.[0] || null)}*/}
+                                    {/*                        />*/}
+                                    {/*                    )}*/}
+                                    {/*                />*/}
 
+                                    {/*                <a*/}
+                                    {/*                    href={previewUrl}*/}
+                                    {/*                    target="_blank"*/}
+                                    {/*                    rel="noopener noreferrer"*/}
+                                    {/*                    className="text-blue-600 hover:underline truncate"*/}
+                                    {/*                >*/}
+                                    {/*                    {replacedFile?.name || (file.file ? file.file.split('/').pop() : 'No file')}*/}
+
+                                    {/*                    /!*{replacedFile?.name || file.file.split('/').pop()}*!/*/}
+                                    {/*                </a>*/}
+
+                                    {/*                /!* Actions *!/*/}
+                                    {/*                <div className="flex justify-center gap-2">*/}
+                                    {/*                    <Button*/}
+                                    {/*                        color="failure"*/}
+                                    {/*                        size="xs"*/}
+                                    {/*                        onClick={() => removeExistingFile(index)}*/}
+                                    {/*                        className="h-9 w-9 rounded-lg border bg-red-700 hover:bg-red-800 text-white"*/}
+                                    {/*                    >*/}
+                                    {/*                        −*/}
+                                    {/*                    </Button>*/}
+                                    {/*                    {index === existingFilesFields.length - 1 && (*/}
+                                    {/*                        <Button*/}
+                                    {/*                            size="xs"*/}
+                                    {/*                            onClick={() => appendExistingFile({ type: '', file: null })}*/}
+                                    {/*                            className="h-9 w-9 rounded-lg border bg-blue-700 hover:bg-blue-800 text-white"*/}
+                                    {/*                        >*/}
+                                    {/*                            +*/}
+                                    {/*                        </Button>*/}
+                                    {/*                    )}*/}
+                                    {/*                </div>*/}
+                                    {/*            </div>*/}
+                                    {/*        );*/}
+                                    {/*    })*/}
+                                    {/*) : (*/}
+                                    {/*    <p className="text-gray-500 text-sm">No uploaded documents yet.</p>*/}
+                                    {/*)}*/}
+
+                                    {/* New Files */}
+                                    {fileFields.map((file, index) => {
+                                        const watchedFile = watch(`document.${index}.file`);
+                                        const previewUrl =
+                                            watchedFile instanceof File
+                                                ? URL.createObjectURL(watchedFile)
+                                                : watchedFile // backend file path string
+                                                    ? `${process.env.NEXT_PUBLIC_IMG}/${watchedFile}`
+                                                    : null;
+
+                                        return (
+                                            <div
+                                                key={file.id ?? index}
+                                                className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center border-b border-gray-200 dark:border-gray-700 py-3"
+                                            >
+                                                {/* File Type */}
+                                                <Controller
+                                                    name={`document.${index}.type`}
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <Select
+                                                            options={employeeFilesOptions}
+                                                            value={
+                                                                employeeFilesOptions.find(
+                                                                    opt => opt.value.toLowerCase() === (field.value?.toLowerCase() ?? "")
+                                                                ) || null
+                                                            }
+                                                            // value={employeeFilesOptions.find(opt => opt.value === field.value) || null}
+                                                            onChange={selected => field.onChange(selected?.value)}
+                                                            placeholder="Select file type..."
+                                                            isDark={isDark}
+                                                        />
+                                                    )}
+                                                />
+
+                                                {/* File Input */}
+                                                <Controller
+                                                    name={`document.${index}.file`}
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <FileInput
+                                                            id={`file-${index}`}
+                                                            onChange={e => field.onChange(e.target.files?.[0] || null)}
+                                                        />
+                                                    )}
+                                                />
+
+                                                {/* Preview */}
+                                                {previewUrl ? (
                                                     <a
                                                         href={previewUrl}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className="text-blue-600 hover:underline truncate"
                                                     >
-                                                        {replacedFile?.name || (file.file ? file.file.split('/').pop() : 'No file')}
-
-                                                        {/*{replacedFile?.name || file.file.split('/').pop()}*/}
+                                                        {watchedFile instanceof File
+                                                            ? watchedFile.name
+                                                            : typeof watchedFile === "string"
+                                                                ? watchedFile.split("/").pop()
+                                                                : "No file"}
                                                     </a>
+                                                ) : (
+                                                    <span className="truncate text-gray-400 italic">No file yet</span>
+                                                )}
 
-                                                    {/* Actions */}
-                                                    <div className="flex justify-center gap-2">
-                                                        <Button
-                                                            color="failure"
-                                                            size="xs"
-                                                            onClick={() => removeExistingFile(index)}
-                                                            className="h-9 w-9 rounded-lg border bg-red-700 hover:bg-red-800 text-white"
-                                                        >
-                                                            −
-                                                        </Button>
-                                                        {index === existingFilesFields.length - 1 && (
-                                                            <Button
-                                                                size="xs"
-                                                                onClick={() => appendExistingFile({ type: '', file: null })}
-                                                                className="h-9 w-9 rounded-lg border bg-blue-700 hover:bg-blue-800 text-white"
-                                                            >
-                                                                +
-                                                            </Button>
-                                                        )}
-                                                    </div>
+                                                {/* Actions */}
+                                                <div className="flex justify-center gap-2">
+                                                    <Button
+                                                        color="failure"
+                                                        size="xs"
+                                                        onClick={() => removeFile(index)}
+                                                        className="h-9 w-9 rounded-lg border bg-red-700 hover:bg-red-800 text-white"
+                                                    >
+                                                        −
+                                                    </Button>
+
+                                                    <Button
+                                                        size="xs"
+                                                        onClick={() => appendFile({ id: null, type: '', file: null })}
+                                                        className="h-9 w-9 rounded-lg border bg-blue-700 hover:bg-blue-800 text-white"
+                                                    >
+                                                        +
+                                                    </Button>
                                                 </div>
-                                            );
-                                        })
-                                    ) : (
-                                        <p className="text-gray-500 text-sm">No uploaded documents yet.</p>
-                                    )}
+                                            </div>
+                                        );
+                                    })}
 
-                                    {/* New Files */}
-                                    {fileFields.length > 0 &&
-                                        fileFields.map((file, index) => {
-                                            const newFile = watch(`document.${index}.file`);
-                                            const previewUrl = newFile instanceof File
-                                                ? URL.createObjectURL(newFile)
-                                                : newFile;
-
-                                            return (
-                                                <div key={file.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center border-b border-gray-200 dark:border-gray-700 py-3">
-                                                    {/* File Type */}
-                                                    <Controller
-                                                        name={`document.${index}.type`}
-                                                        control={control}
-                                                        render={({ field }) => (
-                                                            <Select
-                                                                options={employeeFilesOptions}
-                                                                value={employeeFilesOptions.find(opt => opt.value === field.value) || null}
-                                                                onChange={selected => field.onChange(selected?.value)}
-                                                                placeholder="Select file type..."
-                                                                isDark={isDark}
-                                                            />
-                                                        )}
-                                                    />
-
-                                                    {/* File Input */}
-                                                    <Controller
-                                                        name={`document.${index}.file`}
-                                                        control={control}
-                                                        render={({ field }) => (
-                                                            <FileInput
-                                                                id={`file-${index}`}
-                                                                onChange={e => field.onChange(e.target.files?.[0] || null)}
-                                                            />
-                                                        )}
-                                                    />
-
-                                                    {previewUrl ? (
-                                                        <a href={previewUrl}
-                                                           target="_blank"
-                                                           rel="noopener
-                                                           noreferrer"
-                                                           className="text-blue-600 hover:underline truncate"
-                                                        >
-                                                            {newFile.name}
-                                                        </a>
-                                                    ) : (
-                                                        <span className="truncate text-gray-400 italic">No file yet</span>
-                                                    )}
-
-                                                    {/* Actions */}
-                                                    <div className="flex justify-center gap-2">
-                                                        <Button
-                                                            color="failure"
-                                                            size="xs"
-                                                            onClick={() => removeFile(index)}
-                                                            className="h-9 w-9 rounded-lg border bg-red-700 hover:bg-red-800 text-white"
-                                                        >
-                                                            −
-                                                        </Button>
-
-                                                        {index === fileFields.length - 1 && (
-                                                            <Button
-                                                                size="xs"
-                                                                onClick={() => appendFile({ type: '', file: null })}
-                                                                className="h-9 w-9 rounded-lg border bg-blue-700 hover:bg-blue-800 text-white"
-                                                            >
-                                                                +
-                                                            </Button>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
                                 </div>
                             </TabItem>
 
