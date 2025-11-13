@@ -237,6 +237,9 @@ export default function EmployeeEditPage() {
                 if (!isoString) return '';
                 return isoString.split('T')[0]; // YYYY-MM-DD
             };
+            const formattedDocument = employee.document?.length
+                ? employee.document.map(d => ({ id: d.id, type: d.type.toLowerCase(), file: d.file || null }))
+                : [{ id: null, type: '', file: null }]; // single default row
 
             reset({
                 first_name: employee.first_name || '',
@@ -275,12 +278,13 @@ export default function EmployeeEditPage() {
                 shift: employee.shift?.length
                     ? employee.shift
                     : [{ start_time: '', end_time: '', work_days: [] }],
-                document: employee.document?.map(d => ({
-                    id: d.id,
-                    type: d.type.toLowerCase() || '',
-                    // type: d.type || '',
-                    file: d.file || null, // file is string for existing files
-                })) || [],
+                document: formattedDocument,
+                // document: employee.document?.map(d => ({
+                //     id: d.id,
+                //     type: d.type.toLowerCase() || '',
+                //     // type: d.type || '',
+                //     file: d.file || null, // file is string for existing files
+                // })) || [],
                 // document: employee.document?.length
                 //     ? employee.document.map(d => ({
                 //         id: d.id,
@@ -675,12 +679,17 @@ export default function EmployeeEditPage() {
                                     {/*)}*/}
 
                                     {/* New Files */}
+                                    {/* Ensure at least one row exists */}
+                                    {fileFields.length === 0 && appendFile({ id: null, type: '', file: null })}
+
+                                    {/* File Rows */}
                                     {fileFields.map((file, index) => {
                                         const watchedFile = watch(`document.${index}.file`);
+                                        const watchedType = watch(`document.${index}.type`);
                                         const previewUrl =
                                             watchedFile instanceof File
                                                 ? URL.createObjectURL(watchedFile)
-                                                : watchedFile // backend file path string
+                                                : watchedFile
                                                     ? `${process.env.NEXT_PUBLIC_IMG}/${watchedFile}`
                                                     : null;
 
@@ -698,11 +707,10 @@ export default function EmployeeEditPage() {
                                                             options={employeeFilesOptions}
                                                             value={
                                                                 employeeFilesOptions.find(
-                                                                    opt => opt.value.toLowerCase() === (field.value?.toLowerCase() ?? "")
+                                                                    (opt) => opt.value.toLowerCase() === (field.value?.toLowerCase() ?? '')
                                                                 ) || null
                                                             }
-                                                            // value={employeeFilesOptions.find(opt => opt.value === field.value) || null}
-                                                            onChange={selected => field.onChange(selected?.value)}
+                                                            onChange={(selected) => field.onChange(selected?.value)}
                                                             placeholder="Select file type..."
                                                             isDark={isDark}
                                                         />
@@ -716,7 +724,7 @@ export default function EmployeeEditPage() {
                                                     render={({ field }) => (
                                                         <FileInput
                                                             id={`file-${index}`}
-                                                            onChange={e => field.onChange(e.target.files?.[0] || null)}
+                                                            onChange={(e) => field.onChange(e.target.files?.[0] || null)}
                                                         />
                                                     )}
                                                 />
@@ -731,9 +739,9 @@ export default function EmployeeEditPage() {
                                                     >
                                                         {watchedFile instanceof File
                                                             ? watchedFile.name
-                                                            : typeof watchedFile === "string"
-                                                                ? watchedFile.split("/").pop()
-                                                                : "No file"}
+                                                            : typeof watchedFile === 'string'
+                                                                ? watchedFile.split('/').pop()
+                                                                : 'No file'}
                                                     </a>
                                                 ) : (
                                                     <span className="truncate text-gray-400 italic">No file yet</span>
@@ -749,7 +757,6 @@ export default function EmployeeEditPage() {
                                                     >
                                                         −
                                                     </Button>
-
                                                     <Button
                                                         size="xs"
                                                         onClick={() => appendFile({ id: null, type: '', file: null })}
@@ -761,7 +768,6 @@ export default function EmployeeEditPage() {
                                             </div>
                                         );
                                     })}
-
                                 </div>
                             </TabItem>
 
