@@ -106,7 +106,7 @@ const employeeSchema = z.object({
     document: z
         .array(
             z.object({
-                file_type: z.string().optional(),
+                type: z.string().optional(),
                 file: z.any().optional(),
             })
         )
@@ -115,7 +115,7 @@ const employeeSchema = z.object({
             (arr) =>
                 !arr ||
                 arr.every((file) => {
-                    const filledFields = [file.file_type, file.file].filter(Boolean);
+                    const filledFields = [file.type, file.file].filter(Boolean);
                     return filledFields.length === 0 || filledFields.length === 2;
                 }),
             {message: "All file fields must be filled if a file is added"}
@@ -210,6 +210,11 @@ export default function EmployeeEditPage() {
         name: "document",
     });
 
+    const { fields: existingFilesFields, append: appendExistingFile, remove: removeExistingFile } = useFieldArray({
+        control,
+        name: "existingFiles",
+    });
+
     const { fields: generatedDocumentFields, append: appendGeneratedDocument, remove: removeGeneratedDocument } = useFieldArray({
         control,
         name: "generated_documents",
@@ -273,6 +278,7 @@ export default function EmployeeEditPage() {
                 document: employee.document?.length
                     ? employee.document.map(d => ({
                         id: d.id,
+                        user_id:id,
                         type: d.type,
                         file: d.file,
                         created_at: d.created_at,
@@ -282,7 +288,7 @@ export default function EmployeeEditPage() {
                 existingFiles: employee.document?.length
                     ? employee.document.map(d => ({
                         id: d.id,
-                        file_type: d.type || '',
+                        type: d.type || '',
                         file: d.file || '',
                     }))
                     : [],
@@ -307,12 +313,14 @@ export default function EmployeeEditPage() {
         for (const f of filesToSave) {
             const formDataDoc = new FormData();
             formDataDoc.append('file', f.file);
-            formDataDoc.append('file_type', f.file_type);
+            formDataDoc.append('type', f.type);
             formDataDoc.append('user_id', id);
             await editDocument({formDataDoc, id});
         }
     };
-    const onSubmit2 = async (data) => {
+
+
+    const onSubmit = async (data) => {
         setSuccessMsg('');
         setErrorMsg('');
 
@@ -325,7 +333,7 @@ export default function EmployeeEditPage() {
                 const formDataDoc = new FormData();
                 formDataDoc.append('user_id', id);
                 formDataDoc.append('file', f.file);
-                formDataDoc.append('file_type', f.file_type);
+                formDataDoc.append('type', f.type);
                 console.log('Editing file:', f.file.name, '→', f.id);
                 return editDocument({ formDataDoc, id: f.id });
             });
@@ -335,7 +343,7 @@ export default function EmployeeEditPage() {
                 const formDataDoc = new FormData();
                 formDataDoc.append('user_id', id);
                 formDataDoc.append('file', f.file);
-                formDataDoc.append('file_type', f.file_type);
+                formDataDoc.append('type', f.type);
                 console.log('Creating new file:', f.file.name);
                 return createDocument(formDataDoc);
             });
@@ -385,47 +393,6 @@ export default function EmployeeEditPage() {
         }
     };
 
-    const onSubmit = async (data) => {
-        setSuccessMsg('');
-        setErrorMsg('');
-
-        try {
-            console.log("🧾 Starting file update test...");
-
-            const replacedFiles = (data.existingFiles || []).filter(f => f.file instanceof File);
-            console.log("existingFiles before filter:", data.existingFiles);
-
-            const replacedPromises = replacedFiles.map(async (f) => {
-                const formDataDoc = new FormData();
-                formDataDoc.append('user_id', id);
-                formDataDoc.append('file', f.file);
-                formDataDoc.append('file_type', f.file_type);
-                console.log('🔁 Replacing file:', f.file.name, '→', f.id);
-                return editDocument({ formDataDoc, id: f.id });
-            });
-
-            // Upload new files
-            const newFiles = (data.document || []).filter(f => f.file instanceof File);
-            const newFilePromises = newFiles.map(async (f) => {
-                const formDataDoc = new FormData();
-                formDataDoc.append('user_id', id);
-                formDataDoc.append('file', f.file);
-                formDataDoc.append('file_type', f.file_type);
-                console.log('🆕 Creating new file:', f.file.name);
-                return createDocument(formDataDoc);
-            });
-
-            // Wait for all upload operations
-            await Promise.all([...replacedPromises, ...newFilePromises]);
-
-            setSuccessMsg('✅ Files updated successfully!');
-            console.log('✅ File operations completed successfully.');
-
-        } catch (error) {
-            console.error('❌ File update failed:', error);
-            setErrorMsg('Error updating files.');
-        }
-    };
 
 
     const onError = (errors) => {
@@ -611,35 +578,35 @@ export default function EmployeeEditPage() {
                                     isDark={isDark}
                                 />
                             </TabItem>
-
                             <TabItem title="Files">
                                 <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-6 px-4 space-y-6">
+                                    {/* Table Header */}
                                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 font-medium text-gray-700 dark:text-gray-300 border-b pb-2">
                                         <span>File Type</span>
                                         <span>File Name</span>
                                         <span>Preview</span>
                                         <span className="text-center">Actions</span>
                                     </div>
-                                    {employee?.document?.length ? (
-                                        employee.document.map((doc, index) => {
-                                            const replacedFile = watch(`existingFiles.${index}.file`);
 
+                                    {/* Existing Files */}
+                                    {existingFilesFields.length > 0 ? (
+                                        existingFilesFields.map((file, index) => {
+                                            const replacedFile = watch(`existingFiles.${index}.file`);
                                             const previewUrl = replacedFile instanceof File
                                                 ? URL.createObjectURL(replacedFile)
-                                                : `${process.env.NEXT_PUBLIC_IMG}/${doc.file}`;
+                                                : `${process.env.NEXT_PUBLIC_IMG}/${file.file}`;
 
                                             return (
-                                                <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center border-b border-gray-200 dark:border-gray-700 py-3">
+                                                <div key={file.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center border-b border-gray-200 dark:border-gray-700 py-3">
                                                     {/* File Type */}
                                                     <Controller
-                                                        name={`existingFiles.${index}.file_type`}
+                                                        name={`existingFiles.${index}.type`}
                                                         control={control}
-                                                        defaultValue={doc.type}
+                                                        defaultValue={file.type}
                                                         render={({ field }) => (
                                                             <Select
                                                                 options={employeeFilesOptions}
                                                                 value={employeeFilesOptions.find(opt => opt.value === field.value) || null}
-                                                                // onChange={selected => field.onChange(selected?.value)}
                                                                 onChange={selected => {
                                                                     field.onChange(selected?.value);
                                                                     setUnsavedFiles(true);
@@ -654,6 +621,7 @@ export default function EmployeeEditPage() {
                                                     <Controller
                                                         name={`existingFiles.${index}.file`}
                                                         control={control}
+                                                        defaultValue={file.file}
                                                         render={({ field }) => (
                                                             <FileInput
                                                                 id={`replace-file-${index}`}
@@ -662,23 +630,31 @@ export default function EmployeeEditPage() {
                                                         )}
                                                     />
 
-                                                    {/* File Preview */}
+                                                    {/* Preview */}
                                                     <a
                                                         href={previewUrl}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className="text-blue-600 hover:underline truncate"
                                                     >
-                                                        {replacedFile?.name || doc.file.split('/').pop()}
+                                                        {replacedFile?.name || file.file.split('/').pop()}
                                                     </a>
 
                                                     {/* Actions */}
                                                     <div className="flex justify-center gap-2">
-                                                        {index === employee.document.length - 1 && (
+                                                        <Button
+                                                            color="failure"
+                                                            size="xs"
+                                                            onClick={() => removeExistingFile(index)}
+                                                            className="h-9 w-9 rounded-lg border bg-red-700 hover:bg-red-800 text-white"
+                                                        >
+                                                            −
+                                                        </Button>
+                                                        {index === existingFilesFields.length - 1 && (
                                                             <Button
                                                                 size="xs"
-                                                                onClick={() => appendFile({ file_type: '', file: null })}
-                                                                className="h-[36px] w-[36px] rounded-lg border bg-blue-700 hover:bg-blue-800 text-white text-lg"
+                                                                onClick={() => appendExistingFile({ type: '', file: null })}
+                                                                className="h-9 w-9 rounded-lg border bg-blue-700 hover:bg-blue-800 text-white"
                                                             >
                                                                 +
                                                             </Button>
@@ -690,19 +666,20 @@ export default function EmployeeEditPage() {
                                     ) : (
                                         <p className="text-gray-500 text-sm">No uploaded documents yet.</p>
                                     )}
+
+                                    {/* New Files */}
                                     {fileFields.length > 0 &&
                                         fileFields.map((file, index) => {
                                             const newFile = watch(`document.${index}.file`);
                                             const previewUrl = newFile instanceof File
                                                 ? URL.createObjectURL(newFile)
-                                                : newFile // fallback: assume string URL (already from backend)
-
+                                                : newFile;
 
                                             return (
                                                 <div key={file.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center border-b border-gray-200 dark:border-gray-700 py-3">
                                                     {/* File Type */}
                                                     <Controller
-                                                        name={`document.${index}.file_type`}
+                                                        name={`document.${index}.type`}
                                                         control={control}
                                                         render={({ field }) => (
                                                             <Select
@@ -727,7 +704,7 @@ export default function EmployeeEditPage() {
                                                         )}
                                                     />
 
-                                                    {/* File Preview */}
+                                                    {/* Preview */}
                                                     {previewUrl ? (
                                                         <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline truncate">
                                                             {newFile.name}
@@ -742,7 +719,7 @@ export default function EmployeeEditPage() {
                                                             color="failure"
                                                             size="xs"
                                                             onClick={() => removeFile(index)}
-                                                            className="h-[36px] w-[36px] rounded-lg border bg-red-700 hover:bg-red-800 text-white text-lg"
+                                                            className="h-9 w-9 rounded-lg border bg-red-700 hover:bg-red-800 text-white"
                                                         >
                                                             −
                                                         </Button>
@@ -750,8 +727,8 @@ export default function EmployeeEditPage() {
                                                         {index === fileFields.length - 1 && (
                                                             <Button
                                                                 size="xs"
-                                                                onClick={() => appendFile({ file_type: '', file: null })}
-                                                                className="h-[36px] w-[36px] rounded-lg border bg-blue-700 hover:bg-blue-800 text-white text-lg"
+                                                                onClick={() => appendFile({ type: '', file: null })}
+                                                                className="h-9 w-9 rounded-lg border bg-blue-700 hover:bg-blue-800 text-white"
                                                             >
                                                                 +
                                                             </Button>
@@ -762,7 +739,6 @@ export default function EmployeeEditPage() {
                                         })}
                                 </div>
                             </TabItem>
-
 
                             <TabItem title="Documents">
                                 <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 px-4 mb-6">
