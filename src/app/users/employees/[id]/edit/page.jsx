@@ -630,14 +630,15 @@ export default function EmployeeEditPage() {
                                                         )}
                                                     />
 
-                                                    {/* Preview */}
                                                     <a
                                                         href={previewUrl}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className="text-blue-600 hover:underline truncate"
                                                     >
-                                                        {replacedFile?.name || file.file.split('/').pop()}
+                                                        {replacedFile?.name || (file.file ? file.file.split('/').pop() : 'No file')}
+
+                                                        {/*{replacedFile?.name || file.file.split('/').pop()}*/}
                                                     </a>
 
                                                     {/* Actions */}
@@ -704,9 +705,13 @@ export default function EmployeeEditPage() {
                                                         )}
                                                     />
 
-                                                    {/* Preview */}
                                                     {previewUrl ? (
-                                                        <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline truncate">
+                                                        <a href={previewUrl}
+                                                           target="_blank"
+                                                           rel="noopener
+                                                           noreferrer"
+                                                           className="text-blue-600 hover:underline truncate"
+                                                        >
                                                             {newFile.name}
                                                         </a>
                                                     ) : (
