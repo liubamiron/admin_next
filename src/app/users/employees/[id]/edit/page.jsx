@@ -26,7 +26,7 @@ import {
     countryOptions, driverLicenseOptions, educationOptions, employeeFilesOptions,
     genderOptions, languagesOptions,
     maritalOptions,
-    operatorOptions, SHIFT_DAY_OPTIONS, transportTypeOptions
+    operatorOptions, transportTypeOptions
 } from '@/components/constants/filterOptions';
 import {reactSelectHeightFix} from '@/components/ui/reactSelectHeightFix';
 import {useDarkMode} from "@/hooks/useDarkMode";
@@ -286,18 +286,6 @@ export default function EmployeeEditPage() {
                         file: d.file || '',
                     }))
                     : [],
-                // generated_documents: employee.generated_documents?.length
-                //     ? employee.generated_documents.map(d => ({
-                //         id: d.id,
-                //         template_id: d.template_id,
-                //         manager_id: d.manager_id,
-                //         employer_id: d.employer_id,
-                //         variables: d.variables,
-                //         file_path: d.file_path,
-                //         created_at: d.created_at,
-                //         updated_at: d.updated_at,
-                //     }))
-                //     : [{ id: '', template_id: '', manager_id: '', employer_id: '', variables: {}, file_path: null }],
 
                 received_notes: employee.received_notes?.length
                     ? employee.received_notes.map(n => ({
@@ -324,12 +312,11 @@ export default function EmployeeEditPage() {
             await editDocument({formDataDoc, id});
         }
     };
-    const onSubmit = async (data) => {
+    const onSubmit2 = async (data) => {
         setSuccessMsg('');
         setErrorMsg('');
 
         try {
-            // 1️⃣ Upload replaced (existing) files
             const replacedFiles = (data.existingFiles || []).filter(f => f.file instanceof File);
             const replacedPromises = replacedFiles.map(async (f) => {
                 const formDataDoc = new FormData();
@@ -340,7 +327,6 @@ export default function EmployeeEditPage() {
                 return editDocument({ formDataDoc, id: f.id });
             });
 
-            // 2️⃣ Upload new files
             const newFiles = (data.document || []).filter(f => f.file instanceof File);
             const newFilePromises = newFiles.map(async (f) => {
                 const formDataDoc = new FormData();
@@ -354,7 +340,6 @@ export default function EmployeeEditPage() {
             // Wait for all document uploads (edit + create)
             await Promise.all([...replacedPromises, ...newFilePromises]);
 
-            // 3️⃣ Prepare employee form data
             const employeeFormData = new FormData();
             employeeFormData.append('first_name', data.first_name);
             employeeFormData.append('last_name', data.last_name);
@@ -379,7 +364,6 @@ export default function EmployeeEditPage() {
             employeeFormData.append('corporate_email', data.corporate_email || '');
             employeeFormData.append('image', image instanceof File ? image : (employee.image || ''));
 
-            // 4️⃣ Then update employee
             await new Promise((resolve, reject) => {
                 editEmployee(
                     { id, formData: employeeFormData },
@@ -390,10 +374,7 @@ export default function EmployeeEditPage() {
                 );
             });
 
-            // 5️⃣ Show success, don’t redirect yet
             setSuccessMsg('Employee and documents updated successfully!');
-            // Optional: refresh data instead of redirect
-            // await queryClient.invalidateQueries(['employee', id]);
 
         } catch (error) {
             console.error(error);
@@ -401,6 +382,46 @@ export default function EmployeeEditPage() {
         }
     };
 
+    const onSubmit = async (data) => {
+        setSuccessMsg('');
+        setErrorMsg('');
+
+        try {
+            console.log("🧾 Starting file update test...");
+
+            // Update existing files (replace)
+            const replacedFiles = (data.existingFiles || []).filter(f => f.file instanceof File);
+            const replacedPromises = replacedFiles.map(async (f) => {
+                const formDataDoc = new FormData();
+                formDataDoc.append('user_id', id);
+                formDataDoc.append('file', f.file);
+                formDataDoc.append('file_type', f.file_type);
+                console.log('🔁 Replacing file:', f.file.name, '→', f.id);
+                return editDocument({ formDataDoc, id: f.id });
+            });
+
+            // Upload new files
+            const newFiles = (data.document || []).filter(f => f.file instanceof File);
+            const newFilePromises = newFiles.map(async (f) => {
+                const formDataDoc = new FormData();
+                formDataDoc.append('user_id', id);
+                formDataDoc.append('file', f.file);
+                formDataDoc.append('file_type', f.file_type);
+                console.log('🆕 Creating new file:', f.file.name);
+                return createDocument(formDataDoc);
+            });
+
+            // Wait for all upload operations
+            await Promise.all([...replacedPromises, ...newFilePromises]);
+
+            setSuccessMsg('✅ Files updated successfully!');
+            console.log('✅ File operations completed successfully.');
+
+        } catch (error) {
+            console.error('❌ File update failed:', error);
+            setErrorMsg('Error updating files.');
+        }
+    };
 
 
     const onError = (errors) => {
