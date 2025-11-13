@@ -389,7 +389,6 @@ export default function EmployeeEditPage() {
         try {
             console.log("🧾 Starting file update test...");
 
-            // Update existing files (replace)
             const replacedFiles = (data.existingFiles || []).filter(f => f.file instanceof File);
             const replacedPromises = replacedFiles.map(async (f) => {
                 const formDataDoc = new FormData();
