@@ -4,12 +4,11 @@ import { Button, Label, TextInput } from "flowbite-react";
 import Select from "react-select";
 import { Controller } from "react-hook-form";
 import {reactSelectHeightFix} from "@/components/ui/reactSelectHeightFix";
+import {useTranslation} from "@/providers";
 
 export const CompanyTab = ({
                                control,
                                register,
-                               setValue,
-                               watch,
                                isDark,
                                shiftFields,
                                appendShift,
@@ -30,13 +29,15 @@ export const CompanyTab = ({
         { value: "Sunday", label: "Sunday" },
     ];
 
+    const {t} = useTranslation();
+
     return (
         <>
             <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 p-2 md:p-4 mb-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    {/* Office */}
+
                     <div className="flex flex-col space-y-2">
-                        <Label>Office</Label>
+                        <Label>{t("Office")}</Label>
                         <Controller
                             name="office"
                             control={control}
@@ -55,9 +56,8 @@ export const CompanyTab = ({
                         />
                     </div>
 
-                    {/* Department */}
                     <div className="flex flex-col space-y-2">
-                        <Label>Department</Label>
+                        <Label>{t("Department")}</Label>
                         <Controller
                             name="department"
                             control={control}
@@ -80,9 +80,9 @@ export const CompanyTab = ({
 
             <div className="rounded-lg border  py-4 p-2 md:p-4 mb-6 bg-[#F9FAFB] dark:bg-gray-800">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    {/* Positions */}
+
                     <div className="flex flex-col space-y-2">
-                        <Label>Positions</Label>
+                        <Label>{t("Position")}</Label>
                         <Controller
                             name="position"
                             control={control}
@@ -100,9 +100,8 @@ export const CompanyTab = ({
                         />
                     </div>
 
-                    {/* Official Position */}
                     <div className="flex flex-col space-y-2">
-                        <Label>Official Position</Label>
+                        <Label>{t("Official_Position")}</Label>
                         <TextInput {...register("official_position")} placeholder="Manager" />
                     </div>
                 </div>
@@ -113,7 +112,7 @@ export const CompanyTab = ({
                 {shiftFields.map((field, index) => (
                     <div key={field.id} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
                         <div className="flex flex-col space-y-2">
-                            <Label>Start Time</Label>
+                            <Label>{t("Start_Time")}</Label>
                             <input
                                 type="time"
                                 className="w-full border rounded px-2 py-2"
@@ -121,7 +120,7 @@ export const CompanyTab = ({
                             />
                         </div>
                         <div className="flex flex-col space-y-2">
-                            <Label>End Time</Label>
+                            <Label>{t("End_Time")}</Label>
                             <input
                                 type="time"
                                 className="w-full border rounded px-2 py-2"
@@ -129,7 +128,7 @@ export const CompanyTab = ({
                             />
                         </div>
                         <div className="flex flex-col md:col-span-2 w-full">
-                            <Label>Work Days</Label>
+                            <Label>{t("Work_Days")}</Label>
                             <Controller
                                 name={`shift.${index}.work_days`}
                                 control={control}

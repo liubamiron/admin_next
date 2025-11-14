@@ -14,6 +14,7 @@ import {useEffect} from "react";
 import {useSessionTimer} from "@/hooks/useSessionTimer";
 import Cookies from "js-cookie";
 import GlobalLoading from "@/components/GlobalLoading";
+import {LanguageProvider} from "@/providers";
 
 
 const queryClient = new QueryClient();
@@ -82,6 +83,7 @@ export default function RootLayout({ children }) {
         <body >
         <QueryClientProvider client={queryClient}>
             <ThemeProvider theme={customTheme} >
+                <LanguageProvider>
                 <SidebarProvider>
                     <GlobalLoading />
                     {isLogin ? (
@@ -91,8 +93,8 @@ export default function RootLayout({ children }) {
                             <LayoutContent>{children}</LayoutContent>
                         </ProtectedLayout>
                     )}
-                    {/*<LayoutContent isLogin={isLogin}>{children}</LayoutContent>*/}
                 </SidebarProvider>
+                </LanguageProvider>
             </ThemeProvider>
             <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>

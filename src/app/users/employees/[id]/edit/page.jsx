@@ -37,6 +37,7 @@ import {GeneralTab} from "@/app/users/employees/[id]/edit/components/generalTab"
 import {CompanyTab} from "@/app/users/employees/[id]/edit/components/companyTab";
 import {useEditDocument} from "@/hooks/users/useEditDocument";
 import {useCreateDocument} from "@/hooks/users/useCreateDocument";
+import {useTranslation} from "@/providers";
 
 const employeeSchema = z.object({
     first_name: z.string().min(1, 'First name is required'),
@@ -139,6 +140,7 @@ export default function EmployeeEditPage() {
     const [unsavedFiles, setUnsavedFiles] = useState(false);
     const [showUnsavedModal, setShowUnsavedModal] = useState(false);
     const [nextTab, setNextTab] = useState(null);
+    const {t} = useTranslation();
 
     const handleTabChange = (tab) => {
         if (activeTab === "Files" && unsavedFiles) {
@@ -473,8 +475,8 @@ export default function EmployeeEditPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6">
                     <div className="space-y-4 bg-white p-2 md:p-4 rounded-lg shadow dark:bg-gray-800 flex flex-col justify-between h-full">
                         <div>
-                            <Label value="Profile Image"/>
-                            <div>
+                            <Label value={t("Profile_Image")}/>
+                            {/*<div>*/}
                                 <div
                                     className="w-[60%] m-auto h-auto rounded-lg border border-gray-300 overflow-hidden flex items-center justify-center bg-gray-50">
                                     {image ? (
@@ -523,17 +525,17 @@ export default function EmployeeEditPage() {
                                         }}
                                     />
                                 </div>
-                            </div>
+                            {/*</div>*/}
 
                             <div className={'mt-12'}>
-                                <Label>Date of Placement</Label>
+                                <Label>{t("Date_of_Placement")}</Label>
                                 <TextInput type="date" {...register('date_of_placement')} />
                                 {errors.date_of_placement &&
                                     <p className="text-red-500 text-xs">{errors.date_of_placement.message}</p>}
                             </div>
 
                             <div className={'mt-4'}>
-                                <Label>Date of Dismissal</Label>
+                                <Label>{t("Date_of_Dismissal")}</Label>
                                 <TextInput type="date" {...register('date_of_dismissal')} />
                                 {errors.date_of_dismissal &&
                                     <p className="text-red-500 text-xs">{errors.date_of_dismissal.message}</p>}
@@ -547,7 +549,7 @@ export default function EmployeeEditPage() {
                         className="space-y-4 bg-white p-2 md:p-4 rounded-lg shadow dark:bg-gray-800 flex flex-col justify-between h-full">
                         <Tabs aria-label="Tabs with underline" variant="underline"  onActiveTabChange={handleTabChange}>
 
-                            <TabItem title="General">
+                            <TabItem title={t("General")}>
                                 <GeneralTab
                                     register={register}
                                     errors={errors}
@@ -571,7 +573,7 @@ export default function EmployeeEditPage() {
                                     reactSelectHeightFix={reactSelectHeightFix}
                                 />
                             </TabItem>
-                            <TabItem title="Company">
+                            <TabItem title={t("Company")}>
                                 <CompanyTab
                                     register={register}
                                     control={control}
@@ -588,7 +590,7 @@ export default function EmployeeEditPage() {
                                     isDark={isDark}
                                 />
                             </TabItem>
-                            <TabItem title="Files">
+                            <TabItem title={t("Files")}>
                                 <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-6 px-4 space-y-6">
                                     {/* Table Header */}
                                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 font-medium text-gray-700 dark:text-gray-300 border-b pb-2">
@@ -597,87 +599,6 @@ export default function EmployeeEditPage() {
                                         <span>Preview</span>
                                         <span className="text-center">Actions</span>
                                     </div>
-
-                                    {/* Existing Files */}
-                                    {/*{existingFilesFields.length > 0 ? (*/}
-                                    {/*    existingFilesFields.map((file, index) => {*/}
-                                    {/*        const replacedFile = watch(`existingFiles.${index}.file`);*/}
-                                    {/*        const previewUrl = replacedFile instanceof File*/}
-                                    {/*            ? URL.createObjectURL(replacedFile)*/}
-                                    {/*            : `${process.env.NEXT_PUBLIC_IMG}/${file.file}`;*/}
-
-                                    {/*        return (*/}
-                                    {/*            <div key={file.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center border-b border-gray-200 dark:border-gray-700 py-3">*/}
-                                    {/*                /!* File Type *!/*/}
-                                    {/*                <Controller*/}
-                                    {/*                    name={`existingFiles.${index}.type`}*/}
-                                    {/*                    control={control}*/}
-                                    {/*                    defaultValue={file.type}*/}
-                                    {/*                    render={({ field }) => (*/}
-                                    {/*                        <Select*/}
-                                    {/*                            options={employeeFilesOptions}*/}
-                                    {/*                            value={employeeFilesOptions.find(opt => opt.value === field.value) || null}*/}
-                                    {/*                            onChange={selected => {*/}
-                                    {/*                                field.onChange(selected?.value);*/}
-                                    {/*                                setUnsavedFiles(true);*/}
-                                    {/*                            }}*/}
-                                    {/*                            placeholder="Select file type..."*/}
-                                    {/*                            isDark={isDark}*/}
-                                    {/*                        />*/}
-                                    {/*                    )}*/}
-                                    {/*                />*/}
-
-                                    {/*                /!* File Input *!/*/}
-                                    {/*                <Controller*/}
-                                    {/*                    name={`existingFiles.${index}.file`}*/}
-                                    {/*                    control={control}*/}
-                                    {/*                    defaultValue={file.file}*/}
-                                    {/*                    render={({ field }) => (*/}
-                                    {/*                        <FileInput*/}
-                                    {/*                            id={`replace-file-${index}`}*/}
-                                    {/*                            onChange={e => field.onChange(e.target.files?.[0] || null)}*/}
-                                    {/*                        />*/}
-                                    {/*                    )}*/}
-                                    {/*                />*/}
-
-                                    {/*                <a*/}
-                                    {/*                    href={previewUrl}*/}
-                                    {/*                    target="_blank"*/}
-                                    {/*                    rel="noopener noreferrer"*/}
-                                    {/*                    className="text-blue-600 hover:underline truncate"*/}
-                                    {/*                >*/}
-                                    {/*                    {replacedFile?.name || (file.file ? file.file.split('/').pop() : 'No file')}*/}
-
-                                    {/*                    /!*{replacedFile?.name || file.file.split('/').pop()}*!/*/}
-                                    {/*                </a>*/}
-
-                                    {/*                /!* Actions *!/*/}
-                                    {/*                <div className="flex justify-center gap-2">*/}
-                                    {/*                    <Button*/}
-                                    {/*                        color="failure"*/}
-                                    {/*                        size="xs"*/}
-                                    {/*                        onClick={() => removeExistingFile(index)}*/}
-                                    {/*                        className="h-9 w-9 rounded-lg border bg-red-700 hover:bg-red-800 text-white"*/}
-                                    {/*                    >*/}
-                                    {/*                        −*/}
-                                    {/*                    </Button>*/}
-                                    {/*                    {index === existingFilesFields.length - 1 && (*/}
-                                    {/*                        <Button*/}
-                                    {/*                            size="xs"*/}
-                                    {/*                            onClick={() => appendExistingFile({ type: '', file: null })}*/}
-                                    {/*                            className="h-9 w-9 rounded-lg border bg-blue-700 hover:bg-blue-800 text-white"*/}
-                                    {/*                        >*/}
-                                    {/*                            +*/}
-                                    {/*                        </Button>*/}
-                                    {/*                    )}*/}
-                                    {/*                </div>*/}
-                                    {/*            </div>*/}
-                                    {/*        );*/}
-                                    {/*    })*/}
-                                    {/*) : (*/}
-                                    {/*    <p className="text-gray-500 text-sm">No uploaded documents yet.</p>*/}
-                                    {/*)}*/}
-
                                     {/* New Files */}
                                     {/* Ensure at least one row exists */}
                                     {fileFields.length === 0 && appendFile({ id: null, type: '', file: null })}
@@ -771,7 +692,7 @@ export default function EmployeeEditPage() {
                                 </div>
                             </TabItem>
 
-                            <TabItem title="Documents">
+                            <TabItem title={t("Documents")}>
                                 <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 px-4 mb-6">
                                     <Label>Generated Documents</Label>
                                     {employee.generated_documents?.length ? (
@@ -809,7 +730,7 @@ export default function EmployeeEditPage() {
                                     )}
                                 </div>
                             </TabItem>
-                            <TabItem title="Notes">
+                            <TabItem title={t("Notes")}>
                                 <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 px-4 mb-6">
                                     <Label>Received Notes</Label>
                                     {employee.received_notes?.length ? (
@@ -831,7 +752,7 @@ export default function EmployeeEditPage() {
                                     )}
                                 </div>
                             </TabItem>
-                            <TabItem title="Day Off">
+                            <TabItem title={t("Day_Off")}>
                                 General
                             </TabItem>
                         </Tabs>

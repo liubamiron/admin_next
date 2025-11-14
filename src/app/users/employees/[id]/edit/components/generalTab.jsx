@@ -1,6 +1,7 @@
 import React from 'react';
 import Select from 'react-select';
 import {Button, Label, TextInput} from "flowbite-react";
+import {useTranslation} from "@/providers";
 
 
 
@@ -26,13 +27,15 @@ export const GeneralTab = ({
                                                           driverLicenseOptions,
                                                           reactSelectHeightFix,
                                                       }) => {
+    const { t } = useTranslation();
+
     return (
         <div className="space-y-6">
             {/* ===== Personal Info ===== */}
             <div className="rounded-lg border py-4 p-2 md:p-4 bg-[#F9FAFB] dark:bg-gray-800">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div>
-                        <Label>First Name</Label>
+                        <Label>{t("First_Name")}</Label>
                         <TextInput {...register('first_name')} />
                         {errors.first_name && (
                             <p className="text-red-500 text-xs">{errors.first_name.message}</p>
@@ -40,7 +43,7 @@ export const GeneralTab = ({
                     </div>
 
                     <div>
-                        <Label>Last Name</Label>
+                        <Label>{t("Last_Name")}</Label>
                         <TextInput {...register('last_name')} />
                         {errors.last_name && (
                             <p className="text-red-500 text-xs">{errors.last_name.message}</p>
@@ -48,7 +51,7 @@ export const GeneralTab = ({
                     </div>
 
                     <div>
-                        <Label>Date of Birth</Label>
+                        <Label>{t("Date_of_Birth")}</Label>
                         <TextInput
                             type="date"
                             {...register('dob')}
@@ -62,7 +65,7 @@ export const GeneralTab = ({
                     </div>
 
                     <div>
-                        <Label>Gender</Label>
+                        <Label>{t("Gender")}</Label>
                         <Select
                             options={genderOptions}
                             value={genderOptions.find((opt) => opt.value === watch('sex'))}
@@ -81,7 +84,7 @@ export const GeneralTab = ({
             <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 p-2 md:p-4">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div className="flex flex-col space-y-2">
-                        <Label>Marital Status</Label>
+                        <Label>{t("Marital_Status")}</Label>
                         <Select
                             options={maritalOptions}
                             value={maritalOptions.find(
@@ -94,7 +97,7 @@ export const GeneralTab = ({
                         />
                     </div>
                     <div className="flex flex-col space-y-2">
-                        <Label>Citizenship</Label>
+                        <Label>{t("Citizenship")}</Label>
                         <Select
                             options={citizenshipOptions}
                             value={citizenshipOptions.filter((opt) =>
@@ -112,7 +115,7 @@ export const GeneralTab = ({
 
             {/* ===== Phones ===== */}
             <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 p-2 md:p-4">
-                <Label>Phone Number</Label>
+                <Label>{t("Phone_Number")}</Label>
 
                 {/* First phone */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-2">
@@ -123,14 +126,14 @@ export const GeneralTab = ({
                             )}
                             onChange={(val) => setValue('phone.0.code', val.value)}
                             options={countryOptions}
-                            className="w-[25%]"
+                            className="w-[25%] select_no_border"
                             styles={reactSelectHeightFix}
                             isDark={isDark}
                         />
                         <TextInput
                             {...register('phone.0.phone')}
                             placeholder="Phone"
-                            className="w-[75%] dark:bg-gray-700 dark:text-white border-none"
+                            className="w-[75%] dark:bg-gray-700 dark:text-white select_no_border"
                         />
                     </div>
 
@@ -206,9 +209,8 @@ export const GeneralTab = ({
                 ))}
             </div>
 
-            {/* ===== Children ===== */}
             <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 p-2 md:p-4">
-                <Label>Children</Label>
+                <Label>{t("Children")}</Label>
                 {watch('children')?.map((_, idx) => (
                     <div
                         key={idx}
@@ -266,18 +268,17 @@ export const GeneralTab = ({
                 ))}
             </div>
 
-            {/* ===== Email + Telegram ===== */}
             <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 p-2 md:p-4">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div>
-                        <Label>Email</Label>
+                        <Label>{t("Email")}</Label>
                         <TextInput type="email" {...register('email')} />
                         {errors.email && (
                             <p className="text-red-500 text-xs">{errors.email.message}</p>
                         )}
                     </div>
                     <div>
-                        <Label>Telegram</Label>
+                        <Label>{t("Telegram")}</Label>
                         <TextInput type="text" {...register('telegram')} />
                         {errors.telegram && (
                             <p className="text-red-500 text-xs">{errors.telegram.message}</p>
@@ -290,7 +291,7 @@ export const GeneralTab = ({
             <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 p-2 md:p-4">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div>
-                        <Label>Education</Label>
+                        <Label>{t("Education")}</Label>
                         <Select
                             options={educationOptions}
                             value={educationOptions.find(
@@ -303,7 +304,7 @@ export const GeneralTab = ({
                         />
                     </div>
                     <div>
-                        <Label>Languages</Label>
+                        <Label>{t("Languages")}</Label>
                         <Select
                             options={languagesOptions}
                             value={languagesOptions.filter((opt) =>
@@ -323,7 +324,7 @@ export const GeneralTab = ({
             <div className="rounded-lg border bg-[#F9FAFB] dark:bg-gray-800 py-4 p-2 md:p-4">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div>
-                        <Label>Transport Type</Label>
+                        <Label>{t("Transport_Type")}</Label>
                         <Select
                             options={transportTypeOptions}
                             value={transportTypeOptions.find(
@@ -336,7 +337,7 @@ export const GeneralTab = ({
                         />
                     </div>
                     <div>
-                        <Label>Driver License</Label>
+                        <Label>{t("Driver_License")}</Label>
                         <Select
                             options={driverLicenseOptions}
                             value={driverLicenseOptions.filter((opt) =>

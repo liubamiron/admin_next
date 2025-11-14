@@ -81,3 +81,11 @@ html.dark body {
 .animate-loading-bar {
     animation: loading-bar 1s ease-in-out infinite;
 }
+
+.select_no_border > .css-41eeub-control{
+    border: none !important;
+}
+
+.select_no_border > div > input {
+    border: none !important;
+}
