@@ -9,14 +9,20 @@ import {HiChevronDown, HiChevronUp} from "react-icons/hi";
 import {useSidebarContext} from "@/contexts/sidebar-context";
 import {useEmployees} from "@/hooks/users/useEmployees";
 import {useTranslation} from "@/providers";
+import dynamic from "next/dynamic";
+import {reactSelectHeightFix} from "@/components/ui/reactSelectHeightFix";
+import {useDarkMode} from "@/hooks/useDarkMode";
 
 export function SimpleSidebar() {
     const sidebar = useSidebarContext();
     const pathname = usePathname();
     const [isUsersOpen, setUsersOpen] = useState(false);
-    const {t} = useTranslation()
+    const { t, language, setLanguage, langOptions } = useTranslation();
+    const options = langOptions.map(lang => ({ value: lang.value, label: lang.label }));
+    const {data} = useEmployees();
+    const Select = dynamic(() => import("react-select"), { ssr: false });
+    const isDark = useDarkMode();
 
-    const {data} = useEmployees(); // например, первая страница
     const totalEmployees = data?.total || 0;
 
     const menuItems = [
@@ -80,14 +86,14 @@ export function SimpleSidebar() {
             <div
                 style={{"--sidebar-width": sidebar.desktop.collapsed ? "4rem" : "18rem"}}
                 className={`
-          fixed top-16 left-0 inset-y-0 z-30 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
+          fixed top-16 left-0 inset-y-0 z-30  bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
           w-72 md:translate-x-0
           ${sidebar.desktop.collapsed ? "md:w-16" : "md:w-72"}
           transition-all duration-300
           ${sidebar.mobile.isOpen ? "translate-x-0" : "-translate-x-full"}
         `}
             >
-                <div className="px-3 py-5">
+                <div className="px-3 py-5 flex flex-col h-full">
                     {sidebar.desktop.collapsed && (
                         <Link href="/">
                             <img
@@ -204,6 +210,18 @@ export function SimpleSidebar() {
                             );
                         })}
                     </ul>
+
+                <div className="mt-auto px-3 pb-[120px]">
+                    <Select
+                        value={options.find(opt => opt.value === language)}
+                        onChange={(opt) => setLanguage(opt.value)}
+                        options={options}
+                        styles={reactSelectHeightFix}
+                        isSearchable={false}
+                        isDark={isDark}
+                        className={`${sidebar.desktop.collapsed ? "hidden" : "block"}`}
+                    />
+                </div>
                 </div>
             </div>
         </>

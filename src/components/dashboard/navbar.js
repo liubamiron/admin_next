@@ -75,6 +75,7 @@ export function DashboardNavbar() {
                         isSearchable={false}
                         menuPlacement="auto"
                         isDark={isDark}
+                        className="md:block hidden"
                     />
                     <DarkThemeToggle />
                     <Dropdown
