@@ -319,7 +319,7 @@ export default function EmployeesPage() {
             >
                 <ModalHeader>Filters</ModalHeader>
                 <ModalBody className="overflow-y-auto">
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         {FILTER_FIELDS.map(key => (
                             <div key={key}>
                                 <label className="block mb-1 font-medium">
