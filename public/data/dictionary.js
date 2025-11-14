@@ -47,6 +47,8 @@ export const dictionary = {
         "No_Generated_Documents": "Нет сгенерированных документов",
         "Received_Notes": "Полученные заметки",
         "No_Notes_Received": "Нет полученных заметок",
+        "Edit_Employee": "Редактирование Сотрудника",
+        "Add_Employee": "Добавить Сотрудника"
     },
     en: {
         "My_Profile": "My Profile",
@@ -96,6 +98,8 @@ export const dictionary = {
         "No_Generated_Documents": "No Generated Documents",
         "Received_Notes": "Received Notes",
         "No_Notes_Received": "No Notes Received",
+        "Edit_Employee": "Edit Employee",
+        "Add_Employee": "Add Employee"
     },
     ro: {
         "My_Profile": "Profilul Meu",
@@ -145,5 +149,8 @@ export const dictionary = {
         "No_Generated_Documents": "Nu există documente generate",
         "Received_Notes": "Note primite",
         "No_Notes_Received": "Nu există note primite",
+        "Edit_Employee": "Editarea Angajatorului",
+        "Add_Employee": "Adaugarea Angajatorului"
+
     },
 };

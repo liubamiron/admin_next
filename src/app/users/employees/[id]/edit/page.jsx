@@ -440,12 +440,12 @@ export default function EmployeeEditPage() {
 
 
             <Breadcrumb>
-                <BreadcrumbItem href="/" icon={HiHome}>Home</BreadcrumbItem>
-                <BreadcrumbItem href="/users/employees">Employees</BreadcrumbItem>
-                <BreadcrumbItem>Edit</BreadcrumbItem>
+                <BreadcrumbItem href="/" icon={HiHome}>{t("Home")}</BreadcrumbItem>
+                <BreadcrumbItem href="/users/employees">{t("Employees")}</BreadcrumbItem>
+                    <BreadcrumbItem>{t("Edit")}</BreadcrumbItem>
             </Breadcrumb>
 
-            <h2 className="text-2xl font-semibold">Edit Employee</h2>
+            <h2 className="text-2xl font-semibold"> {t("Edit_Employee")} </h2>
 
             {/* Toasts */}
 

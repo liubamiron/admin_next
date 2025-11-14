@@ -23,6 +23,7 @@ import {usePositions} from "@/hooks/positions/usePositions";
 import {useOffices} from "@/hooks/officies/useOffices";
 import {countryOptions, genderOptions, operatorOptions} from "@/components/constants/filterOptions";
 import {reactSelectHeightFix} from "@/components/ui/reactSelectHeightFix";
+import {useTranslation} from "@/providers";
 
 export default function CandidateEditPage() {
     const router = useRouter();
@@ -44,6 +45,7 @@ export default function CandidateEditPage() {
     const [successMsg, setSuccessMsg] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
     const [newStatus, setNewStatus] = useState("");
+    const {t} = useTranslation();
 
     const { data: departmentsData = [], isLoading: depLoading } = useDepartments();
     const { data: positionsData = [], isLoading: posLoading } = usePositions();
@@ -221,9 +223,9 @@ export default function CandidateEditPage() {
     return (
         <div className="p-6 space-y-6">
             <Breadcrumb>
-                <BreadcrumbItem href="/" icon={HiHome}>Home</BreadcrumbItem>
-                <BreadcrumbItem href="/candidates">Candidates</BreadcrumbItem>
-                <BreadcrumbItem>Edit</BreadcrumbItem>
+                <BreadcrumbItem href="/" icon={HiHome}>{t("Home")}</BreadcrumbItem>
+                <BreadcrumbItem href="/candidates">{t("Candidates")}</BreadcrumbItem>
+                <BreadcrumbItem>{t("Edit")}</BreadcrumbItem>
             </Breadcrumb>
 
             {successMsg && (

@@ -210,7 +210,6 @@ export function SimpleSidebar() {
                             );
                         })}
                     </ul>
-
                     <div className="mt-auto px-3 pb-5 w-full md:w-1/2">
                         <Select
                             value={options.find(opt => opt.value === language)}

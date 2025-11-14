@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import {useState, useMemo} from "react";
 import Link from "next/link";
 import {
     Table,
@@ -25,7 +25,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import Select from "react-select";
 import { HiHome } from "react-icons/hi";
 import {usePathname, useRouter} from "next/navigation";
-import {reactSelectHeightFix} from "@/components/ui/reactSelectHeightFix";
+import {useTranslation} from "@/providers";
 
 export default function EmployeesPage() {
     const [page, setPage] = useState(1);
@@ -33,6 +33,7 @@ export default function EmployeesPage() {
     const [filterOpen, setFilterOpen] = useState(false);
     const [columnsModalOpen, setColumnsModalOpen] = useState(false);
     const router = useRouter();
+    const {t} = useTranslation();
 
     const [visibleColumns, setVisibleColumns] = useState({
         image: true,
@@ -225,17 +226,17 @@ export default function EmployeesPage() {
     return (
         <div className="space-y-6">
             <Breadcrumb className="flex items-center gap-2">
-                <BreadcrumbItem href="/" icon={HiHome}>Home</BreadcrumbItem>
+                <BreadcrumbItem href="/" icon={HiHome}>{t("Home")}</BreadcrumbItem>
                 {crumbs.map((c, i) => (
                     <BreadcrumbItem key={i} {...(c.name.toLowerCase() !== "users" && { href: c.href })}>
-                        {c.name}
+                        {t(c.name)}
                     </BreadcrumbItem>
                 ))}
             </Breadcrumb>
 
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Employees</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">{t("Employees")}</h2>
 
-            <Button  onClick={() => router.push('/users/employees/add')} className={"text-end align-end"}>Add Employee</Button>
+            <Button  onClick={() => router.push('/users/employees/add')} className={"text-end align-end"}>{t("Add_Employee")}</Button>
 
             <div className="flex items-center justify-between gap-4">
                 <div className="flex gap-2">

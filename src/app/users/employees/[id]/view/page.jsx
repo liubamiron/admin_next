@@ -15,10 +15,12 @@ import {
 import {HiHome, HiOutlineCalendar} from "react-icons/hi";
 import {useIdEmployee} from "@/hooks/users/useIdEmployee";
 import {AiOutlineClockCircle, AiOutlineDownload} from "react-icons/ai";
+import {useTransition} from "react";
 
 export default function EmployeeViewPage() {
     const {id} = useParams();
     const {data: employee, isLoading: loadingEmployee, isError} = useIdEmployee(id);
+    const {t} = useTransition();
 
     if (loadingEmployee) return <div>Loading employee...</div>;
     if (isError || !employee) return <div>Error loading employee.</div>;
@@ -45,9 +47,9 @@ export default function EmployeeViewPage() {
     return (
         <div className="p-0 space-y-6 md:p-4">
             <Breadcrumb>
-                <BreadcrumbItem href="/" icon={HiHome}>Home</BreadcrumbItem>
-                <BreadcrumbItem href="/users/employees">Employees</BreadcrumbItem>
-                <BreadcrumbItem>View</BreadcrumbItem>
+                <BreadcrumbItem href="/" icon={HiHome}>{t("Home")}</BreadcrumbItem>
+                <BreadcrumbItem href="/users/employees">{t("Employees")}</BreadcrumbItem>
+                <BreadcrumbItem>{t("View")}</BreadcrumbItem>
             </Breadcrumb>
 
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-12">View Employee</h2>
