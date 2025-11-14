@@ -17,10 +17,10 @@ export function SimpleSidebar() {
     const sidebar = useSidebarContext();
     const pathname = usePathname();
     const [isUsersOpen, setUsersOpen] = useState(false);
-    const { t, language, setLanguage, langOptions } = useTranslation();
-    const options = langOptions.map(lang => ({ value: lang.value, label: lang.label }));
+    const {t, language, setLanguage, langOptions} = useTranslation();
+    const options = langOptions.map(lang => ({value: lang.value, label: lang.label}));
     const {data} = useEmployees();
-    const Select = dynamic(() => import("react-select"), { ssr: false });
+    const Select = dynamic(() => import("react-select"), {ssr: false});
     const isDark = useDarkMode();
 
     const totalEmployees = data?.total || 0;
@@ -211,17 +211,18 @@ export function SimpleSidebar() {
                         })}
                     </ul>
 
-                <div className="mt-auto px-3 pb-[120px]">
-                    <Select
-                        value={options.find(opt => opt.value === language)}
-                        onChange={(opt) => setLanguage(opt.value)}
-                        options={options}
-                        styles={reactSelectHeightFix}
-                        isSearchable={false}
-                        isDark={isDark}
-                        className={`${sidebar.desktop.collapsed ? "hidden" : "block"}`}
-                    />
-                </div>
+                    <div className="mt-auto px-3 pb-5 w-full md:w-1/2">
+                        <Select
+                            value={options.find(opt => opt.value === language)}
+                            onChange={(opt) => setLanguage(opt.value)}
+                            options={options}
+                            styles={reactSelectHeightFix}
+                            isSearchable={false}
+                            menuPlacement="top"
+                            isDark={isDark}
+                            className={`${sidebar.desktop.collapsed ? "hidden" : "block"}`}
+                        />
+                    </div>
                 </div>
             </div>
         </>
