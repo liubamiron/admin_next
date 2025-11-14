@@ -239,7 +239,7 @@ export default function EmployeesPage() {
 
             <Button  onClick={() => router.push('/users/employees/add')} className={"text-end align-end"}>{t("Add_Employee")}</Button>
 
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex  justify-between gap-4 flex-col md:flex-row">
                 <div className="flex gap-2">
                     <Button
                         onClick={() => setFilterOpen(true)}
@@ -267,7 +267,6 @@ export default function EmployeesPage() {
                 />
             </div>
 
-            {/* Columns Selection Modal */}
             <Modal show={columnsModalOpen} onClose={() => setColumnsModalOpen(false)}
             >
                 <div className="max-w-[600px] w-full mx-auto">
@@ -316,7 +315,6 @@ export default function EmployeesPage() {
                 </div>
             </Modal>
 
-            {/* Filter Modal */}
             <Modal show={filterOpen} onClose={() => setFilterOpen(false)}
             >
                 <ModalHeader>Filters</ModalHeader>
