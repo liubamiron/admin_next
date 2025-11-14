@@ -26,6 +26,7 @@ import Select from "react-select";
 import { HiHome } from "react-icons/hi";
 import {usePathname, useRouter} from "next/navigation";
 import {useTranslation} from "@/providers";
+import {reactSelectHeightFix} from "@/components/ui/reactSelectHeightFix";
 
 export default function EmployeesPage() {
     const [page, setPage] = useState(1);
@@ -251,8 +252,7 @@ export default function EmployeesPage() {
 
                     <Button
                         onClick={() => setColumnsModalOpen(true)}
-                        outline
-                        className="bg-gray-50 hover:bg-gray-100 border-gray-300 text-gray-500 flex items-center gap-2"
+                        color="alternative"
                     >
                         Columns
                     </Button>
@@ -319,7 +319,6 @@ export default function EmployeesPage() {
             {/* Filter Modal */}
             <Modal show={filterOpen} onClose={() => setFilterOpen(false)}
             >
-                <div className="max-w-[800px] w-full mx-auto">
                 <ModalHeader>Filters</ModalHeader>
                 <ModalBody className="overflow-y-auto">
                     <div className="grid grid-cols-2 gap-6">
@@ -344,10 +343,9 @@ export default function EmployeesPage() {
                                 />
                             </div>
                         ))}
-
-                        {/* Shift Filters */}
-                        <div className="col-span-2 border-t pt-4">
-                            <div className="grid grid-cols-3 gap-4 items-end">
+                    </div>
+                    <div className="pt-6">
+                            <div className="grid grid-cols-3 gap-4 items-end w-full">
                                 <div>
                                     <label className="block mb-1 font-medium">Start Time</label>
                                     <input
@@ -376,18 +374,16 @@ export default function EmployeesPage() {
                                         className="basic-multi-select"
                                         classNamePrefix="select"
                                         placeholder="Select Workdays"
-                                        // styles={reactSelectHeightFix}
+                                        styles={reactSelectHeightFix}
                                     />
                                 </div>
                             </div>
-                        </div>
                     </div>
                 </ModalBody>
                 <ModalFooter className="flex justify-between">
                     <Button color="gray" onClick={resetFilters}>Reset Filters</Button>
                     <Button onClick={() => setFilterOpen(false)}>Apply</Button>
                 </ModalFooter>
-                </div>
             </Modal>
 
             <div className="overflow-x-auto">
