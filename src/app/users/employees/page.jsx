@@ -343,40 +343,41 @@ export default function EmployeesPage() {
                         ))}
                     </div>
                     <div className="pt-6">
-                            <div className="grid grid-cols-3 gap-4 items-end w-full">
-                                <div>
-                                    <label className="block mb-1 font-medium">Start Time</label>
-                                    <input
-                                        type="time"
-                                        value={filters.shift_start}
-                                        onChange={e => handleFilterChange("shift_start", e.target.value)}
-                                        className="w-full border rounded px-2 py-1"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block mb-1 font-medium">End Time</label>
-                                    <input
-                                        type="time"
-                                        value={filters.shift_end}
-                                        onChange={e => handleFilterChange("shift_end", e.target.value)}
-                                        className="w-full border rounded px-2 py-1"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block mb-1 font-medium">Workdays</label>
-                                    <Select
-                                        isMulti
-                                        options={SHIFT_DAY_OPTIONS}
-                                        value={SHIFT_DAY_OPTIONS.filter(opt => filters.shift_day.includes(opt.value))}
-                                        onChange={selected => handleFilterChange("shift_day", selected?.map(opt => opt.value) || [])}
-                                        className="basic-multi-select"
-                                        classNamePrefix="select"
-                                        placeholder="Select Workdays"
-                                        styles={reactSelectHeightFix}
-                                    />
-                                </div>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 items-end w-full">
+                            <div>
+                                <label className="block mb-1 font-medium">Start Time</label>
+                                <input
+                                    type="time"
+                                    value={filters.shift_start}
+                                    onChange={e => handleFilterChange("shift_start", e.target.value)}
+                                    className="w-full border rounded px-2 py-1"
+                                />
                             </div>
+                            <div>
+                                <label className="block mb-1 font-medium">End Time</label>
+                                <input
+                                    type="time"
+                                    value={filters.shift_end}
+                                    onChange={e => handleFilterChange("shift_end", e.target.value)}
+                                    className="w-full border rounded px-2 py-1"
+                                />
+                            </div>
+                            <div className="col-span-2 md:col-span-1 w-full">
+                                <label className="block mb-1 font-medium">Workdays</label>
+                                <Select
+                                    isMulti
+                                    options={SHIFT_DAY_OPTIONS}
+                                    value={SHIFT_DAY_OPTIONS.filter(opt => filters.shift_day.includes(opt.value))}
+                                    onChange={selected => handleFilterChange("shift_day", selected?.map(opt => opt.value) || [])}
+                                    className="basic-multi-select w-full"
+                                    classNamePrefix="select"
+                                    placeholder="Select Workdays"
+                                    styles={reactSelectHeightFix}
+                                />
+                            </div>
+                        </div>
                     </div>
+
                 </ModalBody>
                 <ModalFooter className="flex justify-between">
                     <Button color="gray" onClick={resetFilters}>Reset Filters</Button>
