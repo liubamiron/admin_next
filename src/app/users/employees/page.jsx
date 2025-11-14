@@ -27,6 +27,7 @@ import { HiHome } from "react-icons/hi";
 import {usePathname, useRouter} from "next/navigation";
 import {useTranslation} from "@/providers";
 import {reactSelectHeightFix} from "@/components/ui/reactSelectHeightFix";
+import {useDarkMode} from "@/hooks/useDarkMode";
 
 export default function EmployeesPage() {
     const [page, setPage] = useState(1);
@@ -35,6 +36,7 @@ export default function EmployeesPage() {
     const [columnsModalOpen, setColumnsModalOpen] = useState(false);
     const router = useRouter();
     const {t} = useTranslation();
+    const {isDark} = useDarkMode()
 
     const [visibleColumns, setVisibleColumns] = useState({
         image: true,
@@ -317,6 +319,7 @@ export default function EmployeesPage() {
 
             <Modal show={filterOpen} onClose={() => setFilterOpen(false)}
             >
+                <div className={`bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 border rounded`}>
                 <ModalHeader>Filters</ModalHeader>
                 <ModalBody className="overflow-y-auto">
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -333,10 +336,12 @@ export default function EmployeesPage() {
                                     className="basic-multi-select"
                                     classNamePrefix="select"
                                     placeholder={`Select ${key}`}
+                                    isDark={isDark}
                                     styles={{
-                                        multiValue: provided => ({ ...provided, backgroundColor: "#DBEAFE" }),
-                                        multiValueLabel: provided => ({ ...provided, color: "#1D4ED8", fontWeight: 500 }),
-                                        multiValueRemove: provided => ({ ...provided, color: "#1D4ED8", ":hover": { color: "#000" } }),
+                                        ...reactSelectHeightFix,
+                                        multiValue: provided => ({ ...provided, backgroundColor: isDark ? '#2563EB' : '#DBEAFE' }),
+                                        multiValueLabel: provided => ({ ...provided, color: isDark ? '#F9FAFB' : '#1D4ED8', fontWeight: 500 }),
+                                        multiValueRemove: provided => ({ ...provided, color: isDark ? '#F9FAFB' : '#1D4ED8', ':hover': { color: '#000' } }),
                                     }}
                                 />
                             </div>
@@ -373,16 +378,19 @@ export default function EmployeesPage() {
                                     classNamePrefix="select"
                                     placeholder="Select Workdays"
                                     styles={reactSelectHeightFix}
+                                    isDark={isDark}
                                 />
                             </div>
                         </div>
                     </div>
 
                 </ModalBody>
-                <ModalFooter className="flex justify-between">
-                    <Button color="gray" onClick={resetFilters}>Reset Filters</Button>
-                    <Button onClick={() => setFilterOpen(false)}>Apply</Button>
-                </ModalFooter>
+                    <ModalFooter className="flex justify-between">
+                        <Button color="gray" onClick={resetFilters}>Reset Filters</Button>
+                        <Button onClick={() => setFilterOpen(false)}>Apply</Button>
+                    </ModalFooter>
+                </div>
+
             </Modal>
 
             <div className="overflow-x-auto">
