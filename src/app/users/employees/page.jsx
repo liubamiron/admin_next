@@ -161,7 +161,6 @@ export default function EmployeesPage() {
         });
     };
 
-    // Filtered employees
     const filteredEmployees = useMemo(() => {
         return employees.filter(emp => {
             const q = search.toLowerCase();
@@ -413,15 +412,15 @@ export default function EmployeesPage() {
                     </TableHead>
                     <TableBody>
                         {filteredEmployees.length > 0 ? filteredEmployees.map(emp => (
-                            <TableRow key={emp.id} className="bg-white dark:bg-gray-800">
+                            <TableRow key={emp?.id} className="bg-white dark:bg-gray-800">
                                 {visibleColumns.image && (
                                     <TableCell>
-                                        <img src={emp.image ? `https://hrm.webng.life/file/${emp.image}` : "/images/default_img.png"} className="w-10 h-10 rounded-full object-cover" alt="img"/>
+                                        <img src={emp?.image ? `https://hrm.webng.life/file/${emp?.image}` : "/images/default_img.png"} className="w-10 h-10 rounded-full object-cover" alt="img"/>
                                     </TableCell>
                                 )}
-                                {visibleColumns.name && <TableCell>{emp.full_name}</TableCell>}
-                                {visibleColumns.email && <TableCell>{emp.email}</TableCell>}
-                                {visibleColumns.department && <TableCell>{emp.department?.name}</TableCell>}
+                                {visibleColumns.name && <TableCell>{emp?.full_name}</TableCell>}
+                                {visibleColumns.email && <TableCell>{emp?.email}</TableCell>}
+                                {visibleColumns.department && <TableCell>{emp?.department?.name}</TableCell>}
                                 {visibleColumns.roles && showRolesColumn && (
                                     <TableCell>
                                         {emp.roles?.map(r => (
@@ -431,7 +430,7 @@ export default function EmployeesPage() {
                                         ))}
                                     </TableCell>
                                 )}
-                                {visibleColumns.position && showPositionsColumn && <TableCell>{emp.position?.name}</TableCell>}
+                                {visibleColumns.position && showPositionsColumn && <TableCell>{emp?.position?.name}</TableCell>}
                                 {visibleColumns.status && (
                                     <TableCell>
                                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
