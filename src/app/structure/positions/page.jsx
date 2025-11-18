@@ -23,11 +23,12 @@ import { usePositions } from "@/hooks/positions/usePositions";
 import { useState } from "react";
 import {useCreatePosition} from "@/hooks/positions/useCreatePosition";
 import {useEditPosition} from "@/hooks/positions/useEditPosition";
+import {useTranslation} from "@/providers";
 
 export default function PositionsPage() {
     const { data: allData } = usePositions(1, "all", null);
     const positions = allData;
-
+    const {t} = useTranslation();
     const { mutateAsync: createPosition } = useCreatePosition();
     const { mutateAsync: editPosition } = useEditPosition();
 
@@ -50,7 +51,7 @@ export default function PositionsPage() {
         { href: "/structure/offices", icon: "/icons/office_img.svg", label: "Offices" },
         { href: "/structure/departments", icon: "/icons/departments_img.svg", label: "Departments" },
         { href: "/structure/positions", icon: "/icons/positions_img.svg", label: "Positions" },
-        { href: "/structure/public-holidays", icon: "/icons/public_holidays.svg", label: "Public Holidays" },
+        { href: "/structure/public-holidays", icon: "/icons/public_holidays.svg", label: "Public_Holidays" },
     ];
 
     const handleSubmit = async (e) => {
@@ -90,11 +91,11 @@ export default function PositionsPage() {
             {/* Breadcrumb */}
             <Breadcrumb className="flex items-center gap-2">
                 <BreadcrumbItem href="/" icon={HiHome}>
-                    Home
+                    {t("Home")}
                 </BreadcrumbItem>
                 {crumbs.map((c, i) => (
                     <BreadcrumbItem key={i} {...(c.name.toLowerCase() !== "structure" && { href: c.href })}>
-                        {c.name}
+                        {t(c.name)}
                     </BreadcrumbItem>
                 ))}
             </Breadcrumb>
@@ -128,7 +129,7 @@ export default function PositionsPage() {
                                     style={isActive ? { filter: "brightness(0) saturate(100%) invert(34%) sepia(99%) saturate(2461%) hue-rotate(194deg) brightness(95%) contrast(96%)" } : {}}
                                 />
                                 <span className={`font-medium ${isActive ? "text-blue-600 dark:text-blue-400" : "text-gray-900 dark:text-gray-100"}`}>
-                  {item.label}
+                  {t(item.label)}
                 </span>
                             </Link>
                         );
@@ -138,9 +139,9 @@ export default function PositionsPage() {
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableHeadCell>Name</TableHeadCell>
-                                    <TableHeadCell>Employees<br/>Count</TableHeadCell>
-                                    <TableHeadCell>Actions</TableHeadCell>
+                                    <TableHeadCell>{t("Name")}</TableHeadCell>
+                                    <TableHeadCell>{t("Employees")}<br/>{t("count")}</TableHeadCell>
+                                    <TableHeadCell>{t("Actions")}</TableHeadCell>
                                 </TableRow>
                             </TableHead>
 

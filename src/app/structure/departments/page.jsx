@@ -25,11 +25,12 @@ import { useOffices } from "@/hooks/officies/useOffices";
 import { useState } from "react";
 import { useCreateDepartment } from "@/hooks/departments/useCreateDepartment";
 import { useEditDepartment } from "@/hooks/departments/useEditDepartment";
+import {useTranslation} from "@/providers";
 
 export default function DepartmentsPage() {
     const { data: allData } = useDepartments(1, "all", null);
     const { data: offices } = useOffices();
-
+    const {t} = useTranslation();
     const [openModal, setOpenModal] = useState(false);
     const [openModalEdit, setOpenModalEdit] = useState(false);
     const [selectedOffice, setSelectedOffice] = useState("");
@@ -113,15 +114,15 @@ export default function DepartmentsPage() {
         <div className="p-0 space-y-6 md:p-4">
             {/* Breadcrumb */}
             <Breadcrumb className="flex items-center gap-2">
-                <BreadcrumbItem href="/" icon={HiHome}>Home</BreadcrumbItem>
+                <BreadcrumbItem href="/" icon={HiHome}>{t("Home")}</BreadcrumbItem>
                 {crumbs.map((c, i) => (
                     <BreadcrumbItem key={i} {...(c.name.toLowerCase() !== "structure" && { href: c.href })}>
-                        {c.name}
+                        {t(c.name)}
                     </BreadcrumbItem>
                 ))}
             </Breadcrumb>
 
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-12">Departments</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-12">{t("Departments")}</h2>
 
             <div className="flex justify-end items-end">
                 <Button onClick={() => setOpenModal(true)}>+ New Department</Button>
@@ -146,24 +147,21 @@ export default function DepartmentsPage() {
                                     style={isActive ? { filter: "brightness(0) saturate(100%) invert(34%) sepia(99%) saturate(2461%) hue-rotate(194deg) brightness(95%) contrast(96%)" } : {}}
                                 />
                                 <span className={`font-medium ${isActive ? "text-blue-600 dark:text-blue-400" : "text-gray-900 dark:text-gray-100"}`}>
-                                    {item.label}
+                                    {t(item.label)}
                                 </span>
                             </Link>
                         );
                     })}
                 </div>
-
-                {/* Table */}
-                {/*<div className="rounded-lg p-6 mb-6 shadow-sm space-y-6 bg-[#F9FAFB] dark:bg-gray-800 md:w-[60%] w-full">*/}
-                    <div className="overflow-x-auto w-full shadow-sm">
+                 <div className="overflow-x-auto w-full shadow-sm">
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableHeadCell>Office</TableHeadCell>
-                                    <TableHeadCell>Name</TableHeadCell>
-                                    <TableHeadCell>Manager</TableHeadCell>
-                                    <TableHeadCell>Employees<br />count</TableHeadCell>
-                                    <TableHeadCell>Actions</TableHeadCell>
+                                    <TableHeadCell>{t("Office")}</TableHeadCell>
+                                    <TableHeadCell>{t("Name")}</TableHeadCell>
+                                    <TableHeadCell>{t("Manager")}</TableHeadCell>
+                                    <TableHeadCell>{t("Employees")}<br />{t("count")}</TableHeadCell>
+                                    <TableHeadCell>{t("Actions")}</TableHeadCell>
                                 </TableRow>
                             </TableHead>
 

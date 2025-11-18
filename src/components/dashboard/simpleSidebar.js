@@ -27,22 +27,22 @@ export function SimpleSidebar() {
 
     const menuItems = [
         {
-            icon: <img src="/icons/my_profile.svg" alt=""/>, // decorative
+            icon: <img src="/icons/my_profile.svg" alt="my_profile"/>, // decorative
             label: t('My_Profile'),
             href: "/profile",
         },
         {
-            icon: <img src="/icons/structure.svg" alt=""/>,
+            icon: <img src="/icons/structure.svg" alt="structure"/>,
             label: t('Structure'),
             href: "/structure/offices",
         },
         {
-            icon: <img src="/icons/users.svg" alt=""/>,
+            icon: <img src="/icons/users.svg" alt="users"/>,
             label: t("Users"),
             submenu: [
                 {
                     id: "1",
-                    icon: <img src="/icons/employees.svg" alt=""/>,
+                    icon: <img src="/icons/employees.svg" alt="employees"/>,
                     label: t("Employees"),
                     href: "/users/employees",
                     count: totalEmployees,
@@ -50,24 +50,24 @@ export function SimpleSidebar() {
             ],
         },
         {
-            icon: <img src="/icons/candidates.svg" alt=""/>,
+            icon: <img src="/icons/candidates.svg" alt="candidates"/>,
             label: t("Candidates"),
             href: "/candidates",
             count: "1",
         },
         {
-            icon: <img src="/icons/interview_calendar.svg" alt=""/>,
+            icon: <img src="/icons/interview_calendar.svg" alt="interview"/>,
             label: t("Interview_Calendar"),
             href: "/interview-calendar",
             count: "3",
         },
         {
-            icon: <img src="/icons/shifts_calendar.svg" alt=""/>,
+            icon: <img src="/icons/shifts_calendar.svg" alt="shifts"/>,
             label: t("Shifts_Calendar"),
             href: "/shifts-calendar",
         },
         {
-            icon: <img src="/icons/org_chart.svg" alt=""/>,
+            icon: <img src="/icons/org_chart.svg" alt="org_chart"/>,
             label: t("Org_Chart"),
             href: "/orgchart",
         },
@@ -116,13 +116,13 @@ export function SimpleSidebar() {
                                 (!sidebar.desktop.collapsed || sidebar.mobile.isOpen);
 
                             return (
-                                <li key={item.label} className="p-1">
+                                <li key={item.label} className="p-1 dark:text-gray-300">
                                     {/* Main Item */}
                                     {!hasSubmenu ? (
                                         <Link
                                             href={item.href}
                                             className={`
-                        flex items-center gap-3 p-1 rounded cursor-pointer 
+                        flex items-center gap-3 p-1 rounded cursor-pointer
                         ${isActiveMain ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300" : "hover:bg-[#EBF5FF] dark:hover:bg-gray-700"}
                       `}
                                         >

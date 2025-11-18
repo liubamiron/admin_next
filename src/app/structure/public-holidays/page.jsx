@@ -23,10 +23,11 @@ import { usePublicHolidays } from "@/hooks/publicHolidays/usePublicHolidays";
 import { useState } from "react";
 import {useCreatePublicHolidays} from "@/hooks/publicHolidays/useCreatePublicHolidays";
 import {useEditPublicHolidays} from "@/hooks/publicHolidays/useEditPublicHolidays";
+import {useTranslation} from "@/providers";
 
 export default function PublicHolidaysPage() {
     const { data: allData } = usePublicHolidays(1, "all", null);
-
+    const {t} = useTranslation();
     const [openModal, setOpenModal] = useState(false);
     const [openModalEdit, setOpenModalEdit] = useState(false);
     const [name, setName] = useState("");
@@ -48,7 +49,7 @@ export default function PublicHolidaysPage() {
         { href: "/structure/offices", icon: "/icons/office_img.svg", label: "Offices" },
         { href: "/structure/departments", icon: "/icons/departments_img.svg", label: "Departments" },
         { href: "/structure/positions", icon: "/icons/positions_img.svg", label: "Positions" },
-        { href: "/structure/public-holidays", icon: "/icons/public_holidays.svg", label: "Public Holidays" },
+        { href: "/structure/public-holidays", icon: "/icons/public_holidays.svg", label: "Public_Holidays" },
     ];
 
     const handleAddSubmit = async (e) => {
@@ -92,15 +93,15 @@ export default function PublicHolidaysPage() {
     return (
         <div className="p-0 space-y-6 md:p-4">
             <Breadcrumb className="flex items-center gap-2">
-                <BreadcrumbItem href="/" icon={HiHome}>Home</BreadcrumbItem>
+                <BreadcrumbItem href="/" icon={HiHome}>{t("Home")}</BreadcrumbItem>
                 {crumbs.map((c, i) => (
                     <BreadcrumbItem key={i} {...(c.name.toLowerCase() !== "structure" && { href: c.href })}>
-                        {c.name}
+                        {t(c.name)}
                     </BreadcrumbItem>
                 ))}
             </Breadcrumb>
 
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white mt-12">Public Holidays</h1>
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white mt-12">{t("Public_Holidays")}</h1>
 
             <div className="flex justify-end items-end h-full ">
                 <Button onClick={() => setOpenModal(true)}>+ New Holiday</Button>
@@ -128,7 +129,7 @@ export default function PublicHolidaysPage() {
                                     style={isActive ? { filter: "brightness(0) saturate(100%) invert(34%) sepia(99%) saturate(2461%) hue-rotate(194deg) brightness(95%) contrast(96%)" } : {}}
                                 />
                                 <span className={`font-medium ${isActive ? "text-blue-600 dark:text-blue-400" : "text-gray-900 dark:text-gray-100"}`}>
-                  {item.label}
+                  {t(item.label)}
                 </span>
                             </Link>
                         );
@@ -140,9 +141,9 @@ export default function PublicHolidaysPage() {
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableHeadCell>Name</TableHeadCell>
-                                    <TableHeadCell>Date</TableHeadCell>
-                                    <TableHeadCell>Actions</TableHeadCell>
+                                    <TableHeadCell>{t("Name")}</TableHeadCell>
+                                    <TableHeadCell>{t("Date")}</TableHeadCell>
+                                    <TableHeadCell>{t("Actions")}</TableHeadCell>
                                 </TableRow>
                             </TableHead>
 

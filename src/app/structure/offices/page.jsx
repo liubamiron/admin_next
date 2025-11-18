@@ -23,11 +23,12 @@ import Link from "next/link";
 import { useState } from "react";
 import {useCreateOffice} from "@/hooks/officies/useCreateOffice";
 import {useEditOffice} from "@/hooks/officies/useEditOffice";
+import {useTranslation} from "@/providers";
 
 export default function OfficePage() {
     const { data: allData } = useOffices(1, "all", null);
     const offices = allData?.data ?? [];
-
+    const {t} = useTranslation();
     const { mutate: createOffice } = useCreateOffice();
     const { mutateAsync: editOffice } = useEditOffice();
 
@@ -44,7 +45,7 @@ export default function OfficePage() {
         { href: "/structure/offices", icon: "/icons/office_img.svg", label: "Offices" },
         { href: "/structure/departments", icon: "/icons/departments_img.svg", label: "Departments" },
         { href: "/structure/positions", icon: "/icons/positions_img.svg", label: "Positions" },
-        { href: "/structure/public-holidays", icon: "/icons/public_holidays.svg", label: "Public Holidays" },
+        { href: "/structure/public-holidays", icon: "/icons/public_holidays.svg", label: "Public_Holidays" },
     ];
 
     // Modal state
@@ -105,17 +106,17 @@ export default function OfficePage() {
             {/* Breadcrumb */}
             <Breadcrumb className="flex items-center gap-2">
                 <BreadcrumbItem href="/" icon={HiHome}>
-                    Home
+                    {t('HOME')}
                 </BreadcrumbItem>
                 {crumbs.map((c, i) => (
                     <BreadcrumbItem key={i} {...(c.name.toLowerCase() !== "structure" && { href: c.href })}>
-                        {c.name}
+                        {/*{c.name}*/}
+                        {t(c.name)}
                     </BreadcrumbItem>
                 ))}
             </Breadcrumb>
 
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-12">Offices</h2>
-
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-12">{t('Offices')}</h2>
 
             <div className="flex justify-end items-end">
                 <Button onClick={() => setOpenModal(true)}>+ New Office</Button>
@@ -150,7 +151,7 @@ export default function OfficePage() {
                                 <span
                                     className={`font-medium ${isActive ? "text-blue-600 dark:text-blue-400" : "text-gray-900 dark:text-gray-100"}`}
                                 >
-                                    {item.label}
+                                    {t(item.label)}
                                 </span>
                             </Link>
                         );
@@ -162,10 +163,12 @@ export default function OfficePage() {
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableHeadCell>Name</TableHeadCell>
-                                    <TableHeadCell>Employees<br/>Count</TableHeadCell>
-                                    <TableHeadCell>Location</TableHeadCell>
-                                    <TableHeadCell>Actions</TableHeadCell>
+                                    <TableRow>
+                                        <TableHeadCell>{t("Name")}</TableHeadCell>
+                                        <TableHeadCell>{t("Employees")}</TableHeadCell>
+                                        <TableHeadCell>{t("Location")}<br />{t("count")}</TableHeadCell>
+                                        <TableHeadCell>{t("Actions")}</TableHeadCell>
+                                    </TableRow>
                                 </TableRow>
                             </TableHead>
 
@@ -233,7 +236,6 @@ export default function OfficePage() {
             </form>
                 </ModalBody>
             </Modal>
-
 
             {/*  Edit Modal */}
             <Modal show={openModalEdit} onClose={() => setOpenModalEdit(false)}>
