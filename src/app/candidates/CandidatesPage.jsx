@@ -26,11 +26,12 @@ import { HiHome } from "react-icons/hi";
 import { useRouter, useSearchParams } from "next/navigation";
 import Select from "react-select";
 import { usePositions } from "@/hooks/positions/usePositions";
+import {useTranslation} from "@/providers";
 
 export default function CandidatesPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
-
+    const {t} = useTranslation();
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
@@ -151,12 +152,12 @@ export default function CandidatesPage() {
             {/* Breadcrumb */}
             <Breadcrumb aria-label="Breadcrumb">
                 <BreadcrumbItem href="/" icon={HiHome}>
-                    Home
+                    {t("Home")}
                 </BreadcrumbItem>
-                <BreadcrumbItem>Candidates</BreadcrumbItem>
+                <BreadcrumbItem>{t("Candidates")}</BreadcrumbItem>
             </Breadcrumb>
 
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Candidates</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">{t("Candidates")}</h2>
 
             {/* Add candidate button */}
             <div className="flex justify-end p-4">
@@ -253,16 +254,16 @@ export default function CandidatesPage() {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableHeadCell>First Name</TableHeadCell>
-                            <TableHeadCell>Last Name</TableHeadCell>
-                            <TableHeadCell>Email</TableHeadCell>
-                            <TableHeadCell>Office</TableHeadCell>
-                            <TableHeadCell>Department</TableHeadCell>
-                            <TableHeadCell>Position</TableHeadCell>
-                            <TableHeadCell>Sex</TableHeadCell>
-                            <TableHeadCell>Birth Date</TableHeadCell>
-                            <TableHeadCell>Status</TableHeadCell>
-                            {showActionsColumn && <TableHeadCell>Actions</TableHeadCell>}
+                            <TableHeadCell>{t("First_Name")}</TableHeadCell>
+                            <TableHeadCell>{t("Last_Name")}</TableHeadCell>
+                            <TableHeadCell>{t("Email")}</TableHeadCell>
+                            <TableHeadCell>{t("Office")}</TableHeadCell>
+                            <TableHeadCell>{t("Department")}</TableHeadCell>
+                            <TableHeadCell>{t("Position")}</TableHeadCell>
+                            <TableHeadCell>{t("Sex")}</TableHeadCell>
+                            <TableHeadCell>{t("Birth_Date")}</TableHeadCell>
+                            <TableHeadCell>{t("Status")}</TableHeadCell>
+                            {showActionsColumn && <TableHeadCell>{t("Actions")}</TableHeadCell>}
                         </TableRow>
                     </TableHead>
                     <TableBody className="divide-y">
