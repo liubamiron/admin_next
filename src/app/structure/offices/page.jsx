@@ -163,12 +163,10 @@ export default function OfficePage() {
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableRow>
                                         <TableHeadCell>{t("Name")}</TableHeadCell>
                                         <TableHeadCell>{t("Employees")}</TableHeadCell>
                                         <TableHeadCell>{t("Location")}<br />{t("count")}</TableHeadCell>
                                         <TableHeadCell>{t("Actions")}</TableHeadCell>
-                                    </TableRow>
                                 </TableRow>
                             </TableHead>
 
