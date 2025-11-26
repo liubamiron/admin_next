@@ -20,13 +20,13 @@ export const CompanyTab = ({
                                depLoading,
                            }) => {
     const SHIFT_DAY_OPTIONS = [
-        { value: "Monday", label: "Monday" },
-        { value: "Tuesday", label: "Tuesday" },
-        { value: "Wednesday", label: "Wednesday" },
-        { value: "Thursday", label: "Thursday" },
-        { value: "Friday", label: "Friday" },
-        { value: "Saturday", label: "Saturday" },
-        { value: "Sunday", label: "Sunday" },
+        { value: "1", label: "Monday" },
+        { value: "2", label: "Tuesday" },
+        { value: "3", label: "Wednesday" },
+        { value: "4", label: "Thursday" },
+        { value: "5", label: "Friday" },
+        { value: "6", label: "Saturday" },
+        { value: "7", label: "Sunday" },
     ];
 
     const {t} = useTranslation();
@@ -110,7 +110,7 @@ export const CompanyTab = ({
             {/* Shifts */}
             <div className="rounded-lg border  py-4 p-2 md:p-4 mb-6 bg-[#F9FAFB] dark:bg-gray-800">
                 {shiftFields.map((field, index) => (
-                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-7 gap-4 items-end">
                         <div className="flex flex-col space-y-2">
                             <Label>{t("Start_Time")}</Label>
                             <input
@@ -127,7 +127,7 @@ export const CompanyTab = ({
                                 {...register(`shift.${index}.end_time`)}
                             />
                         </div>
-                        <div className="flex flex-col md:col-span-2 w-full">
+                        <div className="flex flex-col md:col-span-4">
                             <Label>{t("Work_Days")}</Label>
                             <Controller
                                 name={`shift.${index}.work_days`}
@@ -150,7 +150,7 @@ export const CompanyTab = ({
                                 )}
                             />
                         </div>
-                        <div className="flex items-end gap-2 self-end">
+                        <div className="flex flex-row justify-end gap-4 ">
                             <Button
                                 color="red"
                                 onClick={() => removeShift(index)}
