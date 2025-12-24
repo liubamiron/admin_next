@@ -20,17 +20,26 @@ import { HiHome } from "react-icons/hi";
 import { usePathname } from "next/navigation";
 import { useOffices } from "@/hooks/officies/useOffices";
 import Link from "next/link";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import {useCreateOffice} from "@/hooks/officies/useCreateOffice";
 import {useEditOffice} from "@/hooks/officies/useEditOffice";
-import {useTranslation} from "@/providers";
+import {usePosts} from "@/hooks/usePosts";
 
 export default function OfficePage() {
     const { data: allData } = useOffices(1, "all", null);
     const offices = allData?.data ?? [];
-    const {t} = useTranslation();
+
     const { mutate: createOffice } = useCreateOffice();
     const { mutateAsync: editOffice } = useEditOffice();
+
+
+    const { data: topProducts, isLoading, isError, error } = usePosts(); // <-- use your hook
+
+    useEffect(() => {
+        if (topProducts) {
+            console.log("Top Products:", topProducts); // <-- log data for testing
+        }
+    }, [topProducts]);
 
 
     const pathname = usePathname();
@@ -45,7 +54,7 @@ export default function OfficePage() {
         { href: "/structure/offices", icon: "/icons/office_img.svg", label: "Offices" },
         { href: "/structure/departments", icon: "/icons/departments_img.svg", label: "Departments" },
         { href: "/structure/positions", icon: "/icons/positions_img.svg", label: "Positions" },
-        { href: "/structure/public-holidays", icon: "/icons/public_holidays.svg", label: "Public_Holidays" },
+        { href: "/structure/public-holidays", icon: "/icons/public_holidays.svg", label: "Public Holidays" },
     ];
 
     // Modal state
@@ -106,17 +115,17 @@ export default function OfficePage() {
             {/* Breadcrumb */}
             <Breadcrumb className="flex items-center gap-2">
                 <BreadcrumbItem href="/" icon={HiHome}>
-                    {t('HOME')}
+                    Home
                 </BreadcrumbItem>
                 {crumbs.map((c, i) => (
                     <BreadcrumbItem key={i} {...(c.name.toLowerCase() !== "structure" && { href: c.href })}>
-                        {/*{c.name}*/}
-                        {t(c.name)}
+                        {c.name}
                     </BreadcrumbItem>
                 ))}
             </Breadcrumb>
 
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-12">{t('Offices')}</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-12">Offices</h2>
+
 
             <div className="flex justify-end items-end">
                 <Button onClick={() => setOpenModal(true)}>+ New Office</Button>
@@ -151,7 +160,7 @@ export default function OfficePage() {
                                 <span
                                     className={`font-medium ${isActive ? "text-blue-600 dark:text-blue-400" : "text-gray-900 dark:text-gray-100"}`}
                                 >
-                                    {t(item.label)}
+                                    {item.label}
                                 </span>
                             </Link>
                         );
@@ -159,81 +168,82 @@ export default function OfficePage() {
                 </div>
 
                 {/* Table */}
-                    <div className="overflow-x-auto md:w-[69%] w-full">
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                        <TableHeadCell>{t("Name")}</TableHeadCell>
-                                        <TableHeadCell>{t("Employees")}</TableHeadCell>
-                                        <TableHeadCell>{t("Location")}<br />{t("count")}</TableHeadCell>
-                                        <TableHeadCell>{t("Actions")}</TableHeadCell>
-                                </TableRow>
-                            </TableHead>
+                <div className="overflow-x-auto md:w-[69%] w-full">
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableHeadCell>Name</TableHeadCell>
+                                <TableHeadCell>Employees<br/>Count</TableHeadCell>
+                                <TableHeadCell>Location</TableHeadCell>
+                                <TableHeadCell>Actions</TableHeadCell>
+                            </TableRow>
+                        </TableHead>
 
-                            <TableBody className="divide-y">
-                                {offices?.map((office) => (
-                                    <TableRow
-                                        key={office.id}
-                                        className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
-                                    >
-                                        <TableCell className="font-medium text-gray-900 dark:text-white">
-                                            {office?.name}
-                                        </TableCell>
-                                        <TableCell>{office?.userCount}</TableCell>
-                                        <TableCell>{office?.location}</TableCell>
-                                        <TableCell className="flex gap-2">
-                                            <div className="flex gap-2 justify-center">
-                                                <Button size="xs" color="info" onClick={() => handleEditClick(office)}>
-                                                    <img src="/icons/edit.svg" alt="edit" className="w-5 h-5" />
-                                                </Button>
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
+                        <TableBody className="divide-y">
+                            {offices?.map((office) => (
+                                <TableRow
+                                    key={office.id}
+                                    className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
+                                >
+                                    <TableCell className="font-medium text-gray-900 dark:text-white">
+                                        {office?.name}
+                                    </TableCell>
+                                    <TableCell>{office?.userCount}</TableCell>
+                                    <TableCell>{office?.location}</TableCell>
+                                    <TableCell className="flex gap-2">
+                                        <div className="flex gap-2 justify-center">
+                                            <Button size="xs" color="info" onClick={() => handleEditClick(office)}>
+                                                <img src="/icons/edit.svg" alt="edit" className="w-5 h-5" />
+                                            </Button>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
             </div>
 
             {/* ➕ Add Modal */}
             <Modal show={openModal} onClose={() => setOpenModal(false)}>
                 <ModalHeader>Add New Office</ModalHeader>
                 <ModalBody>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                    <Label htmlFor="name" value="Office Name" />
-                    <TextInput
-                        id="name"
-                        type="text"
-                        required
-                        placeholder="Enter office name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                </div>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div>
+                            <Label htmlFor="name" value="Office Name" />
+                            <TextInput
+                                id="name"
+                                type="text"
+                                required
+                                placeholder="Enter office name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                        </div>
 
-                <div>
-                    <Label htmlFor="location" value="Location" />
-                    <TextInput
-                        id="location"
-                        type="text"
-                        placeholder="Enter location"
-                        value={location}
-                        onChange={(e) => setLocation(e.target.value)}
-                    />
-                </div>
+                        <div>
+                            <Label htmlFor="location" value="Location" />
+                            <TextInput
+                                id="location"
+                                type="text"
+                                placeholder="Enter location"
+                                value={location}
+                                onChange={(e) => setLocation(e.target.value)}
+                            />
+                        </div>
 
-                <div className="flex justify-end space-x-2 pt-2">
-                    <Button color="gray" onClick={() => setOpenModal(false)} type="button">
-                        Cancel
-                    </Button>
-                    <Button color="success" type="submit">
-                        Save
-                    </Button>
-                </div>
-            </form>
+                        <div className="flex justify-end space-x-2 pt-2">
+                            <Button color="gray" onClick={() => setOpenModal(false)} type="button">
+                                Cancel
+                            </Button>
+                            <Button color="success" type="submit">
+                                Save
+                            </Button>
+                        </div>
+                    </form>
                 </ModalBody>
             </Modal>
+
 
             {/*  Edit Modal */}
             <Modal show={openModalEdit} onClose={() => setOpenModalEdit(false)}>
